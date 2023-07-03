@@ -59,17 +59,22 @@ final class PhotoListViewModelTests: XCTestCase {
     }
     
     func test_loadMore_deliversErrorMessageWhenOnError() async {
-        let photos = [makePhoto()]
-        let (sut, loader) = makeSUT(stubs: [.success(photos), .failure(anyNSError())])
+        let photoSet0 = [makePhoto(id: "id0")]
+        let photoSet1 = [makePhoto(id: "id1")]
+        let (sut, loader) = makeSUT(stubs: [.success(photoSet0), .failure(anyNSError()), .success(photoSet1)])
         
-        await expect(sut, loader: loader, expectedPhotos: photos, when: {
+        await expect(sut, loader: loader, expectedPhotos: photoSet0, when: {
             await sut.load()
         })
         
         await expect(sut, loader: loader, expectedError: PhotoListViewModel.errorMessage, when: {
             await sut.loadMore()
         })
-        XCTAssertEqual(loader.loggedPages, [1, 2])
+        
+        await expect(sut, loader: loader, expectedPhotos: photoSet0 + photoSet1, when: {
+            await sut.loadMore()
+        })
+        XCTAssertEqual(loader.loggedPages, [1, 2, 2])
     }
     
     func test_loadMore_deliversMorePhotosWhenSuccess() async {
