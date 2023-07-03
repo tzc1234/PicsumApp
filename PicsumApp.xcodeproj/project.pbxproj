@@ -11,7 +11,7 @@
 		BE6560392A52D4A300CCD5D6 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE6560382A52D4A300CCD5D6 /* SceneDelegate.swift */; };
 		BE6560402A52D4A400CCD5D6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BE65603F2A52D4A400CCD5D6 /* Assets.xcassets */; };
 		BE6560432A52D4A400CCD5D6 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BE6560412A52D4A400CCD5D6 /* LaunchScreen.storyboard */; };
-		BE65604E2A52D4A400CCD5D6 /* PicsumAppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE65604D2A52D4A400CCD5D6 /* PicsumAppTests.swift */; };
+		BE65604E2A52D4A400CCD5D6 /* PhotoListViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE65604D2A52D4A400CCD5D6 /* PhotoListViewModelTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -32,7 +32,7 @@
 		BE6560422A52D4A400CCD5D6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		BE6560442A52D4A400CCD5D6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BE6560492A52D4A400CCD5D6 /* PicsumAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PicsumAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		BE65604D2A52D4A400CCD5D6 /* PicsumAppTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PicsumAppTests.swift; sourceTree = "<group>"; };
+		BE65604D2A52D4A400CCD5D6 /* PhotoListViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoListViewModelTests.swift; sourceTree = "<group>"; };
 		BE6560662A52D5F000CCD5D6 /* PicsumApp.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = PicsumApp.xctestplan; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -88,7 +88,7 @@
 		BE65604C2A52D4A400CCD5D6 /* PicsumAppTests */ = {
 			isa = PBXGroup;
 			children = (
-				BE65604D2A52D4A400CCD5D6 /* PicsumAppTests.swift */,
+				BE65604D2A52D4A400CCD5D6 /* PhotoListViewModelTests.swift */,
 			);
 			path = PicsumAppTests;
 			sourceTree = "<group>";
@@ -202,7 +202,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BE65604E2A52D4A400CCD5D6 /* PicsumAppTests.swift in Sources */,
+				BE65604E2A52D4A400CCD5D6 /* PhotoListViewModelTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
