@@ -51,9 +51,14 @@ final class PhotoListViewModelTests: XCTestCase {
     
     private typealias Result = Swift.Result<[Photo], Error>
     
-    private func makeSUT(stubs: [Result] = []) -> (sut: PhotoListViewModel, loader: LoaderSpy) {
+    private func makeSUT(stubs: [Result] = [],
+                         file: StaticString = #file,
+                         line: UInt = #line) -> (sut: PhotoListViewModel, loader: LoaderSpy) {
         let loader = LoaderSpy(stubs: stubs)
         let sut = PhotoListViewModel(loader: loader)
+        
+        trackForMemoryLeaks(loader, file: file, line: line)
+        trackForMemoryLeaks(sut, file: file, line: line)
         
         return (sut, loader)
     }

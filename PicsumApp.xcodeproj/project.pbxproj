@@ -12,6 +12,7 @@
 		BE6560402A52D4A400CCD5D6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BE65603F2A52D4A400CCD5D6 /* Assets.xcassets */; };
 		BE6560432A52D4A400CCD5D6 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BE6560412A52D4A400CCD5D6 /* LaunchScreen.storyboard */; };
 		BE65604E2A52D4A400CCD5D6 /* PhotoListViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE65604D2A52D4A400CCD5D6 /* PhotoListViewModelTests.swift */; };
+		BE6560692A52DF8900CCD5D6 /* XCTestCase+MemoryLeakTracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE6560682A52DF8900CCD5D6 /* XCTestCase+MemoryLeakTracking.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -34,6 +35,7 @@
 		BE6560492A52D4A400CCD5D6 /* PicsumAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PicsumAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE65604D2A52D4A400CCD5D6 /* PhotoListViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoListViewModelTests.swift; sourceTree = "<group>"; };
 		BE6560662A52D5F000CCD5D6 /* PicsumApp.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = PicsumApp.xctestplan; sourceTree = "<group>"; };
+		BE6560682A52DF8900CCD5D6 /* XCTestCase+MemoryLeakTracking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+MemoryLeakTracking.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,9 +90,18 @@
 		BE65604C2A52D4A400CCD5D6 /* PicsumAppTests */ = {
 			isa = PBXGroup;
 			children = (
+				BE6560672A52DF7C00CCD5D6 /* Helpers */,
 				BE65604D2A52D4A400CCD5D6 /* PhotoListViewModelTests.swift */,
 			);
 			path = PicsumAppTests;
+			sourceTree = "<group>";
+		};
+		BE6560672A52DF7C00CCD5D6 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				BE6560682A52DF8900CCD5D6 /* XCTestCase+MemoryLeakTracking.swift */,
+			);
+			path = Helpers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -203,6 +214,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BE65604E2A52D4A400CCD5D6 /* PhotoListViewModelTests.swift in Sources */,
+				BE6560692A52DF8900CCD5D6 /* XCTestCase+MemoryLeakTracking.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
