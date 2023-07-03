@@ -25,14 +25,34 @@ class PhotoListViewModel {
     }
     
     func load() async {
-        onLoad?(true)
+        resetCurrentPage()
+        
+        await loadPhotosFromLoader {
+            photos = $0
+            didLoad?(photos)
+        }
+    }
+    
+    func loadMore() async {
+        await loadPhotosFromLoader {
+            photos += $0
+            didLoad?(photos)
+        }
+    }
+    
+    private func resetCurrentPage() {
         currentPage = 1
+    }
+    
+    private func loadPhotosFromLoader(completion: ([Photo]) -> Void) async {
+        guard hasMorePage else { return }
+        
+        onLoad?(true)
         
         do {
-            photos = try await loader.load(page: currentPage)
-            hasMorePage = !photos.isEmpty
-            currentPage += 1
-            didLoad?(photos)
+            let photos = try await loader.load(page: currentPage)
+            updatePaging(by: photos)
+            completion(photos)
         } catch {
             onError?(Self.errorMessage)
         }
@@ -40,22 +60,9 @@ class PhotoListViewModel {
         onLoad?(false)
     }
     
-    func loadMore() async {
-        guard hasMorePage else { return }
-        
-        onLoad?(true)
-        
-        do {
-            let morePhotos = try await loader.load(page: currentPage)
-            hasMorePage = !morePhotos.isEmpty
-            currentPage += 1
-            photos += morePhotos
-            didLoad?(photos)
-        } catch {
-            onError?(Self.errorMessage)
-        }
-        
-        onLoad?(false)
+    private func updatePaging(by photos: [Photo]) {
+        hasMorePage = !photos.isEmpty
+        currentPage += 1
     }
     
     static var errorMessage: String {
@@ -174,14 +181,8 @@ final class PhotoListViewModelTests: XCTestCase {
         let photoSet = [makePhoto(id: "id0"), makePhoto(id: "id1")]
         let (sut, loader) = makeSUT(stubs: [.success(photoSet), .success([])])
         
-        await expect(sut, loader: loader, expectedPhotos: photoSet, when: {
-            await sut.load()
-        })
-        
-        await expect(sut, loader: loader, expectedPhotos: photoSet, when: {
-            await sut.loadMore()
-        })
-        
+        await sut.load()
+        await sut.loadMore()
         await sut.loadMore()
         XCTAssertEqual(loader.loggedPages, [1, 2])
     }
@@ -189,10 +190,7 @@ final class PhotoListViewModelTests: XCTestCase {
     func test_loadMore_stopLoadMoreAgainWhenReceivedEmptyPhotosFromLoad() async {
         let (sut, loader) = makeSUT(stubs: [.success([])])
         
-        await expect(sut, loader: loader, expectedPhotos: [], when: {
-            await sut.load()
-        })
-        
+        await sut.load()
         await sut.loadMore()
         XCTAssertEqual(loader.loggedPages, [1])
     }
