@@ -37,7 +37,7 @@ final class PhotoListViewModelTests: XCTestCase {
     }
     
     func test_load_deliversEmptyPhotosOnError() {
-        let (sut, _) = makeSUT(stubs: [.failure(NSError(domain: "error", code: 0))])
+        let (sut, _) = makeSUT(stubs: [.failure(anyNSError())])
         
         var photos = [Photo]()
         sut.didLoad = { photos = $0 }
@@ -63,14 +63,16 @@ final class PhotoListViewModelTests: XCTestCase {
         return (sut, loader)
     }
     
+    private func anyNSError() -> NSError {
+        NSError(domain: "error", code: 0)
+    }
+    
     private class LoaderSpy: PhotosLoader {
         private(set) var stubs: [Result]
         
         init(stubs: [Result]) {
             self.stubs = stubs
         }
-        
-        private(set) var messages = [Any]()
         
         func load() async throws -> [Photo] {
             try stubs.removeFirst().get()
