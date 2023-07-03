@@ -8,16 +8,6 @@
 import XCTest
 @testable import PicsumApp
 
-struct Photo: Equatable {
-    let id, author: String
-    let width, height: Int
-    let webURL, url: URL
-}
-
-protocol PhotosLoader {
-    func load() async throws -> [Photo]
-}
-
 class PhotoListViewModel {
     var onLoad: ((Bool) -> Void)?
     var didLoad: (([Photo]) -> ())?
