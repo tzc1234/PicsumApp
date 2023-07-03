@@ -46,6 +46,17 @@ final class PhotoListViewModelTests: XCTestCase {
         
         XCTAssertEqual(photos, [])
     }
+    
+    func test_load_deliversEmptyPhotosWhenReceivedEmpty() {
+        let (sut, _) = makeSUT(stubs: [.success([])])
+        
+        var photos = [Photo]()
+        sut.didLoad = { photos = $0 }
+        
+        sut.load()
+        
+        XCTAssertEqual(photos, [])
+    }
 
     // MARK: - Helpers
     
