@@ -146,12 +146,13 @@ final class PhotoListViewModelTests: XCTestCase {
         var errorMessage: String?
         sut.onError = { errorMessage = $0 }
         
-        var photos = [Photo]()
+        var photos: [Photo]?
         sut.didLoad = { photos = $0 }
         
         loader.beforeLoad = {
             XCTAssertEqual(isLoading, true, "Expect start loading", file: file, line: line)
-            XCTAssertNil(errorMessage, "Expect no error message", file: file, line: line)
+            XCTAssertNil(errorMessage, "Expect nil error message", file: file, line: line)
+            XCTAssertNil(photos, "Expect nil photos", file: file, line: line)
         }
         
         await action()
@@ -160,7 +161,9 @@ final class PhotoListViewModelTests: XCTestCase {
         switch result {
         case let .success(expectedPhotos):
             XCTAssertEqual(photos, expectedPhotos, file: file, line: line)
+            XCTAssertNil(errorMessage, "Expect nil error message again", file: file, line: line)
         case .failure:
+            XCTAssertNil(photos, "Expect nil photos again", file: file, line: line)
             XCTAssertEqual(errorMessage, PhotoListViewModel.errorMessage, file: file, line: line)
         }
     }
