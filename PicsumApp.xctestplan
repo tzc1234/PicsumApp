@@ -1,0 +1,29 @@
+{
+  "configurations" : [
+    {
+      "id" : "26AF2905-01D5-4EB0-9FB9-B8C75A59F62A",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : false,
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:PicsumApp.xcodeproj",
+      "identifier" : "BE6560322A52D4A300CCD5D6",
+      "name" : "PicsumApp"
+    }
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:PicsumApp.xcodeproj",
+        "identifier" : "BE6560482A52D4A400CCD5D6",
+        "name" : "PicsumAppTests"
+      }
+    }
+  ],
+  "version" : 1
+}
