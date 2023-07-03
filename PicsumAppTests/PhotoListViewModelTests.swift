@@ -69,6 +69,19 @@ final class PhotoListViewModelTests: XCTestCase {
             await sut.load()
         })
     }
+    
+    func test_load_deliversMultiplePhotosWhenReceivedMultiples() async {
+        let photos = [
+            makePhoto(id: "id0", author: "author0", webURL: URL(string: "https://web0-url.com")!, URL: URL(string: "https://url0.com")!),
+            makePhoto(id: "id1", author: "author1", webURL: URL(string: "https://web1-url.com")!, URL: URL(string: "https://url1.com")!),
+            makePhoto(id: "id2", author: "author2", webURL: URL(string: "https://web2-url.com")!, URL: URL(string: "https://url2.com")!)
+        ]
+        let (sut, _) = makeSUT(stubs: [.success(photos)])
+        
+        await expect(sut, withExpectedPhotos: photos, when: {
+            await sut.load()
+        })
+    }
 
     // MARK: - Helpers
     
