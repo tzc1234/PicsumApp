@@ -25,8 +25,20 @@ class PhotoListViewModel {
         onLoad?(true)
         
         do {
-            let photos = try await loader.load()
+            let photos = try await loader.load(page: 1)
             didLoad?(photos)
+        } catch {
+            onError?(Self.errorMessage)
+        }
+        
+        onLoad?(false)
+    }
+    
+    func loadMore() async {
+        onLoad?(true)
+        
+        do {
+            _ = try await loader.load(page: 2)
         } catch {
             onError?(Self.errorMessage)
         }
@@ -44,7 +56,7 @@ final class PhotoListViewModelTests: XCTestCase {
     func test_init_withoutTriggerLoader() {
         let (_, loader) = makeSUT()
         
-        XCTAssertEqual(loader.stubs.count, 0)
+        XCTAssertEqual(loader.loggedPages.count, 0)
     }
     
     func test_load_deliversEmptyPhotosAndErrorMessageOnError() async {
@@ -85,6 +97,20 @@ final class PhotoListViewModelTests: XCTestCase {
         
         await expect(sut, loader: loader, withExpected: result, when: {
             await sut.load()
+        })
+    }
+    
+    func test_loadMore_deliversErrorMessageWhenOnError() async {
+        let successResult = Result.success([makePhoto()])
+        let errorResult = Result.failure(anyNSError())
+        let (sut, loader) = makeSUT(stubs: [successResult, errorResult])
+        
+        await expect(sut, loader: loader, withExpected: successResult, when: {
+            await sut.load()
+        })
+        
+        await expect(sut, loader: loader, withExpected: errorResult, when: {
+            await sut.loadMore()
         })
     }
 
@@ -147,6 +173,7 @@ final class PhotoListViewModelTests: XCTestCase {
     
     private class LoaderSpy: PhotosLoader {
         var beforeLoad: (() -> Void)?
+        private(set) var loggedPages = [Int]()
         
         private(set) var stubs: [Result]
         
@@ -154,8 +181,9 @@ final class PhotoListViewModelTests: XCTestCase {
             self.stubs = stubs
         }
         
-        func load() async throws -> [Photo] {
+        func load(page: Int) async throws -> [Photo] {
             beforeLoad?()
+            loggedPages.append(page)
             return try stubs.removeFirst().get()
         }
     }
