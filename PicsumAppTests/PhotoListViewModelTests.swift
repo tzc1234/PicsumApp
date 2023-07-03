@@ -66,6 +66,7 @@ final class PhotoListViewModelTests: XCTestCase {
         await expect(sut, loader: loader, withExpected: result, when: {
             await sut.load()
         })
+        XCTAssertEqual(loader.loggedPages, [1])
     }
     
     func test_load_deliversEmptyPhotosWhenReceivedEmpty() async {
@@ -75,6 +76,7 @@ final class PhotoListViewModelTests: XCTestCase {
         await expect(sut, loader: loader, withExpected: result, when: {
             await sut.load()
         })
+        XCTAssertEqual(loader.loggedPages, [1])
     }
     
     func test_load_deliversOnePhotoWhenRecivedOne() async {
@@ -84,6 +86,7 @@ final class PhotoListViewModelTests: XCTestCase {
         await expect(sut, loader: loader, withExpected: result, when: {
             await sut.load()
         })
+        XCTAssertEqual(loader.loggedPages, [1])
     }
     
     func test_load_deliversMultiplePhotosWhenReceivedMultiples() async {
@@ -98,6 +101,7 @@ final class PhotoListViewModelTests: XCTestCase {
         await expect(sut, loader: loader, withExpected: result, when: {
             await sut.load()
         })
+        XCTAssertEqual(loader.loggedPages, [1])
     }
     
     func test_loadMore_deliversErrorMessageWhenOnError() async {
@@ -112,6 +116,7 @@ final class PhotoListViewModelTests: XCTestCase {
         await expect(sut, loader: loader, withExpected: errorResult, when: {
             await sut.loadMore()
         })
+        XCTAssertEqual(loader.loggedPages, [1, 2])
     }
 
     // MARK: - Helpers
