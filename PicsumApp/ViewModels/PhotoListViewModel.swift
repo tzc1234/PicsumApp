@@ -68,4 +68,8 @@ final class PhotoListViewModel {
     static var errorMessage: String {
         "Error occured, please reload again."
     }
+    
+    static var title: String {
+        "Photos"
+    }
 }

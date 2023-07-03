@@ -21,6 +21,7 @@ class PhotoListViewController: UICollectionViewController {
     
     convenience init(viewModel: PhotoListViewModel) {
         self.init(collectionViewLayout: UICollectionViewFlowLayout())
+        self.title = PhotoListViewModel.title
         self.viewModel = viewModel
     }
     
@@ -37,7 +38,13 @@ class PhotoListViewController: UICollectionViewController {
 }
 
 final class PhotoListIntegrationTests: XCTestCase {
-
+    
+    func test_photosList_hasTitle() {
+        let (sut, _) = makeSUT()
+        
+        XCTAssertEqual(sut.title, PhotoListViewModel.title)
+    }
+    
     func test_init_noTriggerLoader() {
         let (_, loader) = makeSUT()
         
@@ -45,7 +52,7 @@ final class PhotoListIntegrationTests: XCTestCase {
     }
     
     @MainActor
-    func test_loadPhotos_requestPhotosFromLoader() async {
+    func test_loadPhotosAction_requestPhotosFromLoader() async {
         let (sut, loader) = makeSUT(stubs: [.success([]), .success([]), .success([])])
         
         XCTAssertEqual(loader.loggedPages.count, 0)
