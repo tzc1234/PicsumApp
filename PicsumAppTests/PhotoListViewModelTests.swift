@@ -164,12 +164,10 @@ final class PhotoListViewModelTests: XCTestCase {
 
     // MARK: - Helpers
     
-    private typealias Result = Swift.Result<[Photo], Error>
-    
-    private func makeSUT(stubs: [Result] = [],
+    private func makeSUT(stubs: [PhotosLoaderSpy.Result] = [],
                          file: StaticString = #file,
-                         line: UInt = #line) -> (sut: PhotoListViewModel, loader: LoaderSpy) {
-        let loader = LoaderSpy(stubs: stubs)
+                         line: UInt = #line) -> (sut: PhotoListViewModel, loader: PhotosLoaderSpy) {
+        let loader = PhotosLoaderSpy(stubs: stubs)
         let sut = PhotoListViewModel(loader: loader)
         
         trackForMemoryLeaks(loader, file: file, line: line)
@@ -178,7 +176,7 @@ final class PhotoListViewModelTests: XCTestCase {
         return (sut, loader)
     }
     
-    private func expect(_ sut: PhotoListViewModel, loader: LoaderSpy,
+    private func expect(_ sut: PhotoListViewModel, loader: PhotosLoaderSpy,
                         expectedError: String? = nil, expectedPhotos: [Photo]? = nil,
                         when action: () async -> Void, file: StaticString = #file,
                         line: UInt = #line) async {
@@ -213,23 +211,6 @@ final class PhotoListViewModelTests: XCTestCase {
     
     private func anyNSError() -> NSError {
         NSError(domain: "error", code: 0)
-    }
-    
-    private class LoaderSpy: PhotosLoader {
-        var beforeLoad: (() -> Void)?
-        private(set) var loggedPages = [Int]()
-        
-        private(set) var stubs: [Result]
-        
-        init(stubs: [Result]) {
-            self.stubs = stubs
-        }
-        
-        func load(page: Int) async throws -> [Photo] {
-            beforeLoad?()
-            loggedPages.append(page)
-            return try stubs.removeFirst().get()
-        }
     }
     
 }
