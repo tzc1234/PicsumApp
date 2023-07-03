@@ -25,9 +25,10 @@ class PhotoListViewModel {
     
     func load() async {
         onLoad?(true)
+        currentPage = 1
         
         do {
-            photos = try await loader.load(page: 1)
+            photos = try await loader.load(page: currentPage)
             currentPage += 1
             didLoad?(photos)
         } catch {
@@ -124,7 +125,7 @@ final class PhotoListViewModelTests: XCTestCase {
     func test_loadMore_deliversMorePhotosWhenSuccess() async {
         let photoSet0 = [makePhoto(id: "id0"), makePhoto(id: "id1")]
         let photoSet1 = [makePhoto(id: "id2"), makePhoto(id: "id3")]
-        let photoSet2 = [makePhoto(id: "id4"), makePhoto(id: "id5")]
+        let photoSet2 = [makePhoto(id: "id4")]
         let (sut, loader) = makeSUT(stubs: [.success(photoSet0), .success(photoSet1), .success(photoSet2)])
         
         await expect(sut, loader: loader, expectedPhotos: photoSet0, when: {
@@ -138,8 +139,30 @@ final class PhotoListViewModelTests: XCTestCase {
         await expect(sut, loader: loader, expectedPhotos: photoSet0 + photoSet1 + photoSet2, when: {
             await sut.loadMore()
         })
-        
         XCTAssertEqual(loader.loggedPages, [1, 2, 3])
+    }
+    
+    func test_loadMore_deliversFromTheFirstSetPhotosAgainWhenTriggersLoadAgain() async {
+        let photoSet0 = [makePhoto(id: "id0"), makePhoto(id: "id1")]
+        let photoSet1 = [makePhoto(id: "id2"), makePhoto(id: "id3")]
+        let (sut, loader) = makeSUT(stubs: [.success(photoSet0), .success(photoSet1), .success(photoSet0), .success(photoSet1)])
+        
+        await expect(sut, loader: loader, expectedPhotos: photoSet0, when: {
+            await sut.load()
+        })
+        
+        await expect(sut, loader: loader, expectedPhotos: photoSet0 + photoSet1, when: {
+            await sut.loadMore()
+        })
+        
+        await expect(sut, loader: loader, expectedPhotos: photoSet0, when: {
+            await sut.load()
+        })
+        
+        await expect(sut, loader: loader, expectedPhotos: photoSet0 + photoSet1, when: {
+            await sut.loadMore()
+        })
+        XCTAssertEqual(loader.loggedPages, [1, 2, 1, 2])
     }
 
     // MARK: - Helpers
