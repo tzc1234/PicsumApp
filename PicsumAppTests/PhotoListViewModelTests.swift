@@ -9,7 +9,9 @@ import XCTest
 @testable import PicsumApp
 
 struct Photo: Equatable {
-    
+    let id, author: String
+    let width, height: Int
+    let webURL, url: URL
 }
 
 protocol PhotosLoader {
@@ -18,13 +20,20 @@ protocol PhotosLoader {
 
 class PhotoListViewModel {
     var didLoad: (([Photo]) -> ())?
+     
+    private let loader: PhotosLoader
     
     init(loader: PhotosLoader) {
-        
+        self.loader = loader
     }
     
-    func load() {
-        
+    func load() async {
+        do {
+            let photos = try await loader.load()
+            didLoad?(photos)
+        } catch {
+            
+        }
     }
 }
 
@@ -36,26 +45,38 @@ final class PhotoListViewModelTests: XCTestCase {
         XCTAssertEqual(loader.stubs.count, 0)
     }
     
-    func test_load_deliversEmptyPhotosOnError() {
+    func test_load_deliversEmptyPhotosOnError() async {
         let (sut, _) = makeSUT(stubs: [.failure(anyNSError())])
         
         var photos = [Photo]()
         sut.didLoad = { photos = $0 }
         
-        sut.load()
+        await sut.load()
         
         XCTAssertEqual(photos, [])
     }
     
-    func test_load_deliversEmptyPhotosWhenReceivedEmpty() {
+    func test_load_deliversEmptyPhotosWhenReceivedEmpty() async {
         let (sut, _) = makeSUT(stubs: [.success([])])
         
         var photos = [Photo]()
         sut.didLoad = { photos = $0 }
         
-        sut.load()
+        await sut.load()
         
         XCTAssertEqual(photos, [])
+    }
+    
+    func test_load_deliversOnePhotoWhenRecivedOne() async {
+        let photo = makePhoto()
+        let (sut, _) = makeSUT(stubs: [.success([photo])])
+        
+        var photos = [Photo]()
+        sut.didLoad = { photos = $0 }
+        
+        await sut.load()
+        
+        XCTAssertEqual(photos, [photo])
     }
 
     // MARK: - Helpers
@@ -72,6 +93,13 @@ final class PhotoListViewModelTests: XCTestCase {
         trackForMemoryLeaks(sut, file: file, line: line)
         
         return (sut, loader)
+    }
+    
+    private func makePhoto(id: String = "any id", author: String = "any author",
+                           width: Int = 1, height: Int = 1,
+                           webURL: URL = URL(string: "https://any-web-url.com")!,
+                           URL: URL = URL(string: "https://any-url.com")!) -> Photo {
+        .init(id: id, author: author, width: width, height: height, webURL: webURL, url: URL)
     }
     
     private func anyNSError() -> NSError {
