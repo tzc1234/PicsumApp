@@ -15,6 +15,8 @@ class PhotoListViewModel {
     var onError: Observer<String>?
     var didLoad: Observer<[Photo]>?
      
+    private var photos = [Photo]()
+    private var currentPage = 1
     private let loader: PhotosLoader
     
     init(loader: PhotosLoader) {
@@ -25,7 +27,8 @@ class PhotoListViewModel {
         onLoad?(true)
         
         do {
-            let photos = try await loader.load(page: 1)
+            photos = try await loader.load(page: 1)
+            currentPage += 1
             didLoad?(photos)
         } catch {
             onError?(Self.errorMessage)
@@ -38,7 +41,10 @@ class PhotoListViewModel {
         onLoad?(true)
         
         do {
-            _ = try await loader.load(page: 2)
+            let morePhotos = try await loader.load(page: currentPage)
+            currentPage += 1
+            photos += morePhotos
+            didLoad?(photos)
         } catch {
             onError?(Self.errorMessage)
         }
@@ -60,30 +66,28 @@ final class PhotoListViewModelTests: XCTestCase {
     }
     
     func test_load_deliversEmptyPhotosAndErrorMessageOnError() async {
-        let result = Result.failure(anyNSError())
-        let (sut, loader) = makeSUT(stubs: [result])
+        let (sut, loader) = makeSUT(stubs: [.failure(anyNSError())])
         
-        await expect(sut, loader: loader, withExpected: result, when: {
+        await expect(sut, loader: loader, expectedError: PhotoListViewModel.errorMessage, when: {
             await sut.load()
         })
         XCTAssertEqual(loader.loggedPages, [1])
     }
     
     func test_load_deliversEmptyPhotosWhenReceivedEmpty() async {
-        let result = Result.success([])
-        let (sut, loader) = makeSUT(stubs: [result])
+        let (sut, loader) = makeSUT(stubs: [.success([])])
         
-        await expect(sut, loader: loader, withExpected: result, when: {
+        await expect(sut, loader: loader, expectedPhotos: [], when: {
             await sut.load()
         })
         XCTAssertEqual(loader.loggedPages, [1])
     }
     
     func test_load_deliversOnePhotoWhenRecivedOne() async {
-        let result = Result.success([makePhoto()])
-        let (sut, loader) = makeSUT(stubs: [result])
+        let photos = [makePhoto()]
+        let (sut, loader) = makeSUT(stubs: [.success(photos)])
         
-        await expect(sut, loader: loader, withExpected: result, when: {
+        await expect(sut, loader: loader, expectedPhotos: photos, when: {
             await sut.load()
         })
         XCTAssertEqual(loader.loggedPages, [1])
@@ -95,28 +99,47 @@ final class PhotoListViewModelTests: XCTestCase {
             makePhoto(id: "id1"),
             makePhoto(id: "id2")
         ]
-        let result = Result.success(photos)
-        let (sut, loader) = makeSUT(stubs: [result])
+        let (sut, loader) = makeSUT(stubs: [.success(photos)])
         
-        await expect(sut, loader: loader, withExpected: result, when: {
+        await expect(sut, loader: loader, expectedPhotos: photos, when: {
             await sut.load()
         })
         XCTAssertEqual(loader.loggedPages, [1])
     }
     
     func test_loadMore_deliversErrorMessageWhenOnError() async {
-        let successResult = Result.success([makePhoto()])
-        let errorResult = Result.failure(anyNSError())
-        let (sut, loader) = makeSUT(stubs: [successResult, errorResult])
+        let photos = [makePhoto()]
+        let (sut, loader) = makeSUT(stubs: [.success(photos), .failure(anyNSError())])
         
-        await expect(sut, loader: loader, withExpected: successResult, when: {
+        await expect(sut, loader: loader, expectedPhotos: photos, when: {
             await sut.load()
         })
         
-        await expect(sut, loader: loader, withExpected: errorResult, when: {
+        await expect(sut, loader: loader, expectedError: PhotoListViewModel.errorMessage, when: {
             await sut.loadMore()
         })
         XCTAssertEqual(loader.loggedPages, [1, 2])
+    }
+    
+    func test_loadMore_deliversMorePhotosWhenSuccess() async {
+        let photoSet0 = [makePhoto(id: "id0"), makePhoto(id: "id1")]
+        let photoSet1 = [makePhoto(id: "id2"), makePhoto(id: "id3")]
+        let photoSet2 = [makePhoto(id: "id4"), makePhoto(id: "id5")]
+        let (sut, loader) = makeSUT(stubs: [.success(photoSet0), .success(photoSet1), .success(photoSet2)])
+        
+        await expect(sut, loader: loader, expectedPhotos: photoSet0, when: {
+            await sut.load()
+        })
+        
+        await expect(sut, loader: loader, expectedPhotos: photoSet0 + photoSet1, when: {
+            await sut.loadMore()
+        })
+        
+        await expect(sut, loader: loader, expectedPhotos: photoSet0 + photoSet1 + photoSet2, when: {
+            await sut.loadMore()
+        })
+        
+        XCTAssertEqual(loader.loggedPages, [1, 2, 3])
     }
 
     // MARK: - Helpers
@@ -136,9 +159,8 @@ final class PhotoListViewModelTests: XCTestCase {
     }
     
     private func expect(_ sut: PhotoListViewModel, loader: LoaderSpy,
-                        withExpected result: Result,
-                        when action: () async -> Void,
-                        file: StaticString = #file,
+                        expectedError: String? = nil, expectedPhotos: [Photo]? = nil,
+                        when action: () async -> Void, file: StaticString = #file,
                         line: UInt = #line) async {
         var isLoading: Bool?
         sut.onLoad = { isLoading = $0 }
@@ -158,14 +180,8 @@ final class PhotoListViewModelTests: XCTestCase {
         await action()
         
         XCTAssertEqual(isLoading, false, "Expect end loading", file: file, line: line)
-        switch result {
-        case let .success(expectedPhotos):
-            XCTAssertEqual(photos, expectedPhotos, file: file, line: line)
-            XCTAssertNil(errorMessage, "Expect nil error message again", file: file, line: line)
-        case .failure:
-            XCTAssertNil(photos, "Expect nil photos again", file: file, line: line)
-            XCTAssertEqual(errorMessage, PhotoListViewModel.errorMessage, file: file, line: line)
-        }
+        XCTAssertEqual(errorMessage, expectedError, file: file, line: line)
+        XCTAssertEqual(photos, expectedPhotos, file: file, line: line)
     }
     
     private func makePhoto(id: String = "any id", author: String = "any author",
