@@ -26,12 +26,16 @@ final class PhotoListViewModelTests: XCTestCase {
     }
     
     func test_load_deliversEmptyPhotosWhenReceivedEmpty() async {
-        let (sut, loader) = makeSUT(stubs: [.success([])])
+        let (sut, loader) = makeSUT(stubs: [.success([]), .success([])])
         
         await expect(sut, loader: loader, expectedPhotos: [], when: {
             await sut.load()
         })
-        XCTAssertEqual(loader.loggedPages, [1])
+        
+        await expect(sut, loader: loader, expectedPhotos: [], when: {
+            await sut.load()
+        })
+        XCTAssertEqual(loader.loggedPages, [1, 1])
     }
     
     func test_load_deliversOnePhotoWhenRecivedOne() async {

@@ -33,6 +33,8 @@ final class PhotoListViewModel {
     }
     
     func loadMore() async {
+        guard hasMorePage else { return }
+        
         await loadPhotosFromLoader {
             photos += $0
             didLoad?(photos)
@@ -44,8 +46,6 @@ final class PhotoListViewModel {
     }
     
     private func loadPhotosFromLoader(completion: ([Photo]) -> Void) async {
-        guard hasMorePage else { return }
-        
         onLoad?(true)
         
         do {
