@@ -19,6 +19,7 @@ protocol PhotosLoader {
 }
 
 class PhotoListViewModel {
+    var onLoad: ((Bool) -> Void)?
     var didLoad: (([Photo]) -> ())?
      
     private let loader: PhotosLoader
@@ -28,12 +29,16 @@ class PhotoListViewModel {
     }
     
     func load() async {
+        onLoad?(true)
+        
         do {
             let photos = try await loader.load()
             didLoad?(photos)
         } catch {
             
         }
+        
+        onLoad?(false)
     }
 }
 
@@ -46,26 +51,26 @@ final class PhotoListViewModelTests: XCTestCase {
     }
     
     func test_load_deliversEmptyPhotosOnError() async {
-        let (sut, _) = makeSUT(stubs: [.failure(anyNSError())])
+        let (sut, loader) = makeSUT(stubs: [.failure(anyNSError())])
         
-        await expect(sut, withExpectedPhotos: [], when: {
+        await expect(sut, loader: loader, withExpectedPhotos: [], when: {
             await sut.load()
         })
     }
     
     func test_load_deliversEmptyPhotosWhenReceivedEmpty() async {
-        let (sut, _) = makeSUT(stubs: [.success([])])
+        let (sut, loader) = makeSUT(stubs: [.success([])])
         
-        await expect(sut, withExpectedPhotos: [], when: {
+        await expect(sut, loader: loader, withExpectedPhotos: [], when: {
             await sut.load()
         })
     }
     
     func test_load_deliversOnePhotoWhenRecivedOne() async {
         let photo = makePhoto()
-        let (sut, _) = makeSUT(stubs: [.success([photo])])
+        let (sut, loader) = makeSUT(stubs: [.success([photo])])
         
-        await expect(sut, withExpectedPhotos: [photo], when: {
+        await expect(sut, loader: loader, withExpectedPhotos: [photo], when: {
             await sut.load()
         })
     }
@@ -76,9 +81,9 @@ final class PhotoListViewModelTests: XCTestCase {
             makePhoto(id: "id1", author: "author1", webURL: URL(string: "https://web1-url.com")!, URL: URL(string: "https://url1.com")!),
             makePhoto(id: "id2", author: "author2", webURL: URL(string: "https://web2-url.com")!, URL: URL(string: "https://url2.com")!)
         ]
-        let (sut, _) = makeSUT(stubs: [.success(photos)])
+        let (sut, loader) = makeSUT(stubs: [.success(photos)])
         
-        await expect(sut, withExpectedPhotos: photos, when: {
+        await expect(sut, loader: loader, withExpectedPhotos: photos, when: {
             await sut.load()
         })
     }
@@ -99,7 +104,7 @@ final class PhotoListViewModelTests: XCTestCase {
         return (sut, loader)
     }
     
-    private func expect(_ sut: PhotoListViewModel,
+    private func expect(_ sut: PhotoListViewModel, loader: LoaderSpy,
                         withExpectedPhotos expectedPhotos: [Photo],
                         when action: () async -> Void,
                         file: StaticString = #file,
@@ -107,8 +112,16 @@ final class PhotoListViewModelTests: XCTestCase {
         var photos = [Photo]()
         sut.didLoad = { photos = $0 }
         
+        var isLoading: Bool?
+        sut.onLoad = { isLoading = $0 }
+        
+        loader.beforeLoad = {
+            XCTAssertEqual(isLoading, true, "Expect start loading", file: file, line: line)
+        }
+        
         await action()
         
+        XCTAssertEqual(isLoading, false, "Expect end loading", file: file, line: line)
         XCTAssertEqual(photos, expectedPhotos, file: file, line: line)
     }
     
@@ -124,6 +137,8 @@ final class PhotoListViewModelTests: XCTestCase {
     }
     
     private class LoaderSpy: PhotosLoader {
+        var beforeLoad: (() -> Void)?
+        
         private(set) var stubs: [Result]
         
         init(stubs: [Result]) {
@@ -131,7 +146,8 @@ final class PhotoListViewModelTests: XCTestCase {
         }
         
         func load() async throws -> [Photo] {
-            try stubs.removeFirst().get()
+            beforeLoad?()
+            return try stubs.removeFirst().get()
         }
     }
     
