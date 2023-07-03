@@ -48,35 +48,26 @@ final class PhotoListViewModelTests: XCTestCase {
     func test_load_deliversEmptyPhotosOnError() async {
         let (sut, _) = makeSUT(stubs: [.failure(anyNSError())])
         
-        var photos = [Photo]()
-        sut.didLoad = { photos = $0 }
-        
-        await sut.load()
-        
-        XCTAssertEqual(photos, [])
+        await expect(sut, withExpectedPhotos: [], when: {
+            await sut.load()
+        })
     }
     
     func test_load_deliversEmptyPhotosWhenReceivedEmpty() async {
         let (sut, _) = makeSUT(stubs: [.success([])])
         
-        var photos = [Photo]()
-        sut.didLoad = { photos = $0 }
-        
-        await sut.load()
-        
-        XCTAssertEqual(photos, [])
+        await expect(sut, withExpectedPhotos: [], when: {
+            await sut.load()
+        })
     }
     
     func test_load_deliversOnePhotoWhenRecivedOne() async {
         let photo = makePhoto()
         let (sut, _) = makeSUT(stubs: [.success([photo])])
         
-        var photos = [Photo]()
-        sut.didLoad = { photos = $0 }
-        
-        await sut.load()
-        
-        XCTAssertEqual(photos, [photo])
+        await expect(sut, withExpectedPhotos: [photo], when: {
+            await sut.load()
+        })
     }
 
     // MARK: - Helpers
@@ -93,6 +84,19 @@ final class PhotoListViewModelTests: XCTestCase {
         trackForMemoryLeaks(sut, file: file, line: line)
         
         return (sut, loader)
+    }
+    
+    private func expect(_ sut: PhotoListViewModel,
+                        withExpectedPhotos expectedPhotos: [Photo],
+                        when action: () async -> Void,
+                        file: StaticString = #file,
+                        line: UInt = #line) async {
+        var photos = [Photo]()
+        sut.didLoad = { photos = $0 }
+        
+        await action()
+        
+        XCTAssertEqual(photos, expectedPhotos, file: file, line: line)
     }
     
     private func makePhoto(id: String = "any id", author: String = "any author",
