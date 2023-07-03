@@ -10,6 +10,7 @@ import XCTest
 
 class PhotoListViewModel {
     var onLoad: ((Bool) -> Void)?
+    var onError: ((String) -> Void)?
     var didLoad: (([Photo]) -> ())?
      
     private let loader: PhotosLoader
@@ -25,10 +26,14 @@ class PhotoListViewModel {
             let photos = try await loader.load()
             didLoad?(photos)
         } catch {
-            
+            onError?(Self.errorMessage)
         }
         
         onLoad?(false)
+    }
+    
+    static var errorMessage: String {
+        "Error occured, please reload again."
     }
 }
 
@@ -76,6 +81,21 @@ final class PhotoListViewModelTests: XCTestCase {
         await expect(sut, loader: loader, withExpectedPhotos: photos, when: {
             await sut.load()
         })
+    }
+    
+    func test_load_deliversErrorMessageOnError() async {
+        let (sut, loader) = makeSUT(stubs: [.failure(anyNSError())])
+        
+        var errorMessage: String?
+        sut.onError = { errorMessage = $0 }
+        
+        loader.beforeLoad = {
+            XCTAssertNil(errorMessage)
+        }
+        
+        await sut.load()
+        
+        XCTAssertEqual(errorMessage, PhotoListViewModel.errorMessage)
     }
 
     // MARK: - Helpers
