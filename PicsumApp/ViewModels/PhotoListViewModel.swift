@@ -11,7 +11,7 @@ final class PhotoListViewModel {
     typealias Observer<T> = (T) -> Void
     
     var onLoad: Observer<Bool>?
-    var onError: Observer<String>?
+    var onError: Observer<String?>?
     var didLoad: Observer<[Photo]>?
      
     private var photos = [Photo]()
@@ -52,6 +52,7 @@ final class PhotoListViewModel {
             let photos = try await loader.load(page: currentPage)
             updatePaging(by: photos)
             completion(photos)
+            onError?(nil)
         } catch {
             onError?(Self.errorMessage)
         }

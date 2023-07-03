@@ -58,7 +58,7 @@ final class PhotoListViewModelTests: XCTestCase {
         XCTAssertEqual(loader.loggedPages, [1])
     }
     
-    func test_loadMore_deliversErrorMessageWhenOnError() async {
+    func test_loadMore_deliversUpdatedPhotosWhenLoadMoreAginAfterAnError() async {
         let photoSet0 = [makePhoto(id: "id0")]
         let photoSet1 = [makePhoto(id: "id1")]
         let (sut, loader) = makeSUT(stubs: [.success(photoSet0), .failure(anyNSError()), .success(photoSet1)])
@@ -120,7 +120,7 @@ final class PhotoListViewModelTests: XCTestCase {
         XCTAssertEqual(loader.loggedPages, [1, 2, 1, 2])
     }
     
-    func test_loadMore_stopLoadMoreAgainWhenReceivedEmptyPhotosFromLoadMore() async {
+    func test_loadMore_stopLoadMoreWhenReceivedEmptyPhotosFromLoadMore() async {
         let photoSet = [makePhoto(id: "id0"), makePhoto(id: "id1")]
         let (sut, loader) = makeSUT(stubs: [.success(photoSet), .success([])])
         
@@ -130,12 +130,36 @@ final class PhotoListViewModelTests: XCTestCase {
         XCTAssertEqual(loader.loggedPages, [1, 2])
     }
     
-    func test_loadMore_stopLoadMoreAgainWhenReceivedEmptyPhotosFromLoad() async {
+    func test_loadMore_stopLoadMoreWhenReceivedEmptyPhotosFromLoad() async {
         let (sut, loader) = makeSUT(stubs: [.success([])])
         
         await sut.load()
         await sut.loadMore()
         XCTAssertEqual(loader.loggedPages, [1])
+    }
+    
+    func test_load_deliversNilErrorMessageWhenLoadSuccessAfterAnError() async {
+        let (sut, _) = makeSUT(stubs: [.failure(anyNSError()), .success([])])
+        
+        var errorMessage: String?
+        sut.onError = { errorMessage = $0 }
+        
+        await sut.load()
+        await sut.load()
+        
+        XCTAssertNil(errorMessage)
+    }
+    
+    func test_loadMore_deliversNilErrorMessageWhenLoadMoreSuccessAfterAnError() async {
+        let (sut, _) = makeSUT(stubs: [.failure(anyNSError()), .success([])])
+        
+        var errorMessage: String?
+        sut.onError = { errorMessage = $0 }
+        
+        await sut.loadMore()
+        await sut.loadMore()
+        
+        XCTAssertNil(errorMessage)
     }
 
     // MARK: - Helpers
