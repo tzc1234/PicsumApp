@@ -30,6 +30,7 @@ class PhotoListViewModel {
         
         do {
             photos = try await loader.load(page: currentPage)
+            hasMorePage = !photos.isEmpty
             currentPage += 1
             didLoad?(photos)
         } catch {
@@ -185,6 +186,16 @@ final class PhotoListViewModelTests: XCTestCase {
         XCTAssertEqual(loader.loggedPages, [1, 2])
     }
     
+    func test_loadMore_stopLoadMoreAgainWhenReceivedEmptyPhotosFromLoad() async {
+        let (sut, loader) = makeSUT(stubs: [.success([])])
+        
+        await expect(sut, loader: loader, expectedPhotos: [], when: {
+            await sut.load()
+        })
+        
+        await sut.loadMore()
+        XCTAssertEqual(loader.loggedPages, [1])
+    }
 
     // MARK: - Helpers
     
