@@ -9,9 +9,11 @@ import XCTest
 @testable import PicsumApp
 
 class PhotoListViewModel {
-    var onLoad: ((Bool) -> Void)?
-    var onError: ((String) -> Void)?
-    var didLoad: (([Photo]) -> ())?
+    typealias Observer<T> = (T) -> Void
+    
+    var onLoad: Observer<Bool>?
+    var onError: Observer<String>?
+    var didLoad: Observer<[Photo]>?
      
     private let loader: PhotosLoader
     
