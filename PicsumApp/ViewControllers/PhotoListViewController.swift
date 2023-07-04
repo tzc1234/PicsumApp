@@ -15,20 +15,29 @@ final class PhotoListViewController: UICollectionViewController {
     }()
     
     private lazy var dataSource: UICollectionViewDiffableDataSource<Int, Photo> = {
-        .init(collectionView: collectionView) { collectionView, indexPath, photo in
+        .init(collectionView: collectionView) { [weak self] collectionView, indexPath, photo in
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PhotoListCell.identifier, for: indexPath) as! PhotoListCell
             cell.authorLabel.text = photo.author
+            
+            self?.imageDataTasks[indexPath] = Task {
+                _ = try? await self?.imageLoader?.loadImageData(from: photo.url)
+            }
+            
             return cell
         }
     }()
     
     private(set) var reloadPhotosTask: Task<Void, Never>?
-    private var viewModel: PhotoListViewModel?
+    private(set) var imageDataTasks = [IndexPath: Task<Void, Never>]()
     
-    convenience init(viewModel: PhotoListViewModel) {
+    private var viewModel: PhotoListViewModel?
+    private var imageLoader: ImageDataLoader?
+    
+    convenience init(viewModel: PhotoListViewModel, imageLoader: ImageDataLoader) {
         self.init(collectionViewLayout: UICollectionViewFlowLayout())
         self.title = PhotoListViewModel.title
         self.viewModel = viewModel
+        self.imageLoader = imageLoader
     }
     
     override func viewDidLoad() {

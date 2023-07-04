@@ -25,7 +25,7 @@ final class PhotoListIntegrationTests: XCTestCase {
     
     @MainActor
     func test_loadPhotosAction_requestsPhotosFromLoader() async {
-        let (sut, loader) = makeSUT(stubs: [.success([]), .success([]), .success([])])
+        let (sut, loader) = makeSUT(photoStubs: [.success([]), .success([]), .success([])])
         
         XCTAssertEqual(loader.loggedPages.count, 0)
         
@@ -44,7 +44,7 @@ final class PhotoListIntegrationTests: XCTestCase {
     
     @MainActor
     func test_loadPhotosAction_cancelsPreviousUnfinishedTaskBeforeNewRequest() async throws {
-        let (sut, _) = makeSUT(stubs: [.success([]), .success([])])
+        let (sut, _) = makeSUT(photoStubs: [.success([]), .success([])])
         
         sut.loadViewIfNeeded()
         let previousTask = try XCTUnwrap(sut.reloadPhotosTask)
@@ -59,7 +59,7 @@ final class PhotoListIntegrationTests: XCTestCase {
     
     @MainActor
     func test_loadingPhotosIndicator_isVisiableWhileLoadingPhotos() async {
-        let (sut, loader) = makeSUT(stubs: [.success([]), .failure(anyNSError())])
+        let (sut, loader) = makeSUT(photoStubs: [.success([]), .failure(anyNSError())])
 
         var indicatorLoadingStates = [Bool]()
         loader.beforeLoad = { [weak sut] in
@@ -83,7 +83,7 @@ final class PhotoListIntegrationTests: XCTestCase {
         let photo0 = makePhoto(id: "0", author: "author0")
         let photo1 = makePhoto(id: "1", author: "author1")
         let photo2 = makePhoto(id: "2", author: "author2")
-        let (sut, _) = makeSUT(stubs: [.success([photo0]), .success([photo0, photo1, photo2])])
+        let (sut, _) = makeSUT(photoStubs: [.success([photo0]), .success([photo0, photo1, photo2])])
         
         sut.loadViewIfNeeded()
         
@@ -102,7 +102,7 @@ final class PhotoListIntegrationTests: XCTestCase {
     @MainActor
     func test_loadPhotosCompletion_doesNotAlterCurrentRenderedPhotoViewsOnError() async throws {
         let photo0 = makePhoto(id: "0", author: "author0")
-        let (sut, _) = makeSUT(stubs: [.success([photo0]), .failure(anyNSError())])
+        let (sut, _) = makeSUT(photoStubs: [.success([photo0]), .failure(anyNSError())])
         
         sut.loadViewIfNeeded()
         
@@ -117,17 +117,39 @@ final class PhotoListIntegrationTests: XCTestCase {
         
         assertThat(sut, isRendering: [photo0])
     }
+    
+    @MainActor
+    func test_photoView_loadsImageURLWhenVisiable() async {
+        let photo0 = makePhoto(id: "0", url: URL(string: "https://url-0.com")!)
+        let photo1 = makePhoto(id: "1", url: URL(string: "https://url-1.com")!)
+        let (sut, loader) = makeSUT(
+            photoStubs: [.success([photo0, photo1])],
+            dataStubs: [Data(), Data()])
+        
+        sut.loadViewIfNeeded()
+        await sut.reloadPhotosTask?.value
+        
+        XCTAssertEqual(loader.loadedImageURLs, [], "Expect no image URL requests until views become visiable")
+        
+        sut.simulatePhotoViewVisible(at: 0)
+        await sut.imageDataTasks[.init(item: 0, section: sut.photoViewSection)]?.value
+        XCTAssertEqual(loader.loadedImageURLs, [photo0.url], "Expect first image URL request once first photo view become visiable")
+        
+        sut.simulatePhotoViewVisible(at: 1)
+        await sut.imageDataTasks[.init(item: 1, section: sut.photoViewSection)]?.value
+        XCTAssertEqual(loader.loadedImageURLs, [photo0.url, photo1.url], "Expect second image URL request once second photo view become visiable")
+    }
 
     // MARK: - Helpers
     
     private typealias Result = PhotosLoaderSpy.Result
     
-    private func makeSUT(stubs: [Result] = [],
+    private func makeSUT(photoStubs: [Result] = [], dataStubs: [Data] = [],
                          file: StaticString = #file,
                          line: UInt = #line) -> (sut: PhotoListViewController, loader: PhotosLoaderSpy) {
-        let loader = PhotosLoaderSpy(stubs: stubs)
+        let loader = PhotosLoaderSpy(photoStubs: photoStubs, dataStubs: dataStubs)
         let viewModel = PhotoListViewModel(loader: loader)
-        let sut = PhotoListViewController(viewModel: viewModel)
+        let sut = PhotoListViewController(viewModel: viewModel, imageLoader: loader)
         
         trackForMemoryLeaks(loader, file: file, line: line)
         trackForMemoryLeaks(viewModel, file: file, line: line)
@@ -179,13 +201,17 @@ extension PhotoListViewController {
         collectionView.numberOfSections > photoViewSection ? collectionView.numberOfItems(inSection: photoViewSection) : 0
     }
     
-    func photoView(at row: Int) -> PhotoListCell? {
+    func photoView(at item: Int) -> PhotoListCell? {
         let ds = collectionView.dataSource
-        let indexPath = IndexPath(row: row, section: photoViewSection)
+        let indexPath = IndexPath(item: item, section: 0)
         return ds?.collectionView(collectionView, cellForItemAt: indexPath) as? PhotoListCell
     }
     
-    private var photoViewSection: Int {
+    func simulatePhotoViewVisible(at item: Int) {
+        _ = photoView(at: item)
+    }
+    
+    var photoViewSection: Int {
         0
     }
 }
