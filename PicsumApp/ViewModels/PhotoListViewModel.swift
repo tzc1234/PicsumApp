@@ -45,6 +45,7 @@ final class PhotoListViewModel {
         currentPage = 1
     }
     
+    @MainActor
     private func loadPhotosFromLoader(completion: ([Photo]) -> Void) async {
         onLoad?(true)
         

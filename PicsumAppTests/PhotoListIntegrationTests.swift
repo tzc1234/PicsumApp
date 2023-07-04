@@ -27,7 +27,19 @@ class PhotoListViewController: UICollectionViewController {
     
     override func viewDidLoad() {
         collectionView.refreshControl = refreshControl
+        
+        setupBindings()
         reloadPhotos()
+    }
+    
+    private func setupBindings() {
+        viewModel?.onLoad = { [weak self] isLoading in
+            if isLoading {
+                self?.refreshControl.beginRefreshing()
+            } else {
+                self?.refreshControl.endRefreshing()
+            }
+        }
     }
     
     @objc private func reloadPhotos() {
@@ -86,6 +98,26 @@ final class PhotoListIntegrationTests: XCTestCase {
         XCTAssertEqual(previousTask.isCancelled, true)
     }
     
+    @MainActor
+    func test_loadingPhotosIndicator_isVisiableWhileLoadingPhotos() async {
+        let (sut, loader) = makeSUT(stubs: [.success([]), .success([])])
+
+        var indicatorLoadingStates = [Bool]()
+        loader.beforeLoad = { [weak sut] in
+            indicatorLoadingStates.append(sut?.isShowingLoadingIndicator == true)
+        }
+        sut.loadViewIfNeeded()
+        
+        await sut.reloadPhotosTask?.value
+        XCTAssertEqual(indicatorLoadingStates, [true], "Expect showing loading indicator once the view is loaded")
+        XCTAssertFalse(sut.isShowingLoadingIndicator, "Expect not showing loading indicator once the photos loading finished")
+
+        sut.simulateUserInitiatedReload()
+
+        await sut.reloadPhotosTask?.value
+        XCTAssertEqual(indicatorLoadingStates, [true, true], "Expect showing loading indicator again after user initiated a reload")
+        XCTAssertFalse(sut.isShowingLoadingIndicator, "Expect not showing loading indicator agin after user initiated reload finished")
+    }
 
     // MARK: - Helpers
     
@@ -110,5 +142,9 @@ final class PhotoListIntegrationTests: XCTestCase {
 extension PhotoListViewController {
     func simulateUserInitiatedReload() {
         refreshControl.simulatePullToRefresh()
+    }
+    
+    var isShowingLoadingIndicator: Bool {
+        refreshControl.isRefreshing
     }
 }

@@ -11,7 +11,7 @@ import Foundation
 class PhotosLoaderSpy: PhotosLoader {
     typealias Result = Swift.Result<[Photo], Error>
     
-    var beforeLoad: (() -> Void)?
+    var beforeLoad: (@MainActor () -> Void)?
     private(set) var loggedPages = [Int]()
     
     private(set) var stubs: [Result]
@@ -21,7 +21,7 @@ class PhotosLoaderSpy: PhotosLoader {
     }
     
     func load(page: Int) async throws -> [Photo] {
-        beforeLoad?()
+        await beforeLoad?()
         loggedPages.append(page)
         return try stubs.removeFirst().get()
     }
