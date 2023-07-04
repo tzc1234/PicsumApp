@@ -24,7 +24,7 @@ final class PhotoListIntegrationTests: XCTestCase {
     }
     
     @MainActor
-    func test_loadPhotosAction_requestPhotosFromLoader() async {
+    func test_loadPhotosAction_requestsPhotosFromLoader() async {
         let (sut, loader) = makeSUT(stubs: [.success([]), .success([]), .success([])])
         
         XCTAssertEqual(loader.loggedPages.count, 0)
@@ -43,7 +43,7 @@ final class PhotoListIntegrationTests: XCTestCase {
     }
     
     @MainActor
-    func test_loadPhotosAction_cancelPreviousUnfinishedTaskBeforeNewRequest() async throws {
+    func test_loadPhotosAction_cancelsPreviousUnfinishedTaskBeforeNewRequest() async throws {
         let (sut, _) = makeSUT(stubs: [.success([]), .success([])])
         
         sut.loadViewIfNeeded()
@@ -79,7 +79,7 @@ final class PhotoListIntegrationTests: XCTestCase {
     }
     
     @MainActor
-    func test_loadPhotosCompletion_renderSuccessfullyLoadedPhotos() async throws {
+    func test_loadPhotosCompletion_rendersSuccessfullyLoadedPhotos() async throws {
         let photo0 = makePhoto(id: "0", author: "author0")
         let photo1 = makePhoto(id: "1", author: "author1")
         let photo2 = makePhoto(id: "2", author: "author2")
@@ -97,6 +97,25 @@ final class PhotoListIntegrationTests: XCTestCase {
         await sut.reloadPhotosTask?.value
         
         assertThat(sut, isRendering: [photo0, photo1, photo2])
+    }
+    
+    @MainActor
+    func test_loadPhotosCompletion_doesNotAlterCurrentRenderedPhotoViewsOnError() async throws {
+        let photo0 = makePhoto(id: "0", author: "author0")
+        let (sut, _) = makeSUT(stubs: [.success([photo0]), .failure(anyNSError())])
+        
+        sut.loadViewIfNeeded()
+        
+        assertThat(sut, isRendering: [])
+        
+        await sut.reloadPhotosTask?.value
+        
+        assertThat(sut, isRendering: [photo0])
+        
+        sut.simulateUserInitiatedReload()
+        await sut.reloadPhotosTask?.value
+        
+        assertThat(sut, isRendering: [photo0])
     }
 
     // MARK: - Helpers

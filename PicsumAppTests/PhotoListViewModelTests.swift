@@ -206,8 +206,4 @@ final class PhotoListViewModelTests: XCTestCase {
         XCTAssertEqual(photos, expectedPhotos, file: file, line: line)
     }
     
-    private func anyNSError() -> NSError {
-        NSError(domain: "error", code: 0)
-    }
-    
 }
