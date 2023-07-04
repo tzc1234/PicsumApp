@@ -165,6 +165,27 @@ final class PhotoListIntegrationTests: XCTestCase {
     }
     
     @MainActor
+    func test_photoView_loadsImageURLWhileInvisibleViewIsVisibleAgain() async throws {
+        let photo0 = makePhoto(id: "0", url: URL(string: "https://url-0.com")!)
+        let (sut, loader) = makeSUT(photoStubs: [.success([photo0])], dataStubs: [Data(), Data()])
+        
+        sut.loadViewIfNeeded()
+        await sut.reloadPhotosTask?.value
+        
+        let view = try XCTUnwrap(sut.simulatePhotoViewVisible(at: 0))
+        await sut.imageDataTask(at: 0)?.value
+        XCTAssertEqual(loader.loadedImageURLs, [photo0.url], "Expect image URL request once photo view become visiable")
+        
+        sut.simulatePhotoViewNotVisible(view, at: 0)
+        await sut.imageDataTask(at: 0)?.value
+        XCTAssertEqual(loader.loadedImageURLs, [photo0.url], "Expect image URL request stay unchanged when photo view become invisiable")
+        
+        sut.simulatePhotoViewWillVisibleAgain(view, at: 0)
+        await sut.imageDataTask(at: 0)?.value
+        XCTAssertEqual(loader.loadedImageURLs, [photo0.url, photo0.url], "Expect image URL request again once photo view will become visiable again")
+    }
+    
+    @MainActor
     func test_photoViewLoadingIndicator_isVisibleWhileLoadingImage() async throws {
         let photo0 = makePhoto(id: "0", url: URL(string: "https://url-0.com")!)
         let photo1 = makePhoto(id: "1", url: URL(string: "https://url-1.com")!)
@@ -262,6 +283,12 @@ extension PhotoListViewController {
         let d = collectionView.delegate
         let indexPath = IndexPath(item: item, section: 0)
         d?.collectionView?(collectionView, didEndDisplaying: view, forItemAt: indexPath)
+    }
+    
+    func simulatePhotoViewWillVisibleAgain(_ view: PhotoListCell, at item: Int) {
+        let d = collectionView.delegate
+        let indexPath = IndexPath(item: item, section: 0)
+        d?.collectionView?(collectionView, willDisplay: view, forItemAt: indexPath)
     }
     
     private var photoViewSection: Int {

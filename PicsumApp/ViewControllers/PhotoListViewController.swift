@@ -31,6 +31,7 @@ final class PhotoListViewController: UICollectionViewController {
     
     private(set) var reloadPhotosTask: Task<Void, Never>?
     private(set) var imageDataTasks = [IndexPath: Task<Void, Never>]()
+    private var photos = [Photo]()
     
     private var viewModel: PhotoListViewModel?
     private var imageLoader: ImageDataLoader?
@@ -73,6 +74,7 @@ final class PhotoListViewController: UICollectionViewController {
     }
     
     private func display(_ photos: [Photo]) {
+        self.photos = photos
         var snapshot = NSDiffableDataSourceSnapshot<Int, Photo>()
         snapshot.appendSections([0])
         snapshot.appendItems(photos, toSection: 0)
@@ -82,5 +84,14 @@ final class PhotoListViewController: UICollectionViewController {
     override func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         imageDataTasks[indexPath]?.cancel()
         imageDataTasks[indexPath] = nil
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        guard let cell = cell as? PhotoListCell else { return }
+        
+        imageDataTasks[indexPath] = Task { [url = photos[indexPath.item].url] in
+            _ = try? await imageLoader?.loadImageData(from: url)
+            cell.imageView.isShimmering = false
+        }
     }
 }
