@@ -59,7 +59,7 @@ final class PhotoListIntegrationTests: XCTestCase {
     
     @MainActor
     func test_loadingPhotosIndicator_isVisiableWhileLoadingPhotos() async {
-        let (sut, loader) = makeSUT(stubs: [.success([]), .success([])])
+        let (sut, loader) = makeSUT(stubs: [.success([]), .failure(anyNSError())])
 
         var indicatorLoadingStates = [Bool]()
         loader.beforeLoad = { [weak sut] in
@@ -75,7 +75,7 @@ final class PhotoListIntegrationTests: XCTestCase {
 
         await sut.reloadPhotosTask?.value
         XCTAssertEqual(indicatorLoadingStates, [true, true], "Expect showing loading indicator again after user initiated a reload")
-        XCTAssertFalse(sut.isShowingLoadingIndicator, "Expect not showing loading indicator agin after user initiated reload finished")
+        XCTAssertFalse(sut.isShowingLoadingIndicator, "Expect not showing loading indicator agin after user initiated reload completes with error")
     }
     
     @MainActor
