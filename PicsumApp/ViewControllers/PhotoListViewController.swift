@@ -18,9 +18,11 @@ final class PhotoListViewController: UICollectionViewController {
         .init(collectionView: collectionView) { [weak self] collectionView, indexPath, photo in
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PhotoListCell.identifier, for: indexPath) as! PhotoListCell
             cell.authorLabel.text = photo.author
+            cell.imageView.isShimmering = true
             
             self?.imageDataTasks[indexPath] = Task {
                 _ = try? await self?.imageLoader?.loadImageData(from: photo.url)
+                cell.imageView.isShimmering = false
             }
             
             return cell

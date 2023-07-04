@@ -163,6 +163,28 @@ final class PhotoListIntegrationTests: XCTestCase {
         XCTAssertTrue(task0.isCancelled, "Expect the first image data task is cancelled when first photo view is not visible anymore")
         XCTAssertTrue(task1.isCancelled, "Expect the second image data task is cancelled when second photo view is not visible anymore")
     }
+    
+    @MainActor
+    func test_photoViewLoadingIndicator_isVisibleWhileLoadingImage() async throws {
+        let photo0 = makePhoto(id: "0", url: URL(string: "https://url-0.com")!)
+        let photo1 = makePhoto(id: "1", url: URL(string: "https://url-1.com")!)
+        let (sut, _) = makeSUT(photoStubs: [.success([photo0, photo1])], dataStubs: [Data(), Data()])
+        
+        sut.loadViewIfNeeded()
+        await sut.reloadPhotosTask?.value
+        
+        let view0 = try XCTUnwrap(sut.simulatePhotoViewVisible(at: 0))
+        let view1 = try XCTUnwrap(sut.simulatePhotoViewVisible(at: 1))
+        
+        XCTAssertTrue(view0.isShowingImageLoadingIndicator, "Expect loading indicator for first view while loading first image")
+        XCTAssertTrue(view1.isShowingImageLoadingIndicator, "Expect loading indicator for second view while loading second image")
+        
+        await sut.imageDataTask(at: 0)?.value
+        await sut.imageDataTask(at: 1)?.value
+        
+        XCTAssertFalse(view0.isShowingImageLoadingIndicator, "Expect no loading indicator for first view after loading first image completion")
+        XCTAssertFalse(view1.isShowingImageLoadingIndicator, "Expect no loading indicator for second view after loading second image completion")
+    }
 
     // MARK: - Helpers
     
@@ -254,5 +276,9 @@ extension PhotoListViewController {
 extension PhotoListCell {
     var authorText: String? {
         authorLabel.text
+    }
+    
+    var isShowingImageLoadingIndicator: Bool {
+        imageView.isShimmering
     }
 }

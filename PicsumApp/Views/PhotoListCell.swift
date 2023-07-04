@@ -9,6 +9,7 @@ import UIKit
 
 final class PhotoListCell: UICollectionViewCell {
     let authorLabel = UILabel()
+    let imageView = UIImageView()
     
     static var identifier: String { String(describing: self) }
 }
