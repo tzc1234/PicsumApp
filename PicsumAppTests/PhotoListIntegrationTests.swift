@@ -12,11 +12,11 @@ import UIKit
 class PhotoListViewController: UICollectionViewController {
     private lazy var refreshControl = {
         let refresh = UIRefreshControl()
-        refresh.addTarget(self, action: #selector(reload), for: .valueChanged)
+        refresh.addTarget(self, action: #selector(reloadPhotos), for: .valueChanged)
         return refresh
     }()
     
-    private(set) var task: Task<Void, Never>?
+    private(set) var reloadPhotosTask: Task<Void, Never>?
     private var viewModel: PhotoListViewModel?
     
     convenience init(viewModel: PhotoListViewModel) {
@@ -27,11 +27,11 @@ class PhotoListViewController: UICollectionViewController {
     
     override func viewDidLoad() {
         collectionView.refreshControl = refreshControl
-        reload()
+        reloadPhotos()
     }
     
-    @objc private func reload() {
-        task = Task {
+    @objc private func reloadPhotos() {
+        reloadPhotosTask = Task {
             await viewModel?.load()
         }
     }
@@ -58,15 +58,15 @@ final class PhotoListIntegrationTests: XCTestCase {
         XCTAssertEqual(loader.loggedPages.count, 0)
         
         sut.loadViewIfNeeded()
-        await sut.task?.value
+        await sut.reloadPhotosTask?.value
         XCTAssertEqual(loader.loggedPages.count, 1, "Expect one request once the view is loaded")
         
         sut.simulateUserInitiatedReload()
-        await sut.task?.value
+        await sut.reloadPhotosTask?.value
         XCTAssertEqual(loader.loggedPages.count, 2, "Expect another request after user initiated a reload")
 
         sut.simulateUserInitiatedReload()
-        await sut.task?.value
+        await sut.reloadPhotosTask?.value
         XCTAssertEqual(loader.loggedPages.count, 3, "Expect yet another request after user initiated another reload")
     }
 
