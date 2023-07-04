@@ -31,6 +31,7 @@ class PhotoListViewController: UICollectionViewController {
     }
     
     @objc private func reloadPhotos() {
+        reloadPhotosTask?.cancel()
         reloadPhotosTask = Task {
             await viewModel?.load()
         }
@@ -69,6 +70,22 @@ final class PhotoListIntegrationTests: XCTestCase {
         await sut.reloadPhotosTask?.value
         XCTAssertEqual(loader.loggedPages.count, 3, "Expect yet another request after user initiated another reload")
     }
+    
+    @MainActor
+    func test_loadPhotosAction_cancelPreviousUnfinishedTaskBeforeNewRequest() async throws {
+        let (sut, _) = makeSUT(stubs: [.success([]), .success([])])
+        
+        sut.loadViewIfNeeded()
+        let previousTask = try XCTUnwrap(sut.reloadPhotosTask)
+        
+        XCTAssertEqual(previousTask.isCancelled, false)
+        
+        sut.simulateUserInitiatedReload()
+        await sut.reloadPhotosTask?.value
+        
+        XCTAssertEqual(previousTask.isCancelled, true)
+    }
+    
 
     // MARK: - Helpers
     
