@@ -214,11 +214,11 @@ extension PhotoListViewController {
     }
     
     func simulateUserInitiatedReload() {
-        refreshControl.simulatePullToRefresh()
+        collectionView.refreshControl?.simulatePullToRefresh()
     }
     
     var isShowingLoadingIndicator: Bool {
-        refreshControl.isRefreshing
+        collectionView.refreshControl?.isRefreshing == true
     }
     
     func numberOfRenderedPhotoView() -> Int {
@@ -233,7 +233,7 @@ extension PhotoListViewController {
     
     @discardableResult
     func simulatePhotoViewVisible(at item: Int) -> PhotoListCell? {
-        return photoView(at: item)
+        photoView(at: item)
     }
     
     func simulatePhotoViewNotVisible(_ view: PhotoListCell, at item: Int) {

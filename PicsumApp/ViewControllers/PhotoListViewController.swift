@@ -8,7 +8,7 @@
 import UIKit
 
 final class PhotoListViewController: UICollectionViewController {
-    private(set) lazy var refreshControl = {
+    private lazy var refreshControl = {
         let refresh = UIRefreshControl()
         refresh.addTarget(self, action: #selector(reloadPhotos), for: .valueChanged)
         return refresh
