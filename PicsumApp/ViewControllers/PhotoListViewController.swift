@@ -14,6 +14,14 @@ final class PhotoListViewController: UICollectionViewController {
         return refresh
     }()
     
+    private lazy var dataSource: UICollectionViewDiffableDataSource<Int, Photo> = {
+        .init(collectionView: collectionView) { collectionView, indexPath, photo in
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PhotoListCell.identifier, for: indexPath) as! PhotoListCell
+            cell.authorLabel.text = photo.author
+            return cell
+        }
+    }()
+    
     private(set) var reloadPhotosTask: Task<Void, Never>?
     private var viewModel: PhotoListViewModel?
     
@@ -25,6 +33,8 @@ final class PhotoListViewController: UICollectionViewController {
     
     override func viewDidLoad() {
         collectionView.refreshControl = refreshControl
+        collectionView.dataSource = dataSource
+        collectionView.register(PhotoListCell.self, forCellWithReuseIdentifier: PhotoListCell.identifier)
         
         setupBindings()
         reloadPhotos()
@@ -38,6 +48,10 @@ final class PhotoListViewController: UICollectionViewController {
                 self?.refreshControl.endRefreshing()
             }
         }
+        
+        viewModel?.didLoad = { [weak self] photos in
+            self?.display(photos)
+        }
     }
     
     @objc private func reloadPhotos() {
@@ -45,5 +59,12 @@ final class PhotoListViewController: UICollectionViewController {
         reloadPhotosTask = Task {
             await viewModel?.load()
         }
+    }
+    
+    private func display(_ photos: [Photo]) {
+        var snapshot = NSDiffableDataSourceSnapshot<Int, Photo>()
+        snapshot.appendSections([0])
+        snapshot.appendItems(photos, toSection: 0)
+        dataSource.applySnapshotUsingReloadData(snapshot)
     }
 }

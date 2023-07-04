@@ -77,6 +77,27 @@ final class PhotoListIntegrationTests: XCTestCase {
         XCTAssertEqual(indicatorLoadingStates, [true, true], "Expect showing loading indicator again after user initiated a reload")
         XCTAssertFalse(sut.isShowingLoadingIndicator, "Expect not showing loading indicator agin after user initiated reload finished")
     }
+    
+    @MainActor
+    func test_loadPhotosCompletion_renderSuccessfullyLoadedPhotos() async throws {
+        let photo0 = makePhoto(id: "0", author: "author0")
+        let photo1 = makePhoto(id: "1", author: "author1")
+        let photo2 = makePhoto(id: "2", author: "author2")
+        let (sut, _) = makeSUT(stubs: [.success([photo0]), .success([photo0, photo1, photo2])])
+        
+        sut.loadViewIfNeeded()
+        
+        assertThat(sut, isRendering: [])
+        
+        await sut.reloadPhotosTask?.value
+        
+        assertThat(sut, isRendering: [photo0])
+        
+        sut.simulateUserInitiatedReload()
+        await sut.reloadPhotosTask?.value
+        
+        assertThat(sut, isRendering: [photo0, photo1, photo2])
+    }
 
     // MARK: - Helpers
     
@@ -96,14 +117,62 @@ final class PhotoListIntegrationTests: XCTestCase {
         return (sut, loader)
     }
     
+    private func assertThat(_ sut: PhotoListViewController, isRendering photos: [Photo],
+                            file: StaticString = #file, line: UInt = #line) {
+        guard photos.count == sut.numberOfRenderedPhotoView() else {
+            XCTFail("Expect \(photos.count) photo views, got \(sut.numberOfRenderedPhotoView()) instead", file: file, line: line)
+            return
+        }
+        
+        photos.enumerated().forEach { index, photo in
+            assertThat(sut, hasViewConfigureFor: photo, at: index, file: file, line: line)
+        }
+    }
+    
+    private func assertThat(_ sut: PhotoListViewController, hasViewConfigureFor photo: Photo, at index: Int,
+                            file: StaticString = #file, line: UInt = #line) {
+        guard let view = sut.photoView(at: index) else {
+            XCTFail("Expect a photo view at index \(index)", file: file, line: line)
+            return
+        }
+        
+        XCTAssertEqual(view.authorText, photo.author, "Expect author: \(photo.author) for index \(index)", file: file, line: line)
+    }
+    
 }
 
 extension PhotoListViewController {
+    public override func loadViewIfNeeded() {
+        super.loadViewIfNeeded()
+        
+        collectionView.frame = CGRect(x: 0, y: 0, width: 1, height: 1)
+    }
+    
     func simulateUserInitiatedReload() {
         refreshControl.simulatePullToRefresh()
     }
     
     var isShowingLoadingIndicator: Bool {
         refreshControl.isRefreshing
+    }
+    
+    func numberOfRenderedPhotoView() -> Int {
+        collectionView.numberOfSections > photoViewSection ? collectionView.numberOfItems(inSection: photoViewSection) : 0
+    }
+    
+    func photoView(at row: Int) -> PhotoListCell? {
+        let ds = collectionView.dataSource
+        let indexPath = IndexPath(row: row, section: photoViewSection)
+        return ds?.collectionView(collectionView, cellForItemAt: indexPath) as? PhotoListCell
+    }
+    
+    private var photoViewSection: Int {
+        0
+    }
+}
+
+extension PhotoListCell {
+    var authorText: String? {
+        authorLabel.text
     }
 }
