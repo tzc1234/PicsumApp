@@ -132,12 +132,36 @@ final class PhotoListIntegrationTests: XCTestCase {
         XCTAssertEqual(loader.loadedImageURLs, [], "Expect no image URL requests until views become visiable")
         
         sut.simulatePhotoViewVisible(at: 0)
-        await sut.imageDataTasks[.init(item: 0, section: sut.photoViewSection)]?.value
+        await sut.imageDataTask(at: 0)?.value
         XCTAssertEqual(loader.loadedImageURLs, [photo0.url], "Expect first image URL request once first photo view become visiable")
         
         sut.simulatePhotoViewVisible(at: 1)
-        await sut.imageDataTasks[.init(item: 1, section: sut.photoViewSection)]?.value
+        await sut.imageDataTask(at: 1)?.value
         XCTAssertEqual(loader.loadedImageURLs, [photo0.url, photo1.url], "Expect second image URL request once second photo view become visiable")
+    }
+    
+    @MainActor
+    func test_photoView_cancelsImageDataTaskWhenNotVisibleAnymore() async throws {
+        let photo0 = makePhoto(id: "0", url: URL(string: "https://url-0.com")!)
+        let photo1 = makePhoto(id: "1", url: URL(string: "https://url-1.com")!)
+        let (sut, _) = makeSUT(photoStubs: [.success([photo0, photo1])], dataStubs: [Data(), Data()])
+        
+        sut.loadViewIfNeeded()
+        await sut.reloadPhotosTask?.value
+        
+        let view0 = try XCTUnwrap(sut.simulatePhotoViewVisible(at: 0))
+        let view1 = try XCTUnwrap(sut.simulatePhotoViewVisible(at: 1))
+        let task0 = try XCTUnwrap(sut.imageDataTask(at: 0))
+        let task1 = try XCTUnwrap(sut.imageDataTask(at: 1))
+        
+        XCTAssertFalse(task0.isCancelled, "Expect the first image data task started when first photo view is visible")
+        XCTAssertFalse(task1.isCancelled, "Expect the second image data task started when excond photo view is visible")
+        
+        sut.simulatePhotoViewNotVisible(view0, at: 0)
+        sut.simulatePhotoViewNotVisible(view1, at: 1)
+        
+        XCTAssertTrue(task0.isCancelled, "Expect the first image data task is cancelled when first photo view is not visible anymore")
+        XCTAssertTrue(task1.isCancelled, "Expect the second image data task is cancelled when second photo view is not visible anymore")
     }
 
     // MARK: - Helpers
@@ -207,12 +231,23 @@ extension PhotoListViewController {
         return ds?.collectionView(collectionView, cellForItemAt: indexPath) as? PhotoListCell
     }
     
-    func simulatePhotoViewVisible(at item: Int) {
-        _ = photoView(at: item)
+    @discardableResult
+    func simulatePhotoViewVisible(at item: Int) -> PhotoListCell? {
+        return photoView(at: item)
     }
     
-    var photoViewSection: Int {
+    func simulatePhotoViewNotVisible(_ view: PhotoListCell, at item: Int) {
+        let d = collectionView.delegate
+        let indexPath = IndexPath(item: item, section: 0)
+        d?.collectionView?(collectionView, didEndDisplaying: view, forItemAt: indexPath)
+    }
+    
+    private var photoViewSection: Int {
         0
+    }
+    
+    func imageDataTask(at item: Int) -> Task<Void, Never>? {
+        imageDataTasks[.init(item: item, section: photoViewSection)]
     }
 }
 

@@ -76,4 +76,9 @@ final class PhotoListViewController: UICollectionViewController {
         snapshot.appendItems(photos, toSection: 0)
         dataSource.applySnapshotUsingReloadData(snapshot)
     }
+    
+    override func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        imageDataTasks[indexPath]?.cancel()
+        imageDataTasks[indexPath] = nil
+    }
 }
