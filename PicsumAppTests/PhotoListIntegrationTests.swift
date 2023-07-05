@@ -255,6 +255,24 @@ final class PhotoListIntegrationTests: XCTestCase {
         
         XCTAssertEqual(view0.renderedImage, imageData0, "Expect image for first view once loading first image completed successfully after first view visiable again")
     }
+    
+    @MainActor
+    func test_photoView_rendersNoImageOnInvalidImageData() async throws {
+        let photo0 = makePhoto(id: "0", url: URL(string: "https://url-0.com")!)
+        let invalidData = Data("invalid data".utf8)
+        let (sut, _) = makeSUT(photoStubs: [.success([photo0])], dataStubs: [.success(invalidData)])
+        
+        sut.loadViewIfNeeded()
+        await sut.reloadPhotosTask?.value
+        
+        let view0 = try XCTUnwrap(sut.simulatePhotoViewVisible(at: 0))
+        
+        XCTAssertEqual(view0.renderedImage, .none, "Expect no image for first view while loading first image")
+        
+        await sut.imageDataTask(at: 0)?.value
+        
+        XCTAssertEqual(view0.renderedImage, .none, "Expect no image for first view once loading first image complete with invalid image data")
+    }
 
     // MARK: - Helpers
 
