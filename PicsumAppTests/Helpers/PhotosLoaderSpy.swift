@@ -39,6 +39,7 @@ class PhotosLoaderSpy: PhotosLoader, ImageDataLoader {
     func loadImageData(from url: URL) async throws -> Data {
         loadedImageURLs.append(url)
         guard !dataStubs.isEmpty else { throw anyNSError() }
-        return try dataStubs.removeFirst().get()
+        let data = try dataStubs.removeFirst().get()
+        return data
     }
 }

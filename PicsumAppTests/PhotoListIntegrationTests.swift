@@ -231,6 +231,30 @@ final class PhotoListIntegrationTests: XCTestCase {
         XCTAssertEqual(view0.renderedImage, imageData0, "Expect image for first view once loading first image completed")
         XCTAssertEqual(view1.renderedImage, imageData1, "Expect image for second view once loading second image completed")
     }
+    
+    @MainActor
+    func test_photoView_rendersNoImageOnError() async throws {
+        let photo0 = makePhoto(id: "0", url: URL(string: "https://url-0.com")!)
+        let imageData0 = UIImage.make(withColor: .red).pngData()!
+        let (sut, _) = makeSUT(photoStubs: [.success([photo0])],
+                               dataStubs: [.failure(anyNSError()), .success(imageData0)])
+        
+        sut.loadViewIfNeeded()
+        await sut.reloadPhotosTask?.value
+        
+        let view0 = try XCTUnwrap(sut.simulatePhotoViewVisible(at: 0))
+        
+        XCTAssertEqual(view0.renderedImage, .none, "Expect no image for first view while loading first image")
+        
+        await sut.imageDataTask(at: 0)?.value
+        
+        XCTAssertEqual(view0.renderedImage, .none, "Expect no image for first view while loading first image complete with error")
+        
+        sut.simulatePhotoViewWillVisibleAgain(view0, at: 0)
+        await sut.imageDataTask(at: 0)?.value
+        
+        XCTAssertEqual(view0.renderedImage, imageData0, "Expect image for first view once loading first image completed successfully after first view visiable again")
+    }
 
     // MARK: - Helpers
 
