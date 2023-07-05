@@ -200,8 +200,10 @@ final class PhotoListIntegrationTests: XCTestCase {
         XCTAssertTrue(view0.isShowingImageLoadingIndicator, "Expect loading indicator for first view while loading first image")
         XCTAssertTrue(view1.isShowingImageLoadingIndicator, "Expect loading indicator for second view while loading second image")
         
+        // Once trigger `.value` from whatever Task, all other tasks will complete at the same time.
+        // Cannot find a better way to one by one triggering Tasks.
         await sut.imageDataTask(at: 0)?.value
-        await sut.imageDataTask(at: 1)?.value
+//        await sut.imageDataTask(at: 1)?.value
         
         XCTAssertFalse(view0.isShowingImageLoadingIndicator, "Expect no loading indicator for first view after loading first image completion")
         XCTAssertFalse(view1.isShowingImageLoadingIndicator, "Expect no loading indicator for second view after loading second image completion")
