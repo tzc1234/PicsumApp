@@ -387,17 +387,3 @@ extension PhotoListViewController {
         imageDataTasks[.init(item: item, section: photoViewSection)]
     }
 }
-
-extension PhotoListCell {
-    var authorText: String? {
-        authorLabel.text
-    }
-    
-    var isShowingImageLoadingIndicator: Bool {
-        imageView.isShimmering
-    }
-    
-    var renderedImage: Data? {
-        imageView.image?.pngData()
-    }
-}

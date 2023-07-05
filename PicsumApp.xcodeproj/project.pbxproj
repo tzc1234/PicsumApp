@@ -22,6 +22,7 @@
 		BE65606C2A52EE1100CCD5D6 /* Photo.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE65606B2A52EE1100CCD5D6 /* Photo.swift */; };
 		BE65606F2A52EE8200CCD5D6 /* PhotosLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE65606E2A52EE8200CCD5D6 /* PhotosLoader.swift */; };
 		BE6560722A53237B00CCD5D6 /* PhotoListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE6560712A53237B00CCD5D6 /* PhotoListViewModel.swift */; };
+		BE81030F2A559EB700CE012A /* PhotoListCell+TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE81030E2A559EB700CE012A /* PhotoListCell+TestHelpers.swift */; };
 		BED8ECCD2A5340870077FFF9 /* PhotoListIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BED8ECCC2A5340870077FFF9 /* PhotoListIntegrationTests.swift */; };
 		BED8ECCF2A53428C0077FFF9 /* PhotosLoaderSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = BED8ECCE2A53428C0077FFF9 /* PhotosLoaderSpy.swift */; };
 		BED8ECD42A536D9E0077FFF9 /* UIRefreshControl+TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BED8ECD32A536D9E0077FFF9 /* UIRefreshControl+TestHelpers.swift */; };
@@ -58,6 +59,7 @@
 		BE65606B2A52EE1100CCD5D6 /* Photo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Photo.swift; sourceTree = "<group>"; };
 		BE65606E2A52EE8200CCD5D6 /* PhotosLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotosLoader.swift; sourceTree = "<group>"; };
 		BE6560712A53237B00CCD5D6 /* PhotoListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoListViewModel.swift; sourceTree = "<group>"; };
+		BE81030E2A559EB700CE012A /* PhotoListCell+TestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PhotoListCell+TestHelpers.swift"; sourceTree = "<group>"; };
 		BED8ECCC2A5340870077FFF9 /* PhotoListIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoListIntegrationTests.swift; sourceTree = "<group>"; };
 		BED8ECCE2A53428C0077FFF9 /* PhotosLoaderSpy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotosLoaderSpy.swift; sourceTree = "<group>"; };
 		BED8ECD32A536D9E0077FFF9 /* UIRefreshControl+TestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIRefreshControl+TestHelpers.swift"; sourceTree = "<group>"; };
@@ -162,6 +164,7 @@
 				BED8ECD52A536DC90077FFF9 /* UIControl+TestHelpers.swift */,
 				BE1FD4E92A5421CE0021777F /* XCTestCase+Helpers.swift */,
 				BE3691082A5566EE00DF0560 /* UIImage+TestHelpers.swift */,
+				BE81030E2A559EB700CE012A /* PhotoListCell+TestHelpers.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -307,6 +310,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BE81030F2A559EB700CE012A /* PhotoListCell+TestHelpers.swift in Sources */,
 				BED8ECCF2A53428C0077FFF9 /* PhotosLoaderSpy.swift in Sources */,
 				BED8ECD42A536D9E0077FFF9 /* UIRefreshControl+TestHelpers.swift in Sources */,
 				BE65604E2A52D4A400CCD5D6 /* PhotoListViewModelTests.swift in Sources */,
