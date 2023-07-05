@@ -124,7 +124,7 @@ final class PhotoListIntegrationTests: XCTestCase {
         let photo1 = makePhoto(id: "1", url: URL(string: "https://url-1.com")!)
         let (sut, loader) = makeSUT(
             photoStubs: [.success([photo0, photo1])],
-            dataStubs: [Data(), Data()])
+            dataStubs: [anySuccessData(), anySuccessData()])
         
         sut.loadViewIfNeeded()
         await sut.reloadPhotosTask?.value
@@ -144,7 +144,7 @@ final class PhotoListIntegrationTests: XCTestCase {
     func test_photoView_cancelsImageDataTaskWhenNotVisibleAnymore() async throws {
         let photo0 = makePhoto(id: "0", url: URL(string: "https://url-0.com")!)
         let photo1 = makePhoto(id: "1", url: URL(string: "https://url-1.com")!)
-        let (sut, _) = makeSUT(photoStubs: [.success([photo0, photo1])], dataStubs: [Data(), Data()])
+        let (sut, _) = makeSUT(photoStubs: [.success([photo0, photo1])], dataStubs: [anySuccessData(), anySuccessData()])
         
         sut.loadViewIfNeeded()
         await sut.reloadPhotosTask?.value
@@ -167,7 +167,7 @@ final class PhotoListIntegrationTests: XCTestCase {
     @MainActor
     func test_photoView_loadsImageURLWhileInvisibleViewIsVisibleAgain() async throws {
         let photo0 = makePhoto(id: "0", url: URL(string: "https://url-0.com")!)
-        let (sut, loader) = makeSUT(photoStubs: [.success([photo0])], dataStubs: [Data(), Data()])
+        let (sut, loader) = makeSUT(photoStubs: [.success([photo0])], dataStubs: [anySuccessData(), anySuccessData()])
         
         sut.loadViewIfNeeded()
         await sut.reloadPhotosTask?.value
@@ -189,7 +189,7 @@ final class PhotoListIntegrationTests: XCTestCase {
     func test_photoViewLoadingIndicator_isVisibleWhileLoadingImage() async throws {
         let photo0 = makePhoto(id: "0", url: URL(string: "https://url-0.com")!)
         let photo1 = makePhoto(id: "1", url: URL(string: "https://url-1.com")!)
-        let (sut, _) = makeSUT(photoStubs: [.success([photo0, photo1])], dataStubs: [Data(), Data()])
+        let (sut, _) = makeSUT(photoStubs: [.success([photo0, photo1])], dataStubs: [anySuccessData(), anySuccessData()])
         
         sut.loadViewIfNeeded()
         await sut.reloadPhotosTask?.value
@@ -215,7 +215,7 @@ final class PhotoListIntegrationTests: XCTestCase {
         let photo1 = makePhoto(id: "1", url: URL(string: "https://url-1.com")!)
         let imageData0 = UIImage.make(withColor: .red).pngData()!
         let imageData1 = UIImage.make(withColor: .blue).pngData()!
-        let (sut, _) = makeSUT(photoStubs: [.success([photo0, photo1])], dataStubs: [imageData0, imageData1])
+        let (sut, _) = makeSUT(photoStubs: [.success([photo0, photo1])], dataStubs: [.success(imageData0), .success(imageData1)])
         
         sut.loadViewIfNeeded()
         await sut.reloadPhotosTask?.value
@@ -233,12 +233,9 @@ final class PhotoListIntegrationTests: XCTestCase {
     }
 
     // MARK: - Helpers
-    
-    private typealias Result = PhotosLoaderSpy.Result
-    
-    private func makeSUT(photoStubs: [Result] = [], dataStubs: [Data] = [],
-                         file: StaticString = #file,
-                         line: UInt = #line) -> (sut: PhotoListViewController, loader: PhotosLoaderSpy) {
+
+    private func makeSUT(photoStubs: [PhotosLoaderSpy.PhotosResult] = [], dataStubs: [PhotosLoaderSpy.DataResult] = [],
+                         file: StaticString = #file, line: UInt = #line) -> (sut: PhotoListViewController, loader: PhotosLoaderSpy) {
         let loader = PhotosLoaderSpy(photoStubs: photoStubs, dataStubs: dataStubs)
         let viewModel = PhotoListViewModel(loader: loader)
         let sut = PhotoListViewController(viewModel: viewModel, imageLoader: loader)
@@ -270,6 +267,10 @@ final class PhotoListIntegrationTests: XCTestCase {
         }
         
         XCTAssertEqual(view.authorText, photo.author, "Expect author: \(photo.author) for index \(index)", file: file, line: line)
+    }
+    
+    private func anySuccessData() -> PhotosLoaderSpy.DataResult {
+        .success(Data())
     }
     
 }

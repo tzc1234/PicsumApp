@@ -11,13 +11,13 @@ import Foundation
 class PhotosLoaderSpy: PhotosLoader, ImageDataLoader {
     // MARK: - PhotosLoader
     
-    typealias Result = Swift.Result<[Photo], Error>
+    typealias PhotosResult = Swift.Result<[Photo], Error>
     
     var beforeLoad: (() -> Void)?
     private(set) var loggedPages = [Int]()
-    private(set) var photoStubs: [Result]
+    private(set) var photoStubs: [PhotosResult]
     
-    init(photoStubs: [Result], dataStubs: [Data]) {
+    init(photoStubs: [PhotosResult], dataStubs: [DataResult]) {
         self.photoStubs = photoStubs
         self.dataStubs = dataStubs
     }
@@ -30,14 +30,15 @@ class PhotosLoaderSpy: PhotosLoader, ImageDataLoader {
     }
     
     // MARK: - ImageDataLoader
+    typealias DataResult = Swift.Result<Data, Error>
     
-    private(set) var dataStubs: [Data]
+    private(set) var dataStubs: [DataResult]
     private(set) var loadedImageURLs = [URL]()
     
     @MainActor
     func loadImageData(from url: URL) async throws -> Data {
         loadedImageURLs.append(url)
         guard !dataStubs.isEmpty else { throw anyNSError() }
-        return dataStubs.removeFirst()
+        return try dataStubs.removeFirst().get()
     }
 }

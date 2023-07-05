@@ -168,7 +168,7 @@ final class PhotoListViewModelTests: XCTestCase {
 
     // MARK: - Helpers
     
-    private func makeSUT(stubs: [PhotosLoaderSpy.Result] = [],
+    private func makeSUT(stubs: [PhotosLoaderSpy.PhotosResult] = [],
                          file: StaticString = #file,
                          line: UInt = #line) -> (sut: PhotoListViewModel, loader: PhotosLoaderSpy) {
         let loader = PhotosLoaderSpy(photoStubs: stubs, dataStubs: [])
