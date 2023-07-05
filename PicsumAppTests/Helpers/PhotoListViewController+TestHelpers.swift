@@ -55,6 +55,6 @@ extension PhotoListViewController {
     }
     
     func imageDataTask(at item: Int) -> Task<Void, Never>? {
-        imageDataTasks[.init(item: item, section: photoViewSection)]
+        cellControllers[item].imageDataTask
     }
 }

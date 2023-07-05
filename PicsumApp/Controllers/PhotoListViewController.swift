@@ -14,20 +14,14 @@ final class PhotoListViewController: UICollectionViewController {
         return refresh
     }()
     
-    private lazy var dataSource: UICollectionViewDiffableDataSource<Int, Photo> = {
-        .init(collectionView: collectionView) { [weak self] collectionView, indexPath, photo in
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PhotoListCell.identifier, for: indexPath) as! PhotoListCell
-            cell.authorLabel.text = photo.author
-            cell.imageView.image = nil
-            cell.imageView.isShimmering = true
-            self?.startImageLoading(on: cell, at: indexPath)
-            return cell
+    private lazy var dataSource: UICollectionViewDiffableDataSource<Int, PhotoListCellController> = {
+        .init(collectionView: collectionView) { [weak self] collectionView, indexPath, cellController in
+            cellController.cell(in: collectionView, for: indexPath)
         }
     }()
     
     private(set) var reloadPhotosTask: Task<Void, Never>?
-    private(set) var imageDataTasks = [IndexPath: Task<Void, Never>]()
-    private var photos = [Photo]()
+    private(set) var cellControllers = [PhotoListCellController]()
     
     private var viewModel: PhotoListViewModel?
     private var imageLoader: ImageDataLoader?
@@ -58,7 +52,11 @@ final class PhotoListViewController: UICollectionViewController {
         }
         
         viewModel?.didLoad = { [weak self] photos in
-            self?.display(photos)
+            guard let self, let imageLoader = self.imageLoader else { return }
+            
+            self.display(photos.map { photo in
+                PhotoListCellController(photo: photo, imageLoader: imageLoader)
+            })
         }
         
         viewModel?.onError = { [weak self] message in
@@ -79,30 +77,19 @@ final class PhotoListViewController: UICollectionViewController {
         }
     }
     
-    private func display(_ photos: [Photo]) {
-        self.photos = photos
-        var snapshot = NSDiffableDataSourceSnapshot<Int, Photo>()
+    private func display(_ cellControllers: [PhotoListCellController]) {
+        self.cellControllers = cellControllers
+        var snapshot = NSDiffableDataSourceSnapshot<Int, PhotoListCellController>()
         snapshot.appendSections([0])
-        snapshot.appendItems(photos, toSection: 0)
+        snapshot.appendItems(cellControllers, toSection: 0)
         dataSource.applySnapshotUsingReloadData(snapshot)
     }
     
     override func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        imageDataTasks[indexPath]?.cancel()
-        imageDataTasks[indexPath] = nil
+        cellControllers[indexPath.item].cancelImageLoading()
     }
     
     override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        guard let cell = cell as? PhotoListCell else { return }
-        
-        startImageLoading(on: cell, at: indexPath)
-    }
-    
-    private func startImageLoading(on cell: PhotoListCell, at indexPath: IndexPath) {
-        let url = photos[indexPath.item].url
-        imageDataTasks[indexPath] = Task { [weak self] in
-            cell.imageView.image = (try? await self?.imageLoader?.loadImageData(from: url)).flatMap(UIImage.init)
-            cell.imageView.isShimmering = false
-        }
+        cellControllers[indexPath.item].startImageLoading()
     }
 }
