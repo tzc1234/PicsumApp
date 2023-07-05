@@ -13,7 +13,7 @@ class PhotosLoaderSpy: PhotosLoader, ImageDataLoader {
     
     typealias Result = Swift.Result<[Photo], Error>
     
-    var beforeLoad: (@MainActor () -> Void)?
+    var beforeLoad: (() -> Void)?
     private(set) var loggedPages = [Int]()
     private(set) var photoStubs: [Result]
     
@@ -22,8 +22,9 @@ class PhotosLoaderSpy: PhotosLoader, ImageDataLoader {
         self.dataStubs = dataStubs
     }
     
+    @MainActor
     func load(page: Int) async throws -> [Photo] {
-        await beforeLoad?()
+        beforeLoad?()
         loggedPages.append(page)
         return try photoStubs.removeFirst().get()
     }
@@ -33,8 +34,10 @@ class PhotosLoaderSpy: PhotosLoader, ImageDataLoader {
     private(set) var dataStubs: [Data]
     private(set) var loadedImageURLs = [URL]()
     
+    @MainActor
     func loadImageData(from url: URL) async throws -> Data {
         loadedImageURLs.append(url)
-        return Data()
+        guard !dataStubs.isEmpty else { throw anyNSError() }
+        return dataStubs.removeFirst()
     }
 }

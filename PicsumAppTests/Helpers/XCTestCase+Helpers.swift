@@ -15,8 +15,8 @@ extension XCTestCase {
                    url: URL = URL(string: "https://any-url.com")!) -> Photo {
         .init(id: id, author: author, width: width, height: height, webURL: webURL, url: url)
     }
-    
-    func anyNSError() -> NSError {
-        NSError(domain: "error", code: 0)
-    }
+}
+
+func anyNSError() -> NSError {
+    NSError(domain: "error", code: 0)
 }
