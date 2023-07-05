@@ -273,11 +273,31 @@ final class PhotoListIntegrationTests: XCTestCase {
         
         XCTAssertEqual(view0.renderedImage, .none, "Expect no image for first view once loading first image complete with invalid image data")
     }
+    
+    @MainActor
+    func test_errorView_showErrorWhenPhotoRequestOnError() async throws {
+        let (sut, _) = makeSUT(photoStubs: [.failure(anyNSError())])
+        let window = UIWindow()
+        window.addSubview(sut.view)
+        
+        sut.loadViewIfNeeded()
+        await sut.reloadPhotosTask?.value
+        
+        let alert = try XCTUnwrap(sut.presentedViewController as? UIAlertController)
+        
+        XCTAssertEqual(alert.message, PhotoListViewModel.errorMessage)
+        
+        let exp = expectation(description: "Wait for sut dismiss to prevent memory leak.")
+        sut.dismiss(animated: false) { exp.fulfill() }
+        await fulfillment(of: [exp])
+    }
 
     // MARK: - Helpers
 
-    private func makeSUT(photoStubs: [PhotosLoaderSpy.PhotosResult] = [], dataStubs: [PhotosLoaderSpy.DataResult] = [],
-                         file: StaticString = #file, line: UInt = #line) -> (sut: PhotoListViewController, loader: PhotosLoaderSpy) {
+    private func makeSUT(photoStubs: [PhotosLoaderSpy.PhotosResult] = [],
+                         dataStubs: [PhotosLoaderSpy.DataResult] = [],
+                         file: StaticString = #file,
+                         line: UInt = #line) -> (sut: PhotoListViewController, loader: PhotosLoaderSpy) {
         let loader = PhotosLoaderSpy(photoStubs: photoStubs, dataStubs: dataStubs)
         let viewModel = PhotoListViewModel(loader: loader)
         let sut = PhotoListViewController(viewModel: viewModel, imageLoader: loader)

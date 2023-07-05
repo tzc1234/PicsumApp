@@ -60,6 +60,16 @@ final class PhotoListViewController: UICollectionViewController {
         viewModel?.didLoad = { [weak self] photos in
             self?.display(photos)
         }
+        
+        viewModel?.onError = { [weak self] message in
+            self?.showErrorView(message: message)
+        }
+    }
+    
+    private func showErrorView(message: String?) {
+        let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
+        alert.addAction(.init(title: "Cancel", style: .cancel))
+        present(alert, animated: true)
     }
     
     @objc private func reloadPhotos() {
