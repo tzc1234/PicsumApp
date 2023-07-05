@@ -208,6 +208,29 @@ final class PhotoListIntegrationTests: XCTestCase {
         XCTAssertFalse(view0.isShowingImageLoadingIndicator, "Expect no loading indicator for first view after loading first image completion")
         XCTAssertFalse(view1.isShowingImageLoadingIndicator, "Expect no loading indicator for second view after loading second image completion")
     }
+    
+    @MainActor
+    func test_photoView_rendersImageLoadedFromURL() async throws {
+        let photo0 = makePhoto(id: "0", url: URL(string: "https://url-0.com")!)
+        let photo1 = makePhoto(id: "1", url: URL(string: "https://url-1.com")!)
+        let imageData0 = UIImage.make(withColor: .red).pngData()!
+        let imageData1 = UIImage.make(withColor: .blue).pngData()!
+        let (sut, _) = makeSUT(photoStubs: [.success([photo0, photo1])], dataStubs: [imageData0, imageData1])
+        
+        sut.loadViewIfNeeded()
+        await sut.reloadPhotosTask?.value
+        
+        let view0 = try XCTUnwrap(sut.simulatePhotoViewVisible(at: 0))
+        let view1 = try XCTUnwrap(sut.simulatePhotoViewVisible(at: 1))
+        
+        XCTAssertEqual(view0.renderedImage, .none, "Expect no image for first view while loading first image")
+        XCTAssertEqual(view1.renderedImage, .none, "Expect no image for second view while loading second image")
+        
+        await sut.imageDataTask(at: 0)?.value
+        
+        XCTAssertEqual(view0.renderedImage, imageData0, "Expect image for first view once loading first image completed")
+        XCTAssertEqual(view1.renderedImage, imageData1, "Expect image for second view once loading second image completed")
+    }
 
     // MARK: - Helpers
     
@@ -309,5 +332,9 @@ extension PhotoListCell {
     
     var isShowingImageLoadingIndicator: Bool {
         imageView.isShimmering
+    }
+    
+    var renderedImage: Data? {
+        imageView.image?.pngData()
     }
 }

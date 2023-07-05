@@ -18,13 +18,9 @@ final class PhotoListViewController: UICollectionViewController {
         .init(collectionView: collectionView) { [weak self] collectionView, indexPath, photo in
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PhotoListCell.identifier, for: indexPath) as! PhotoListCell
             cell.authorLabel.text = photo.author
+            cell.imageView.image = nil
             cell.imageView.isShimmering = true
-            
-            self?.imageDataTasks[indexPath] = Task {
-                _ = try? await self?.imageLoader?.loadImageData(from: photo.url)
-                cell.imageView.isShimmering = false
-            }
-            
+            self?.startImageLoading(on: cell, at: indexPath)
             return cell
         }
     }()
@@ -89,8 +85,13 @@ final class PhotoListViewController: UICollectionViewController {
     override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         guard let cell = cell as? PhotoListCell else { return }
         
-        imageDataTasks[indexPath] = Task { [url = photos[indexPath.item].url] in
-            _ = try? await imageLoader?.loadImageData(from: url)
+        startImageLoading(on: cell, at: indexPath)
+    }
+    
+    private func startImageLoading(on cell: PhotoListCell, at indexPath: IndexPath) {
+        let url = photos[indexPath.item].url
+        imageDataTasks[indexPath] = Task { [weak self] in
+            cell.imageView.image = (try? await self?.imageLoader?.loadImageData(from: url)).flatMap(UIImage.init)
             cell.imageView.isShimmering = false
         }
     }

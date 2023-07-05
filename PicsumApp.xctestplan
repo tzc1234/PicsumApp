@@ -9,7 +9,15 @@
     }
   ],
   "defaultOptions" : {
-    "codeCoverage" : false,
+    "codeCoverage" : {
+      "targets" : [
+        {
+          "containerPath" : "container:PicsumApp.xcodeproj",
+          "identifier" : "BE6560322A52D4A300CCD5D6",
+          "name" : "PicsumApp"
+        }
+      ]
+    },
     "targetForVariableExpansion" : {
       "containerPath" : "container:PicsumApp.xcodeproj",
       "identifier" : "BE6560322A52D4A300CCD5D6",

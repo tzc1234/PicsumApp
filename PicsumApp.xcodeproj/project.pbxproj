@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		BE1FD4EA2A5421CE0021777F /* XCTestCase+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1FD4E92A5421CE0021777F /* XCTestCase+Helpers.swift */; };
 		BE1FD4ED2A5423860021777F /* PhotoListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1FD4EC2A5423860021777F /* PhotoListViewController.swift */; };
+		BE3691092A5566EE00DF0560 /* UIImage+TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3691082A5566EE00DF0560 /* UIImage+TestHelpers.swift */; };
 		BE4876D82A542E4900F6AE3F /* PhotoListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE4876D72A542E4900F6AE3F /* PhotoListCell.swift */; };
 		BE4876DA2A547B2A00F6AE3F /* ImageDataLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE4876D92A547B2A00F6AE3F /* ImageDataLoader.swift */; };
 		BE4876DD2A54996900F6AE3F /* UIView+Shimming.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE4876DC2A54996900F6AE3F /* UIView+Shimming.swift */; };
@@ -40,6 +41,7 @@
 /* Begin PBXFileReference section */
 		BE1FD4E92A5421CE0021777F /* XCTestCase+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+Helpers.swift"; sourceTree = "<group>"; };
 		BE1FD4EC2A5423860021777F /* PhotoListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoListViewController.swift; sourceTree = "<group>"; };
+		BE3691082A5566EE00DF0560 /* UIImage+TestHelpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+TestHelpers.swift"; sourceTree = "<group>"; };
 		BE4876D72A542E4900F6AE3F /* PhotoListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoListCell.swift; sourceTree = "<group>"; };
 		BE4876D92A547B2A00F6AE3F /* ImageDataLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDataLoader.swift; sourceTree = "<group>"; };
 		BE4876DC2A54996900F6AE3F /* UIView+Shimming.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Shimming.swift"; sourceTree = "<group>"; };
@@ -159,6 +161,7 @@
 				BED8ECD32A536D9E0077FFF9 /* UIRefreshControl+TestHelpers.swift */,
 				BED8ECD52A536DC90077FFF9 /* UIControl+TestHelpers.swift */,
 				BE1FD4E92A5421CE0021777F /* XCTestCase+Helpers.swift */,
+				BE3691082A5566EE00DF0560 /* UIImage+TestHelpers.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -307,6 +310,7 @@
 				BED8ECCF2A53428C0077FFF9 /* PhotosLoaderSpy.swift in Sources */,
 				BED8ECD42A536D9E0077FFF9 /* UIRefreshControl+TestHelpers.swift in Sources */,
 				BE65604E2A52D4A400CCD5D6 /* PhotoListViewModelTests.swift in Sources */,
+				BE3691092A5566EE00DF0560 /* UIImage+TestHelpers.swift in Sources */,
 				BED8ECD62A536DC90077FFF9 /* UIControl+TestHelpers.swift in Sources */,
 				BE6560692A52DF8900CCD5D6 /* XCTestCase+MemoryLeakTracking.swift in Sources */,
 				BE1FD4EA2A5421CE0021777F /* XCTestCase+Helpers.swift in Sources */,

@@ -9,7 +9,6 @@ import UIKit
 
 extension UIImage {
     static func make(withColor color: UIColor, rect: CGRect = CGRect(x: 0, y: 0, width: 1, height: 1)) -> UIImage {
-        let rect = rect
         let format = UIGraphicsImageRendererFormat()
         format.scale = 1
 
