@@ -24,13 +24,11 @@ final class PhotoListViewController: UICollectionViewController {
     private(set) var cellControllers = [PhotoListCellController]()
     
     private var viewModel: PhotoListViewModel?
-    private var imageLoader: ImageDataLoader?
     
-    convenience init(viewModel: PhotoListViewModel, imageLoader: ImageDataLoader) {
+    convenience init(viewModel: PhotoListViewModel) {
         self.init(collectionViewLayout: UICollectionViewFlowLayout())
         self.title = PhotoListViewModel.title
         self.viewModel = viewModel
-        self.imageLoader = imageLoader
     }
     
     override func viewDidLoad() {
@@ -51,14 +49,6 @@ final class PhotoListViewController: UICollectionViewController {
             }
         }
         
-        viewModel?.didLoad = { [weak self] photos in
-            guard let self, let imageLoader = self.imageLoader else { return }
-            
-            self.display(photos.map { photo in
-                PhotoListCellController(photo: photo, imageLoader: imageLoader)
-            })
-        }
-        
         viewModel?.onError = { [weak self] message in
             self?.showErrorView(message: message)
         }
@@ -77,7 +67,7 @@ final class PhotoListViewController: UICollectionViewController {
         }
     }
     
-    private func display(_ cellControllers: [PhotoListCellController]) {
+    func display(_ cellControllers: [PhotoListCellController]) {
         self.cellControllers = cellControllers
         var snapshot = NSDiffableDataSourceSnapshot<Int, PhotoListCellController>()
         snapshot.appendSections([0])

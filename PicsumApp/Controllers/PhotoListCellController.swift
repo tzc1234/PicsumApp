@@ -7,7 +7,6 @@
 
 import UIKit
 
-@MainActor
 final class PhotoListCellController {
     private(set) var imageDataTask: Task<Void, Never>?
     private var cell: PhotoListCell?
@@ -20,6 +19,7 @@ final class PhotoListCellController {
         self.imageLoader = imageLoader
     }
     
+    @MainActor
     func cell(in collectionView: UICollectionView, for indexPath: IndexPath) -> PhotoListCell {
         cell = collectionView.dequeueReusableCell(withReuseIdentifier: PhotoListCell.identifier, for: indexPath) as? PhotoListCell
         cell?.authorLabel.text = photo.author
@@ -29,6 +29,7 @@ final class PhotoListCellController {
         return cell!
     }
     
+    @MainActor
     func startImageLoading() {
         imageDataTask = Task { [url = photo.url, weak self] in
             self?.cell?.imageView.image = (try? await self?.imageLoader.loadImageData(from: url)).flatMap(UIImage.init)

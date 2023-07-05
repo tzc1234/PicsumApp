@@ -25,6 +25,7 @@
 		BE81030F2A559EB700CE012A /* PhotoListCell+TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE81030E2A559EB700CE012A /* PhotoListCell+TestHelpers.swift */; };
 		BE8103112A559F4C00CE012A /* PhotoListViewController+TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8103102A559F4C00CE012A /* PhotoListViewController+TestHelpers.swift */; };
 		BE8103132A55C19700CE012A /* PhotoListCellController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8103122A55C19700CE012A /* PhotoListCellController.swift */; };
+		BE8103152A55C2C400CE012A /* PhotoListComposer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8103142A55C2C400CE012A /* PhotoListComposer.swift */; };
 		BED8ECCD2A5340870077FFF9 /* PhotoListIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BED8ECCC2A5340870077FFF9 /* PhotoListIntegrationTests.swift */; };
 		BED8ECCF2A53428C0077FFF9 /* PhotosLoaderSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = BED8ECCE2A53428C0077FFF9 /* PhotosLoaderSpy.swift */; };
 		BED8ECD42A536D9E0077FFF9 /* UIRefreshControl+TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BED8ECD32A536D9E0077FFF9 /* UIRefreshControl+TestHelpers.swift */; };
@@ -64,6 +65,7 @@
 		BE81030E2A559EB700CE012A /* PhotoListCell+TestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PhotoListCell+TestHelpers.swift"; sourceTree = "<group>"; };
 		BE8103102A559F4C00CE012A /* PhotoListViewController+TestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PhotoListViewController+TestHelpers.swift"; sourceTree = "<group>"; };
 		BE8103122A55C19700CE012A /* PhotoListCellController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoListCellController.swift; sourceTree = "<group>"; };
+		BE8103142A55C2C400CE012A /* PhotoListComposer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoListComposer.swift; sourceTree = "<group>"; };
 		BED8ECCC2A5340870077FFF9 /* PhotoListIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoListIntegrationTests.swift; sourceTree = "<group>"; };
 		BED8ECCE2A53428C0077FFF9 /* PhotosLoaderSpy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotosLoaderSpy.swift; sourceTree = "<group>"; };
 		BED8ECD32A536D9E0077FFF9 /* UIRefreshControl+TestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIRefreshControl+TestHelpers.swift"; sourceTree = "<group>"; };
@@ -143,6 +145,7 @@
 				BE4876D62A542E2D00F6AE3F /* Views */,
 				BE6560362A52D4A300CCD5D6 /* AppDelegate.swift */,
 				BE6560382A52D4A300CCD5D6 /* SceneDelegate.swift */,
+				BE8103142A55C2C400CE012A /* PhotoListComposer.swift */,
 				BE65603F2A52D4A400CCD5D6 /* Assets.xcassets */,
 				BE6560412A52D4A400CCD5D6 /* LaunchScreen.storyboard */,
 				BE6560442A52D4A400CCD5D6 /* Info.plist */,
@@ -307,6 +310,7 @@
 				BE6560722A53237B00CCD5D6 /* PhotoListViewModel.swift in Sources */,
 				BE4876DA2A547B2A00F6AE3F /* ImageDataLoader.swift in Sources */,
 				BE8103132A55C19700CE012A /* PhotoListCellController.swift in Sources */,
+				BE8103152A55C2C400CE012A /* PhotoListComposer.swift in Sources */,
 				BE6560392A52D4A300CCD5D6 /* SceneDelegate.swift in Sources */,
 				BE4876D82A542E4900F6AE3F /* PhotoListCell.swift in Sources */,
 				BE1FD4ED2A5423860021777F /* PhotoListViewController.swift in Sources */,

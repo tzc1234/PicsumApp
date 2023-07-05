@@ -300,7 +300,7 @@ final class PhotoListIntegrationTests: XCTestCase {
                          line: UInt = #line) -> (sut: PhotoListViewController, loader: PhotosLoaderSpy) {
         let loader = PhotosLoaderSpy(photoStubs: photoStubs, dataStubs: dataStubs)
         let viewModel = PhotoListViewModel(loader: loader)
-        let sut = PhotoListViewController(viewModel: viewModel, imageLoader: loader)
+        let sut = PhotoListComposer.composeWith(viewModel: viewModel, imageLoader: loader)
         
         trackForMemoryLeaks(loader, file: file, line: line)
         trackForMemoryLeaks(viewModel, file: file, line: line)
