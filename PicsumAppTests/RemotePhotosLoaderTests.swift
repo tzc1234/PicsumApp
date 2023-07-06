@@ -126,23 +126,6 @@ final class RemotePhotosLoaderTests: XCTestCase {
         XCTAssertEqual(error as? PhotosResponseConverter.Error, .invaildData, file: file, line: line)
     }
     
-    private class ClientSpy: HTTPClient {
-        typealias Stub = Result<(Data, HTTPURLResponse), Error>
-        
-        private(set) var loggedURLs = [URL]()
-        
-        private var stubs: [Stub]
-        
-        init(stubs: [Stub]) {
-            self.stubs = stubs
-        }
-        
-        func get(from url: URL) async throws -> (Data, HTTPURLResponse) {
-            loggedURLs.append(url)
-            return try stubs.removeFirst().get()
-        }
-    }
-    
 }
 
 private extension [Photo] {

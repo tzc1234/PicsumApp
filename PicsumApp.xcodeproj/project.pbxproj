@@ -20,6 +20,7 @@
 		BE5496802A5702C900D402A3 /* HTTPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE54967F2A5702C900D402A3 /* HTTPClient.swift */; };
 		BE5496822A57032B00D402A3 /* RemotePhotosLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE5496812A57032B00D402A3 /* RemotePhotosLoader.swift */; };
 		BE5496842A5705E000D402A3 /* PhotosResponseConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE5496832A5705E000D402A3 /* PhotosResponseConverter.swift */; };
+		BE5496862A570DF600D402A3 /* ClientSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE5496852A570DF600D402A3 /* ClientSpy.swift */; };
 		BE6560372A52D4A300CCD5D6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE6560362A52D4A300CCD5D6 /* AppDelegate.swift */; };
 		BE6560392A52D4A300CCD5D6 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE6560382A52D4A300CCD5D6 /* SceneDelegate.swift */; };
 		BE6560402A52D4A400CCD5D6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BE65603F2A52D4A400CCD5D6 /* Assets.xcassets */; };
@@ -63,6 +64,7 @@
 		BE54967F2A5702C900D402A3 /* HTTPClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPClient.swift; sourceTree = "<group>"; };
 		BE5496812A57032B00D402A3 /* RemotePhotosLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemotePhotosLoader.swift; sourceTree = "<group>"; };
 		BE5496832A5705E000D402A3 /* PhotosResponseConverter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotosResponseConverter.swift; sourceTree = "<group>"; };
+		BE5496852A570DF600D402A3 /* ClientSpy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientSpy.swift; sourceTree = "<group>"; };
 		BE6560332A52D4A300CCD5D6 /* PicsumApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PicsumApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE6560362A52D4A300CCD5D6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		BE6560382A52D4A300CCD5D6 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -210,6 +212,7 @@
 				BE3691082A5566EE00DF0560 /* UIImage+TestHelpers.swift */,
 				BE8103102A559F4C00CE012A /* PhotoListViewController+TestHelpers.swift */,
 				BE81030E2A559EB700CE012A /* PhotoListCell+TestHelpers.swift */,
+				BE5496852A570DF600D402A3 /* ClientSpy.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -363,6 +366,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BE5496862A570DF600D402A3 /* ClientSpy.swift in Sources */,
 				BE81030F2A559EB700CE012A /* PhotoListCell+TestHelpers.swift in Sources */,
 				BED8ECCF2A53428C0077FFF9 /* PhotosLoaderSpy.swift in Sources */,
 				BED8ECD42A536D9E0077FFF9 /* UIRefreshControl+TestHelpers.swift in Sources */,
