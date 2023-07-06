@@ -44,11 +44,11 @@ final class PhotoListViewController: UICollectionViewController {
     }
     
     private func setupBindings() {
-        viewModel?.onLoad = { [weak self] isLoading in
+        viewModel?.onLoad = { [weak refreshControl] isLoading in
             if isLoading {
-                self?.refreshControl.beginRefreshing()
+                refreshControl?.beginRefreshing()
             } else {
-                self?.refreshControl.endRefreshing()
+                refreshControl?.endRefreshing()
             }
         }
         
