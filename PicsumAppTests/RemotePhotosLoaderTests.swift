@@ -71,6 +71,18 @@ final class RemotePhotosLoaderTests: XCTestCase {
             }
         }
     }
+    
+    func test_load_deliversErrorWhen200ResponseButInvalidData() async {
+        let invalidData = Data("invalid data".utf8)
+        let (sut, _) = makeSUT(stubs: [.success((invalidData, HTTPURLResponse(statusCode: 200)))])
+        
+        do {
+            try await _ = sut.load(page: 1)
+            XCTFail("Should not success")
+        } catch {
+            assertInvaildDataError(error)
+        }
+    }
 
     // MARK: - Helpers
     
