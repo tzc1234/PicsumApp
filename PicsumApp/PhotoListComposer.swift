@@ -12,9 +12,9 @@ enum PhotoListComposer {
         let viewController = PhotoListViewController(viewModel: viewModel)
         
         viewModel.didLoad = { [weak viewController] photos in
-            viewController?.display(photos.map { photo in
+            viewController?.cellControllers = photos.map { photo in
                 PhotoListCellController(photo: photo, imageLoader: imageLoader)
-            })
+            }
         }
         
         return viewController

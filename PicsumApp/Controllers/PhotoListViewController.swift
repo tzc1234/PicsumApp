@@ -8,6 +8,10 @@
 import UIKit
 
 final class PhotoListViewController: UICollectionViewController {
+    var cellControllers = [PhotoListCellController]() {
+        didSet { reloadCollectionView() }
+    }
+    
     private lazy var refreshControl = {
         let refresh = UIRefreshControl()
         refresh.addTarget(self, action: #selector(reloadPhotos), for: .valueChanged)
@@ -21,7 +25,6 @@ final class PhotoListViewController: UICollectionViewController {
     }()
     
     private(set) var reloadPhotosTask: Task<Void, Never>?
-    private(set) var cellControllers = [PhotoListCellController]()
     
     private var viewModel: PhotoListViewModel?
     
@@ -67,8 +70,7 @@ final class PhotoListViewController: UICollectionViewController {
         }
     }
     
-    func display(_ cellControllers: [PhotoListCellController]) {
-        self.cellControllers = cellControllers
+    private func reloadCollectionView() {
         var snapshot = NSDiffableDataSourceSnapshot<Int, PhotoListCellController>()
         snapshot.appendSections([0])
         snapshot.appendItems(cellControllers, toSection: 0)
