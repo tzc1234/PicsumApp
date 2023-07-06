@@ -9,7 +9,7 @@ import XCTest
 @testable import PicsumApp
 
 protocol HTTPClient {
-    func get(from url: URL) async throws -> (Data, URLResponse)
+    func get(from url: URL) async throws -> (Data, HTTPURLResponse)
 }
 
 class PicsumPhotosLoader: PhotosLoader {
@@ -53,7 +53,22 @@ final class PicsumPhotosLoaderTests: XCTestCase {
             try await _ = sut.load(page: 1)
             XCTFail("Should not success")
         } catch {
-            XCTAssertEqual(error as? PicsumPhotosLoader.Error, .invaildData)
+            assertInvaildDataError(error)
+        }
+    }
+    
+    func test_load_deliversErrorWhenNon200Response() async {
+        let simples = [100, 201, 202, 300, 400, 500]
+        let stubs = simples.map { ClientSpy.Stub.success((Data(), HTTPURLResponse(statusCode: $0))) }
+        let (sut, _) = makeSUT(stubs: stubs)
+        
+        for statusCode in simples {
+            do {
+                try await _ = sut.load(page: 1)
+                XCTFail("Should not success in statusCode: \(statusCode)")
+            } catch {
+                assertInvaildDataError(error)
+            }
         }
     }
 
@@ -71,8 +86,12 @@ final class PicsumPhotosLoaderTests: XCTestCase {
         return (sut, client)
     }
     
+    private func assertInvaildDataError(_ error: Error, file: StaticString = #filePath, line: UInt = #line) {
+        XCTAssertEqual(error as? PicsumPhotosLoader.Error, .invaildData, file: file, line: line)
+    }
+    
     private class ClientSpy: HTTPClient {
-        typealias Stub = Result<(Data, URLResponse), Error>
+        typealias Stub = Result<(Data, HTTPURLResponse), Error>
         
         private(set) var loggedURLs = [URL]()
         
@@ -82,10 +101,16 @@ final class PicsumPhotosLoaderTests: XCTestCase {
             self.stubs = stubs
         }
         
-        func get(from url: URL) async throws -> (Data, URLResponse) {
+        func get(from url: URL) async throws -> (Data, HTTPURLResponse) {
             loggedURLs.append(url)
             return try stubs.removeFirst().get()
         }
     }
     
+}
+
+extension HTTPURLResponse {
+    convenience init(statusCode: Int) {
+        self.init(url: URL(string: "https://any-url.com")!, statusCode: statusCode, httpVersion: nil, headerFields: nil)!
+    }
 }
