@@ -15,9 +15,15 @@ class URLSessionHTTPClient: HTTPClient {
         self.session = session
     }
     
+    private struct UnexpectedValueRepresentation: Error {}
+    
     func get(from url: URL) async throws -> (Data, HTTPURLResponse) {
-        let _ = try await session.data(from: url)
-        throw anyNSError()
+        let (data, response) = try await session.data(from: url)
+        guard let response = response as? HTTPURLResponse else {
+            throw UnexpectedValueRepresentation()
+        }
+        
+        return (data, response)
     }
 }
 
@@ -59,6 +65,19 @@ final class URLSessionHTTPClientTests: XCTestCase {
         await assertFailureFor(data: anyData(), response: nonHTTPURLResponse(), error: anyNSError())
         await assertFailureFor(data: anyData(), response: anyHTTPURLResponse(), error: anyNSError())
         await assertFailureFor(data: anyData(), response: nonHTTPURLResponse(), error: nil)
+    }
+    
+    func test_get_succeedsOnHTTPURLReponseWithData() async throws {
+        let sut = makeSUT()
+        let data = anyData()
+        let response = anyHTTPURLResponse()
+        URLProtocolStub.stub(data: data, response: response, error: nil)
+        
+        let received = try await sut.get(from: anyURL())
+        
+        XCTAssertEqual(received.0, data)
+        XCTAssertEqual(received.1.url, response.url)
+        XCTAssertEqual(received.1.statusCode, response.statusCode)
     }
     
     // MARK: - Helpers
