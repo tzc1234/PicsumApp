@@ -23,7 +23,7 @@ class RemotePhotosLoader: PhotosLoader {
         case invaildData
     }
     
-    func load(page: Int) async throws -> [PicsumApp.Photo] {
+    func load(page: Int) async throws -> [Photo] {
         do {
             let (data, response) = try await client.get(from: PhotosEndpoint.get(page: page).url)
             guard response.statusCode == 200 else {
@@ -136,6 +136,19 @@ final class RemotePhotosLoaderTests: XCTestCase {
 
         XCTAssertEqual(photos, expectedPhotos)
     }
+    
+    func test_load_deliversMultiplePhotosWhen200ResponseWithMultiplePhotosData() async throws {
+        let expectedPhotos = [
+            Photo(id: "0", author: "author0", width: 0, height: 0, webURL: URL(string: "https://web-url-0.com")!, url: URL(string: "https://url-0.com")!),
+            Photo(id: "1", author: "author1", width: 1, height: 1, webURL: URL(string: "https://web-url-1.com")!, url: URL(string: "https://url-1.com")!),
+            Photo(id: "2", author: "author2", width: 2, height: 2, webURL: URL(string: "https://web-url-2.com")!, url: URL(string: "https://url-2.com")!)
+        ]
+        let (sut, _) = makeSUT(stubs: [.success((expectedPhotos.toData(), HTTPURLResponse(statusCode: 200)))])
+        
+        let photos = try await sut.load(page: 1)
+
+        XCTAssertEqual(photos, expectedPhotos)
+    }
 
     // MARK: - Helpers
     
@@ -174,7 +187,7 @@ final class RemotePhotosLoaderTests: XCTestCase {
     
 }
 
-extension [Photo] {
+private extension [Photo] {
     func toData() -> Data {
         let json = map { photo in
             [
@@ -190,7 +203,7 @@ extension [Photo] {
     }
 }
 
-extension HTTPURLResponse {
+private extension HTTPURLResponse {
     convenience init(statusCode: Int) {
         self.init(url: URL(string: "https://any-url.com")!, statusCode: statusCode, httpVersion: nil, headerFields: nil)!
     }
