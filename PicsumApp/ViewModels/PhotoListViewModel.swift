@@ -7,9 +7,9 @@
 
 import Foundation
 
+typealias Observer<T> = (T) -> Void
+
 final class PhotoListViewModel {
-    typealias Observer<T> = (T) -> Void
-    
     var onLoad: Observer<Bool>?
     var onError: Observer<String?>?
     var didLoad: Observer<[Photo]>?

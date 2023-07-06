@@ -82,6 +82,6 @@ final class PhotoListViewController: UICollectionViewController {
     }
     
     override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        cellControllers[indexPath.item].load(for: cell as? PhotoListCell)
+        cellControllers[indexPath.item].load()
     }
 }
