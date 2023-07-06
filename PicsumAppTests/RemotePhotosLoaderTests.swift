@@ -83,6 +83,18 @@ final class RemotePhotosLoaderTests: XCTestCase {
             assertInvaildDataError(error)
         }
     }
+    
+    func test_load_deliversErrorWhen200ResponseButEmptyData() async {
+        let emptyData = Data()
+        let (sut, _) = makeSUT(stubs: [.success((emptyData, HTTPURLResponse(statusCode: 200)))])
+        
+        do {
+            try await _ = sut.load(page: 1)
+            XCTFail("Should not success")
+        } catch {
+            assertInvaildDataError(error)
+        }
+    }
 
     // MARK: - Helpers
     
