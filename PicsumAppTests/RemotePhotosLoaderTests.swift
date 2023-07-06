@@ -30,16 +30,21 @@ class RemotePhotosLoader: PhotosLoader {
                 throw Error.invaildData
             }
             
-            _ = try JSONDecoder().decode([PhotoResponse].self, from: data)
-                
-            return []
+            let photosResponse = try JSONDecoder().decode([PhotoResponse].self, from: data)
+            return photosResponse.map(\.photo)
         } catch {
             throw Error.invaildData
         }
     }
     
     private struct PhotoResponse: Decodable {
+        let id, author: String
+        let width, height: Int
+        let url, download_url: URL
         
+        var photo: Photo {
+            .init(id: id, author: author, width: width, height: height, webURL: url, url: download_url)
+        }
     }
 }
 
@@ -120,6 +125,17 @@ final class RemotePhotosLoaderTests: XCTestCase {
 
         XCTAssertEqual(photos, [])
     }
+    
+    func test_load_deliversOnePhotoWhen200ResponseWithOnePhotoData() async throws {
+        let expectedPhotos = [
+            Photo(id: "0", author: "author", width: 0, height: 0, webURL: URL(string: "https://web-url.com")!, url: URL(string: "https://url.com")!)
+        ]
+        let (sut, _) = makeSUT(stubs: [.success((expectedPhotos.toData(), HTTPURLResponse(statusCode: 200)))])
+        
+        let photos = try await sut.load(page: 1)
+
+        XCTAssertEqual(photos, expectedPhotos)
+    }
 
     // MARK: - Helpers
     
@@ -156,6 +172,22 @@ final class RemotePhotosLoaderTests: XCTestCase {
         }
     }
     
+}
+
+extension [Photo] {
+    func toData() -> Data {
+        let json = map { photo in
+            [
+                "id": photo.id,
+                "author": photo.author,
+                "width": photo.width,
+                "height": photo.height,
+                "url": photo.webURL.absoluteString,
+                "download_url": photo.url.absoluteString
+            ] as [String: Any]
+        }
+        return try! JSONSerialization.data(withJSONObject: json)
+    }
 }
 
 extension HTTPURLResponse {
