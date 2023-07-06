@@ -24,31 +24,36 @@ final class PhotoListCellController {
         cell = collectionView.dequeueReusableCell(withReuseIdentifier: PhotoListCell.identifier, for: indexPath) as? PhotoListCell
         cell?.authorLabel.text = photo.author
         cell?.imageView.image = nil
-        cell?.imageView.isShimmering = true
-        startImageLoading()
+        load(for: cell)
         return cell!
     }
     
     @MainActor
-    func startImageLoading() {
+    func load(for cell: PhotoListCell?) {
+        cell?.imageView.isShimmering = true
         imageDataTask = Task { [url = photo.url, weak self] in
-            self?.cell?.imageView.image = (try? await self?.imageLoader.loadImageData(from: url)).flatMap(UIImage.init)
-            self?.cell?.imageView.isShimmering = false
+            cell?.imageView.image = (try? await self?.imageLoader.loadImageData(from: url)).flatMap(UIImage.init)
+            cell?.imageView.isShimmering = false
         }
     }
     
-    func cancelImageLoading() {
+    func cancelLoad() {
         imageDataTask?.cancel()
         imageDataTask = nil
+        releaseCellForReuse()
+    }
+    
+    private func releaseCellForReuse() {
+        cell = nil
     }
 }
 
 extension PhotoListCellController: Hashable {
-    nonisolated static func == (lhs: PhotoListCellController, rhs: PhotoListCellController) -> Bool {
+    static func == (lhs: PhotoListCellController, rhs: PhotoListCellController) -> Bool {
         lhs === rhs
     }
     
-    nonisolated func hash(into hasher: inout Hasher) {
+    func hash(into hasher: inout Hasher) {
         hasher.combine(photo.id)
     }
 }
