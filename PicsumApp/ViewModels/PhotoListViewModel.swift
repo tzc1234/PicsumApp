@@ -23,7 +23,7 @@ final class PhotoListViewModel {
         self.loader = loader
     }
     
-    func load() async {
+    func loadPhotos() async {
         resetCurrentPage()
         
         await loadPhotosFromLoader {
@@ -32,7 +32,7 @@ final class PhotoListViewModel {
         }
     }
     
-    func loadMore() async {
+    func loadMorePhotos() async {
         guard hasMorePage else { return }
         
         await loadPhotosFromLoader {

@@ -66,7 +66,7 @@ final class PhotoListViewController: UICollectionViewController {
     @objc private func reloadPhotos() {
         reloadPhotosTask?.cancel()
         reloadPhotosTask = Task {
-            await viewModel?.load()
+            await viewModel?.loadPhotos()
         }
     }
     
