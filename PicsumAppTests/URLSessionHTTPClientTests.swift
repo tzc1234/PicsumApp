@@ -80,6 +80,19 @@ final class URLSessionHTTPClientTests: XCTestCase {
         XCTAssertEqual(received.1.statusCode, response.statusCode)
     }
     
+    func test_get_succeedsOnHTTPURLReponseWithNilData() async throws {
+        let sut = makeSUT()
+        let response = anyHTTPURLResponse()
+        URLProtocolStub.stub(data: nil, response: response, error: nil)
+        
+        let received = try await sut.get(from: anyURL())
+        
+        let emptyData = Data()
+        XCTAssertEqual(received.0, emptyData)
+        XCTAssertEqual(received.1.url, response.url)
+        XCTAssertEqual(received.1.statusCode, response.statusCode)
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> URLSessionHTTPClient {
@@ -94,7 +107,7 @@ final class URLSessionHTTPClientTests: XCTestCase {
     }
     
     private func assertFailureFor(data: Data?, response: URLResponse?, error: Error?,
-                               file: StaticString = #filePath, line: UInt = #line) async {
+                                  file: StaticString = #filePath, line: UInt = #line) async {
         let sut = makeSUT(file: file, line: line)
         URLProtocolStub.stub(data: data, response: response, error: error)
         
