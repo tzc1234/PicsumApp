@@ -23,6 +23,7 @@
 		BE5496862A570DF600D402A3 /* ClientSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE5496852A570DF600D402A3 /* ClientSpy.swift */; };
 		BE5496882A570ED400D402A3 /* RemoteImageDataLoaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE5496872A570ED400D402A3 /* RemoteImageDataLoaderTests.swift */; };
 		BE54968A2A57137600D402A3 /* HTTPURLResponse+TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE5496892A57137600D402A3 /* HTTPURLResponse+TestHelpers.swift */; };
+		BE54968C2A57156E00D402A3 /* RemoteImageDataLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE54968B2A57156E00D402A3 /* RemoteImageDataLoader.swift */; };
 		BE6560372A52D4A300CCD5D6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE6560362A52D4A300CCD5D6 /* AppDelegate.swift */; };
 		BE6560392A52D4A300CCD5D6 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE6560382A52D4A300CCD5D6 /* SceneDelegate.swift */; };
 		BE6560402A52D4A400CCD5D6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BE65603F2A52D4A400CCD5D6 /* Assets.xcassets */; };
@@ -69,6 +70,7 @@
 		BE5496852A570DF600D402A3 /* ClientSpy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientSpy.swift; sourceTree = "<group>"; };
 		BE5496872A570ED400D402A3 /* RemoteImageDataLoaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteImageDataLoaderTests.swift; sourceTree = "<group>"; };
 		BE5496892A57137600D402A3 /* HTTPURLResponse+TestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HTTPURLResponse+TestHelpers.swift"; sourceTree = "<group>"; };
+		BE54968B2A57156E00D402A3 /* RemoteImageDataLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteImageDataLoader.swift; sourceTree = "<group>"; };
 		BE6560332A52D4A300CCD5D6 /* PicsumApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PicsumApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE6560362A52D4A300CCD5D6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		BE6560382A52D4A300CCD5D6 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -144,15 +146,16 @@
 			path = Endpoints;
 			sourceTree = "<group>";
 		};
-		BE54967E2A57029200D402A3 /* Serives */ = {
+		BE54967E2A57029200D402A3 /* Services */ = {
 			isa = PBXGroup;
 			children = (
 				BE5496792A56CFBF00D402A3 /* Endpoints */,
 				BE54967F2A5702C900D402A3 /* HTTPClient.swift */,
 				BE5496812A57032B00D402A3 /* RemotePhotosLoader.swift */,
 				BE5496832A5705E000D402A3 /* PhotosResponseConverter.swift */,
+				BE54968B2A57156E00D402A3 /* RemoteImageDataLoader.swift */,
 			);
-			path = Serives;
+			path = Services;
 			sourceTree = "<group>";
 		};
 		BE65602A2A52D4A300CCD5D6 = {
@@ -177,7 +180,7 @@
 		BE6560352A52D4A300CCD5D6 /* PicsumApp */ = {
 			isa = PBXGroup;
 			children = (
-				BE54967E2A57029200D402A3 /* Serives */,
+				BE54967E2A57029200D402A3 /* Services */,
 				BE65606A2A52EDFA00CCD5D6 /* Models */,
 				BE65606D2A52EE6800CCD5D6 /* Loaders */,
 				BE6560702A53236900CCD5D6 /* ViewModels */,
@@ -354,6 +357,7 @@
 				BE65606F2A52EE8200CCD5D6 /* PhotosLoader.swift in Sources */,
 				BE6560372A52D4A300CCD5D6 /* AppDelegate.swift in Sources */,
 				BE5496822A57032B00D402A3 /* RemotePhotosLoader.swift in Sources */,
+				BE54968C2A57156E00D402A3 /* RemoteImageDataLoader.swift in Sources */,
 				BE6560722A53237B00CCD5D6 /* PhotoListViewModel.swift in Sources */,
 				BE5496762A56BA1300D402A3 /* PhotoImageViewModel.swift in Sources */,
 				BE4876DA2A547B2A00F6AE3F /* ImageDataLoader.swift in Sources */,

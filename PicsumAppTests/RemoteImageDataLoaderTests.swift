@@ -8,29 +8,6 @@
 import XCTest
 @testable import PicsumApp
 
-class RemoteImageDataLoader: ImageDataLoader {
-    private let client: HTTPClient
-    
-    init(client: HTTPClient) {
-        self.client = client
-    }
-    
-    enum Error: Swift.Error {
-        case invalidData
-    }
-    
-    func loadImageData(from url: URL) async throws -> Data {
-        do {
-            let (data, response) = try await client.get(from: url)
-            guard response.statusCode == 200 else { throw Error.invalidData }
-            
-            return data
-        } catch {
-            throw Error.invalidData
-        }
-    }
-}
-
 final class RemoteImageDataLoaderTests: XCTestCase {
 
     func test_init_noTriggerClient() {
@@ -39,7 +16,7 @@ final class RemoteImageDataLoaderTests: XCTestCase {
         XCTAssertEqual(client.loggedURLs.count, 0)
     }
     
-    func test_loadImageData_passesCorrectURLToClient() async throws {
+    func test_loadImageData_passesCorrectURLToClient() async {
         let (sut, client) = makeSUT(stubs: [.failure(anyNSError())])
         let url = anyURL()
         
