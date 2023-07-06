@@ -9,17 +9,17 @@ import Foundation
 
 enum PhotosResponseConverter {
     enum Error: Swift.Error {
-        case invaildData
+        case invalidData
     }
     
     static func convert(from data: Data, response: HTTPURLResponse) throws -> [Photo] {
-        guard isOK(response) else { throw Error.invaildData }
+        guard isOK(response) else { throw Error.invalidData }
         
         do {
             let photosResponse = try JSONDecoder().decode([PhotoResponse].self, from: data)
             return photosResponse.map(\.photo)
         } catch {
-            throw Error.invaildData
+            throw Error.invalidData
         }
     }
     

@@ -32,7 +32,7 @@ final class RemotePhotosLoaderTests: XCTestCase {
             try await _ = sut.load(page: 1)
             XCTFail("Should not success")
         } catch {
-            assertInvaildDataError(error)
+            assertInvalidDataError(error)
         }
     }
     
@@ -46,7 +46,7 @@ final class RemotePhotosLoaderTests: XCTestCase {
                 try await _ = sut.load(page: 1)
                 XCTFail("Should not success in statusCode: \(statusCode)")
             } catch {
-                assertInvaildDataError(error)
+                assertInvalidDataError(error)
             }
         }
     }
@@ -59,7 +59,7 @@ final class RemotePhotosLoaderTests: XCTestCase {
             try await _ = sut.load(page: 1)
             XCTFail("Should not success")
         } catch {
-            assertInvaildDataError(error)
+            assertInvalidDataError(error)
         }
     }
     
@@ -71,7 +71,7 @@ final class RemotePhotosLoaderTests: XCTestCase {
             try await _ = sut.load(page: 1)
             XCTFail("Should not success")
         } catch {
-            assertInvaildDataError(error)
+            assertInvalidDataError(error)
         }
     }
     
@@ -122,8 +122,8 @@ final class RemotePhotosLoaderTests: XCTestCase {
         return (sut, client)
     }
     
-    private func assertInvaildDataError(_ error: Error, file: StaticString = #filePath, line: UInt = #line) {
-        XCTAssertEqual(error as? PhotosResponseConverter.Error, .invaildData, file: file, line: line)
+    private func assertInvalidDataError(_ error: Error, file: StaticString = #filePath, line: UInt = #line) {
+        XCTAssertEqual(error as? PhotosResponseConverter.Error, .invalidData, file: file, line: line)
     }
     
 }

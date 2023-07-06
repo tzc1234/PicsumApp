@@ -19,7 +19,7 @@ final class RemotePhotosLoader: PhotosLoader {
             let (data, response) = try await client.get(from: PhotosEndpoint.get(page: page).url)
             return try PhotosResponseConverter.convert(from: data, response: response)
         } catch {
-            throw PhotosResponseConverter.Error.invaildData
+            throw PhotosResponseConverter.Error.invalidData
         }
     }
 }
