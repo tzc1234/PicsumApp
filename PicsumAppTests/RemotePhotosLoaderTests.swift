@@ -128,7 +128,7 @@ final class RemotePhotosLoaderTests: XCTestCase {
     
     func test_load_deliversOnePhotoWhen200ResponseWithOnePhotoData() async throws {
         let expectedPhotos = [
-            Photo(id: "0", author: "author", width: 0, height: 0, webURL: URL(string: "https://web-url.com")!, url: URL(string: "https://url.com")!)
+            Photo(id: "0", author: "author", width: 0, height: 0, webURL: URL(string: "https://web-url.com")!, url: anyURL())
         ]
         let (sut, _) = makeSUT(stubs: [.success((expectedPhotos.toData(), HTTPURLResponse(statusCode: 200)))])
         
@@ -205,6 +205,6 @@ private extension [Photo] {
 
 private extension HTTPURLResponse {
     convenience init(statusCode: Int) {
-        self.init(url: URL(string: "https://any-url.com")!, statusCode: statusCode, httpVersion: nil, headerFields: nil)!
+        self.init(url: anyURL(), statusCode: statusCode, httpVersion: nil, headerFields: nil)!
     }
 }
