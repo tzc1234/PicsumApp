@@ -21,7 +21,9 @@ class RemoteImageDataLoader: ImageDataLoader {
     
     func loadImageData(from url: URL) async throws -> Data {
         do {
-            _ = try await client.get(from: url)
+            let (data, response) = try await client.get(from: url)
+            guard response.statusCode == 200 else { throw Error.invalidData }
+            
         } catch {
             throw Error.invalidData
         }
@@ -55,6 +57,21 @@ final class RemoteImageDataLoaderTests: XCTestCase {
             XCTFail("Should not success")
         } catch {
             assertInvalidDataError(error)
+        }
+    }
+    
+    func test_loadImageData_deliversErrorWhenNon200Response() async {
+        let simples = [100, 201, 202, 300, 400, 500]
+        let stubs = simples.map { ClientSpy.Stub.success((Data(), HTTPURLResponse(statusCode: $0))) }
+        let (sut, _) = makeSUT(stubs: stubs)
+        
+        for statusCode in simples {
+            do {
+                try await _ = sut.loadImageData(from: anyURL())
+                XCTFail("Should not success in statusCode: \(statusCode)")
+            } catch {
+                assertInvalidDataError(error)
+            }
         }
     }
 
