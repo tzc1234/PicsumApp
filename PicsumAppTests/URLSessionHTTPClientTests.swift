@@ -8,25 +8,6 @@
 import XCTest
 @testable import PicsumApp
 
-class URLSessionHTTPClient: HTTPClient {
-    private let session: URLSession
-    
-    init(session: URLSession) {
-        self.session = session
-    }
-    
-    private struct UnexpectedValueRepresentation: Error {}
-    
-    func get(from url: URL) async throws -> (Data, HTTPURLResponse) {
-        let (data, response) = try await session.data(from: url)
-        guard let response = response as? HTTPURLResponse else {
-            throw UnexpectedValueRepresentation()
-        }
-        
-        return (data, response)
-    }
-}
-
 final class URLSessionHTTPClientTests: XCTestCase {
 
     override func tearDown() {
