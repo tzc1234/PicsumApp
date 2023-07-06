@@ -53,11 +53,11 @@ final class PhotoListViewController: UICollectionViewController {
         }
         
         viewModel?.onError = { [weak self] message in
-            self?.showErrorView(message: message)
+            message.flatMap { self?.showErrorView(message: $0) }
         }
     }
     
-    private func showErrorView(message: String?) {
+    private func showErrorView(message: String) {
         let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
         alert.addAction(.init(title: "Cancel", style: .cancel))
         present(alert, animated: true)

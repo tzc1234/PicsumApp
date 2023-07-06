@@ -277,15 +277,19 @@ final class PhotoListIntegrationTests: XCTestCase {
     
     @MainActor
     func test_errorView_showErrorWhenPhotoRequestOnError() async throws {
-        let (sut, _) = makeSUT(photoStubs: [.failure(anyNSError())])
+        let (sut, _) = makeSUT(photoStubs: [.success([]), .failure(anyNSError())])
         let window = UIWindow()
         window.addSubview(sut.view)
         
         sut.loadViewIfNeeded()
         await sut.reloadPhotosTask?.value
         
-        let alert = try XCTUnwrap(sut.presentedViewController as? UIAlertController)
+        XCTAssertNil(sut.presentedViewController, "Expect no error view after loading photo successfully")
         
+        sut.simulateUserInitiatedReload()
+        await sut.reloadPhotosTask?.value
+        
+        let alert = try XCTUnwrap(sut.presentedViewController as? UIAlertController)
         XCTAssertEqual(alert.message, PhotoListViewModel.errorMessage)
         
         let exp = expectation(description: "Wait for sut dismiss to prevent memory leak.")
