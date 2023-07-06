@@ -116,10 +116,8 @@ final class RemotePhotosLoaderTests: XCTestCase {
     }
     
     func test_load_deliversEmptyPhotosWhen200ResponseWithEmptyPhotosData() async throws {
-        let json: [[String: Any]] = []
-        let emptyPhotosData = try JSONSerialization.data(withJSONObject: json)
-        let (sut, _) = makeSUT(stubs: [.success((emptyPhotosData, HTTPURLResponse(statusCode: 200)))])
-        
+        let emptyPhotos = [Photo]()
+        let (sut, _) = makeSUT(stubs: [.success((emptyPhotos.toData(), HTTPURLResponse(statusCode: 200)))])
         
         let photos = try await sut.load(page: 1)
 
