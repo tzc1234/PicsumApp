@@ -30,6 +30,8 @@ final class PhotoListCellController {
     
     @MainActor
     func load() {
+        guard imageDataTask == nil else { return }
+        
         imageDataTask = Task { [weak viewModel] in
             await viewModel?.loadImage()
         }

@@ -250,6 +250,7 @@ final class PhotoListIntegrationTests: XCTestCase {
         
         XCTAssertEqual(view0.renderedImage, .none, "Expect no image for first view while loading first image complete with error")
         
+        sut.simulatePhotoViewNotVisible(view0, at: 0)
         sut.simulatePhotoViewWillVisibleAgain(view0, at: 0)
         await sut.imageDataTask(at: 0)?.value
         
