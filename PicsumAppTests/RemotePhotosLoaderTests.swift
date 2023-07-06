@@ -68,7 +68,7 @@ final class RemotePhotosLoaderTests: XCTestCase {
         let (sut, _) = makeSUT(stubs: [.success((emptyData, HTTPURLResponse(statusCode: 200)))])
         
         do {
-            try await _ = sut.load(page: 1)
+            _ = try await sut.load(page: 1)
             XCTFail("Should not success")
         } catch {
             assertInvalidDataError(error)

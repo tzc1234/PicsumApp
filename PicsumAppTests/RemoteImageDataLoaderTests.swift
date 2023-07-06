@@ -24,11 +24,10 @@ class RemoteImageDataLoader: ImageDataLoader {
             let (data, response) = try await client.get(from: url)
             guard response.statusCode == 200 else { throw Error.invalidData }
             
+            return data
         } catch {
             throw Error.invalidData
         }
-        
-        return Data()
     }
 }
 
@@ -67,12 +66,21 @@ final class RemoteImageDataLoaderTests: XCTestCase {
         
         for statusCode in simples {
             do {
-                try await _ = sut.loadImageData(from: anyURL())
+                _ = try await sut.loadImageData(from: anyURL())
                 XCTFail("Should not success in statusCode: \(statusCode)")
             } catch {
                 assertInvalidDataError(error)
             }
         }
+    }
+    
+    func test_loadImageData_deliversDataWhen200Response() async throws {
+        let imageData = UIImage.make(withColor: .red).pngData()!
+        let (sut, _) = makeSUT(stubs: [.success((imageData, HTTPURLResponse(statusCode: 200)))])
+        
+        let data = try await sut.loadImageData(from: anyURL())
+        
+        XCTAssertEqual(data, imageData)
     }
 
     // MARK: - Helpers
