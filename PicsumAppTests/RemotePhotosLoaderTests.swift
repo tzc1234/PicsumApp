@@ -24,8 +24,22 @@ class RemotePhotosLoader: PhotosLoader {
     }
     
     func load(page: Int) async throws -> [PicsumApp.Photo] {
-        try? await _ = client.get(from: PhotosEndpoint.get(page: page).url)
-        throw Error.invaildData
+        do {
+            let (data, response) = try await client.get(from: PhotosEndpoint.get(page: page).url)
+            guard response.statusCode == 200 else {
+                throw Error.invaildData
+            }
+            
+            _ = try JSONDecoder().decode([PhotoResponse].self, from: data)
+                
+            return []
+        } catch {
+            throw Error.invaildData
+        }
+    }
+    
+    private struct PhotoResponse: Decodable {
+        
     }
 }
 
@@ -94,6 +108,17 @@ final class RemotePhotosLoaderTests: XCTestCase {
         } catch {
             assertInvaildDataError(error)
         }
+    }
+    
+    func test_load_deliversEmptyPhotosWhen200ResponseWithEmptyPhotosData() async throws {
+        let json: [[String: Any]] = []
+        let emptyPhotosData = try JSONSerialization.data(withJSONObject: json)
+        let (sut, _) = makeSUT(stubs: [.success((emptyPhotosData, HTTPURLResponse(statusCode: 200)))])
+        
+        
+        let photos = try await sut.load(page: 1)
+
+        XCTAssertEqual(photos, [])
     }
 
     // MARK: - Helpers
