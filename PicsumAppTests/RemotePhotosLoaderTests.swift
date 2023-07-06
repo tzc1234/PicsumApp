@@ -123,7 +123,7 @@ final class RemotePhotosLoaderTests: XCTestCase {
     }
     
     private func assertInvaildDataError(_ error: Error, file: StaticString = #filePath, line: UInt = #line) {
-        XCTAssertEqual(error as? RemotePhotosLoader.Error, .invaildData, file: file, line: line)
+        XCTAssertEqual(error as? PhotosResponseConverter.Error, .invaildData, file: file, line: line)
     }
     
     private class ClientSpy: HTTPClient {
