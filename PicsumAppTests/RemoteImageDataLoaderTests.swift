@@ -15,8 +15,17 @@ class RemoteImageDataLoader: ImageDataLoader {
         self.client = client
     }
     
+    enum Error: Swift.Error {
+        case invalidData
+    }
+    
     func loadImageData(from url: URL) async throws -> Data {
-        _ = try? await client.get(from: url)
+        do {
+            _ = try await client.get(from: url)
+        } catch {
+            throw Error.invalidData
+        }
+        
         return Data()
     }
 }
@@ -33,9 +42,20 @@ final class RemoteImageDataLoaderTests: XCTestCase {
         let (sut, client) = makeSUT(stubs: [.failure(anyNSError())])
         let url = anyURL()
         
-        _ = try await sut.loadImageData(from: url)
+        _ = try? await sut.loadImageData(from: url)
         
         XCTAssertEqual(client.loggedURLs, [url])
+    }
+    
+    func test_loadImageData_deliversErrorOnClientError() async {
+        let (sut, _) = makeSUT(stubs: [.failure(anyNSError())])
+        
+        do {
+            _ = try await sut.loadImageData(from: anyURL())
+            XCTFail("Should not success")
+        } catch {
+            assertInvalidDataError(error)
+        }
     }
 
     // MARK: - Helpers
@@ -51,4 +71,9 @@ final class RemoteImageDataLoaderTests: XCTestCase {
         
         return (sut, client)
     }
+    
+    private func assertInvalidDataError(_ error: Error, file: StaticString = #filePath, line: UInt = #line) {
+        XCTAssertEqual(error as? RemoteImageDataLoader.Error, .invalidData, file: file, line: line)
+    }
+    
 }
