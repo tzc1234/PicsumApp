@@ -1,5 +1,5 @@
 //
-//  PicsumPhotosLoaderTests.swift
+//  RemotePhotosLoaderTests.swift
 //  PicsumAppTests
 //
 //  Created by Tsz-Lung on 06/07/2023.
@@ -12,7 +12,7 @@ protocol HTTPClient {
     func get(from url: URL) async throws -> (Data, HTTPURLResponse)
 }
 
-class PicsumPhotosLoader: PhotosLoader {
+class RemotePhotosLoader: PhotosLoader {
     private let client: HTTPClient
     
     init(client: HTTPClient) {
@@ -29,7 +29,7 @@ class PicsumPhotosLoader: PhotosLoader {
     }
 }
 
-final class PicsumPhotosLoaderTests: XCTestCase {
+final class RemotePhotosLoaderTests: XCTestCase {
 
     func test_init_noTriggerClient() {
         let (_, client) = makeSUT()
@@ -76,9 +76,9 @@ final class PicsumPhotosLoaderTests: XCTestCase {
     
     private func makeSUT(stubs: [ClientSpy.Stub] = [],
                          file: StaticString = #filePath,
-                         line: UInt = #line) -> (sut: PicsumPhotosLoader, client: ClientSpy) {
+                         line: UInt = #line) -> (sut: RemotePhotosLoader, client: ClientSpy) {
         let client = ClientSpy(stubs: stubs)
-        let sut = PicsumPhotosLoader(client: client)
+        let sut = RemotePhotosLoader(client: client)
         
         trackForMemoryLeaks(client, file: file, line: line)
         trackForMemoryLeaks(sut, file: file, line: line)
@@ -87,7 +87,7 @@ final class PicsumPhotosLoaderTests: XCTestCase {
     }
     
     private func assertInvaildDataError(_ error: Error, file: StaticString = #filePath, line: UInt = #line) {
-        XCTAssertEqual(error as? PicsumPhotosLoader.Error, .invaildData, file: file, line: line)
+        XCTAssertEqual(error as? RemotePhotosLoader.Error, .invaildData, file: file, line: line)
     }
     
     private class ClientSpy: HTTPClient {
