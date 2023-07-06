@@ -14,6 +14,8 @@
 		BE4876DA2A547B2A00F6AE3F /* ImageDataLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE4876D92A547B2A00F6AE3F /* ImageDataLoader.swift */; };
 		BE4876DD2A54996900F6AE3F /* UIView+Shimming.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE4876DC2A54996900F6AE3F /* UIView+Shimming.swift */; };
 		BE5496762A56BA1300D402A3 /* PhotoImageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE5496752A56BA1300D402A3 /* PhotoImageViewModel.swift */; };
+		BE5496782A56CAFA00D402A3 /* PhotosEndpointTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE5496772A56CAFA00D402A3 /* PhotosEndpointTests.swift */; };
+		BE54967B2A56CFEC00D402A3 /* PhotosEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE54967A2A56CFEC00D402A3 /* PhotosEndpoint.swift */; };
 		BE6560372A52D4A300CCD5D6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE6560362A52D4A300CCD5D6 /* AppDelegate.swift */; };
 		BE6560392A52D4A300CCD5D6 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE6560382A52D4A300CCD5D6 /* SceneDelegate.swift */; };
 		BE6560402A52D4A400CCD5D6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BE65603F2A52D4A400CCD5D6 /* Assets.xcassets */; };
@@ -51,6 +53,8 @@
 		BE4876D92A547B2A00F6AE3F /* ImageDataLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDataLoader.swift; sourceTree = "<group>"; };
 		BE4876DC2A54996900F6AE3F /* UIView+Shimming.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Shimming.swift"; sourceTree = "<group>"; };
 		BE5496752A56BA1300D402A3 /* PhotoImageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoImageViewModel.swift; sourceTree = "<group>"; };
+		BE5496772A56CAFA00D402A3 /* PhotosEndpointTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotosEndpointTests.swift; sourceTree = "<group>"; };
+		BE54967A2A56CFEC00D402A3 /* PhotosEndpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotosEndpoint.swift; sourceTree = "<group>"; };
 		BE6560332A52D4A300CCD5D6 /* PicsumApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PicsumApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE6560362A52D4A300CCD5D6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		BE6560382A52D4A300CCD5D6 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -118,6 +122,14 @@
 			path = Helpers;
 			sourceTree = "<group>";
 		};
+		BE5496792A56CFBF00D402A3 /* Endpoints */ = {
+			isa = PBXGroup;
+			children = (
+				BE54967A2A56CFEC00D402A3 /* PhotosEndpoint.swift */,
+			);
+			path = Endpoints;
+			sourceTree = "<group>";
+		};
 		BE65602A2A52D4A300CCD5D6 = {
 			isa = PBXGroup;
 			children = (
@@ -140,6 +152,7 @@
 		BE6560352A52D4A300CCD5D6 /* PicsumApp */ = {
 			isa = PBXGroup;
 			children = (
+				BE5496792A56CFBF00D402A3 /* Endpoints */,
 				BE65606A2A52EDFA00CCD5D6 /* Models */,
 				BE65606D2A52EE6800CCD5D6 /* Loaders */,
 				BE6560702A53236900CCD5D6 /* ViewModels */,
@@ -161,6 +174,7 @@
 				BE6560672A52DF7C00CCD5D6 /* Helpers */,
 				BE65604D2A52D4A400CCD5D6 /* PhotoListViewModelTests.swift */,
 				BED8ECCC2A5340870077FFF9 /* PhotoListIntegrationTests.swift */,
+				BE5496772A56CAFA00D402A3 /* PhotosEndpointTests.swift */,
 			);
 			path = PicsumAppTests;
 			sourceTree = "<group>";
@@ -315,6 +329,7 @@
 				BE4876DA2A547B2A00F6AE3F /* ImageDataLoader.swift in Sources */,
 				BE8103132A55C19700CE012A /* PhotoListCellController.swift in Sources */,
 				BE8103152A55C2C400CE012A /* PhotoListComposer.swift in Sources */,
+				BE54967B2A56CFEC00D402A3 /* PhotosEndpoint.swift in Sources */,
 				BE6560392A52D4A300CCD5D6 /* SceneDelegate.swift in Sources */,
 				BE4876D82A542E4900F6AE3F /* PhotoListCell.swift in Sources */,
 				BE1FD4ED2A5423860021777F /* PhotoListViewController.swift in Sources */,
@@ -333,6 +348,7 @@
 				BE8103112A559F4C00CE012A /* PhotoListViewController+TestHelpers.swift in Sources */,
 				BED8ECD62A536DC90077FFF9 /* UIControl+TestHelpers.swift in Sources */,
 				BE6560692A52DF8900CCD5D6 /* XCTestCase+MemoryLeakTracking.swift in Sources */,
+				BE5496782A56CAFA00D402A3 /* PhotosEndpointTests.swift in Sources */,
 				BE1FD4EA2A5421CE0021777F /* XCTestCase+Helpers.swift in Sources */,
 				BED8ECCD2A5340870077FFF9 /* PhotoListIntegrationTests.swift in Sources */,
 			);
