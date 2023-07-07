@@ -10,7 +10,6 @@ import UIKit
 final class PhotoListCell: UICollectionViewCell {
     private(set) lazy var authorLabel = {
         let l = UILabel()
-        l.textColor = .label
         l.font = .preferredFont(forTextStyle: .caption2)
         l.translatesAutoresizingMaskIntoConstraints = false
         return l
@@ -19,8 +18,16 @@ final class PhotoListCell: UICollectionViewCell {
     private(set) lazy var imageView = {
         let iv = UIImageView()
         iv.contentMode = .scaleAspectFill
-        iv.clipsToBounds = true
-        iv.backgroundColor = .systemYellow
+        iv.backgroundColor = .systemGray5
+        iv.translatesAutoresizingMaskIntoConstraints = false
+        return iv
+    }()
+    
+    private lazy var placeholderView = {
+        let configuration = UIImage.SymbolConfiguration(pointSize: 50)
+        let image = UIImage(systemName: "photo", withConfiguration: configuration)
+        let iv = UIImageView(image: image)
+        iv.tintColor = .secondaryLabel
         iv.translatesAutoresizingMaskIntoConstraints = false
         return iv
     }()
@@ -41,6 +48,10 @@ final class PhotoListCell: UICollectionViewCell {
     }
     
     private func configureUI() {
+        contentView.layer.cornerRadius = 8
+        contentView.clipsToBounds = true
+        
+        contentView.addSubview(placeholderView)
         contentView.addSubview(imageView)
         contentView.addSubview(blurView)
         contentView.addSubview(authorLabel)
@@ -50,6 +61,9 @@ final class PhotoListCell: UICollectionViewCell {
             imageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             imageView.topAnchor.constraint(equalTo: contentView.topAnchor),
             imageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            
+            placeholderView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            placeholderView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             
             blurView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             blurView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
