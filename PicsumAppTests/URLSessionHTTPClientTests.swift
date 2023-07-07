@@ -54,11 +54,11 @@ final class URLSessionHTTPClientTests: XCTestCase {
         let response = anyHTTPURLResponse()
         URLProtocolStub.stub(data: data, response: response, error: nil)
         
-        let received = try await sut.get(from: anyURL())
+        let (receivedData, receivedResponse) = try await sut.get(from: anyURL())
         
-        XCTAssertEqual(received.0, data)
-        XCTAssertEqual(received.1.url, response.url)
-        XCTAssertEqual(received.1.statusCode, response.statusCode)
+        XCTAssertEqual(receivedData, data)
+        XCTAssertEqual(receivedResponse.url, response.url)
+        XCTAssertEqual(receivedResponse.statusCode, response.statusCode)
     }
     
     func test_get_succeedsOnHTTPURLReponseWithNilData() async throws {
@@ -66,12 +66,12 @@ final class URLSessionHTTPClientTests: XCTestCase {
         let response = anyHTTPURLResponse()
         URLProtocolStub.stub(data: nil, response: response, error: nil)
         
-        let received = try await sut.get(from: anyURL())
+        let (receivedData, receivedResponse) = try await sut.get(from: anyURL())
         
         let emptyData = Data()
-        XCTAssertEqual(received.0, emptyData)
-        XCTAssertEqual(received.1.url, response.url)
-        XCTAssertEqual(received.1.statusCode, response.statusCode)
+        XCTAssertEqual(receivedData, emptyData)
+        XCTAssertEqual(receivedResponse.url, response.url)
+        XCTAssertEqual(receivedResponse.statusCode, response.statusCode)
     }
     
     // MARK: - Helpers
