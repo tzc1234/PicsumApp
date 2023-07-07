@@ -16,20 +16,22 @@ final class RemoteImageDataLoaderTests: XCTestCase {
         XCTAssertEqual(client.loggedURLs.count, 0)
     }
     
-    func test_loadImageData_passesCorrectURLToClient() async {
+    func test_loadImageData_passesCorrectParametersToClient() async {
         let (sut, client) = makeSUT(stubs: [.failure(anyNSError())])
-        let url = anyURL()
+        let id = "99"
+        let width: UInt = 500
+        let height: UInt = 500
         
-        _ = try? await sut.loadImageData(from: url)
+        _ = try? await sut.loadImageData(by: id, width: width, height: height)
         
-        XCTAssertEqual(client.loggedURLs, [url])
+        XCTAssertEqual(client.loggedURLs, [PhotoImageEndpoint.get(id: id, width: width, height: height).url])
     }
     
     func test_loadImageData_deliversErrorOnClientError() async {
         let (sut, _) = makeSUT(stubs: [.failure(anyNSError())])
         
         do {
-            _ = try await sut.loadImageData(from: anyURL())
+            _ = try await sut.loadImageData(by: "1", width: 1, height: 1)
             XCTFail("Should not success")
         } catch {
             assertInvalidDataError(error)
@@ -43,7 +45,7 @@ final class RemoteImageDataLoaderTests: XCTestCase {
         
         for statusCode in simples {
             do {
-                _ = try await sut.loadImageData(from: anyURL())
+                _ = try await sut.loadImageData(by: "1", width: 1, height: 1)
                 XCTFail("Should not success in statusCode: \(statusCode)")
             } catch {
                 assertInvalidDataError(error)
@@ -55,7 +57,7 @@ final class RemoteImageDataLoaderTests: XCTestCase {
         let imageData = UIImage.make(withColor: .red).pngData()!
         let (sut, _) = makeSUT(stubs: [.success((imageData, HTTPURLResponse(statusCode: 200)))])
         
-        let data = try await sut.loadImageData(from: anyURL())
+        let data = try await sut.loadImageData(by: "1", width: 1, height: 1)
         
         XCTAssertEqual(data, imageData)
     }

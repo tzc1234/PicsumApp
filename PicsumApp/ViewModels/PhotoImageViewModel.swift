@@ -26,9 +26,16 @@ final class PhotoImageViewModel<Image> {
     func loadImage() async {
         onLoadImage?(true)
         
-        let image = (try? await imageLoader.loadImageData(from: photo.url)).flatMap(imageConverter)
+        let image = (try? await imageLoader.loadImageData(
+            by: photo.id,
+            width: Self.defaultWidth,
+            height: Self.defaultHeight)
+        ).flatMap(imageConverter)
         didLoadImage?(image)
         
         onLoadImage?(false)
     }
+    
+    private static var defaultWidth: UInt { 500 }
+    private static var defaultHeight: UInt { 500 }
 }

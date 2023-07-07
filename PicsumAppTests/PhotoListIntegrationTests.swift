@@ -119,7 +119,7 @@ final class PhotoListIntegrationTests: XCTestCase {
     }
     
     @MainActor
-    func test_photoView_loadsImageURLWhenVisiable() async {
+    func test_photoView_loadsImageByIDWhenVisiable() async {
         let photo0 = makePhoto(id: "0", url: URL(string: "https://url-0.com")!)
         let photo1 = makePhoto(id: "1", url: URL(string: "https://url-1.com")!)
         let (sut, loader) = makeSUT(
@@ -129,15 +129,15 @@ final class PhotoListIntegrationTests: XCTestCase {
         sut.loadViewIfNeeded()
         await sut.reloadPhotosTask?.value
         
-        XCTAssertEqual(loader.loadedImageURLs, [], "Expect no image URL requests until views become visiable")
+        XCTAssertEqual(loader.loggedPhotoIDs, [], "Expect no image URL requests until views become visiable")
         
         sut.simulatePhotoViewVisible(at: 0)
         await sut.imageDataTask(at: 0)?.value
-        XCTAssertEqual(loader.loadedImageURLs, [photo0.url], "Expect first image URL request once first photo view become visiable")
+        XCTAssertEqual(loader.loggedPhotoIDs, [photo0.id], "Expect first image URL request once first photo view become visiable")
         
         sut.simulatePhotoViewVisible(at: 1)
         await sut.imageDataTask(at: 1)?.value
-        XCTAssertEqual(loader.loadedImageURLs, [photo0.url, photo1.url], "Expect second image URL request once second photo view become visiable")
+        XCTAssertEqual(loader.loggedPhotoIDs, [photo0.id, photo1.id], "Expect second image URL request once second photo view become visiable")
     }
     
     @MainActor
@@ -165,7 +165,7 @@ final class PhotoListIntegrationTests: XCTestCase {
     }
     
     @MainActor
-    func test_photoView_loadsImageURLWhileInvisibleViewIsVisibleAgain() async throws {
+    func test_photoView_loadsImageByIDWhileInvisibleViewIsVisibleAgain() async throws {
         let photo0 = makePhoto(id: "0", url: URL(string: "https://url-0.com")!)
         let (sut, loader) = makeSUT(photoStubs: [.success([photo0])], dataStubs: [anySuccessData(), anySuccessData()])
         
@@ -174,15 +174,15 @@ final class PhotoListIntegrationTests: XCTestCase {
         
         let view = try XCTUnwrap(sut.simulatePhotoViewVisible(at: 0))
         await sut.imageDataTask(at: 0)?.value
-        XCTAssertEqual(loader.loadedImageURLs, [photo0.url], "Expect image URL request once photo view become visiable")
+        XCTAssertEqual(loader.loggedPhotoIDs, [photo0.id], "Expect image URL request once photo view become visiable")
         
         sut.simulatePhotoViewNotVisible(view, at: 0)
         await sut.imageDataTask(at: 0)?.value
-        XCTAssertEqual(loader.loadedImageURLs, [photo0.url], "Expect image URL request stay unchanged when photo view become invisiable")
+        XCTAssertEqual(loader.loggedPhotoIDs, [photo0.id], "Expect image URL request stay unchanged when photo view become invisiable")
         
         sut.simulatePhotoViewWillVisibleAgain(view, at: 0)
         await sut.imageDataTask(at: 0)?.value
-        XCTAssertEqual(loader.loadedImageURLs, [photo0.url, photo0.url], "Expect image URL request again once photo view will become visiable again")
+        XCTAssertEqual(loader.loggedPhotoIDs, [photo0.id, photo0.id], "Expect image URL request again once photo view will become visiable again")
     }
     
     @MainActor

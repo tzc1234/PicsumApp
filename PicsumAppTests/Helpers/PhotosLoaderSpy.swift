@@ -33,11 +33,11 @@ class PhotosLoaderSpy: PhotosLoader, ImageDataLoader {
     typealias DataResult = Swift.Result<Data, Error>
     
     private(set) var dataStubs: [DataResult]
-    private(set) var loadedImageURLs = [URL]()
+    private(set) var loggedPhotoIDs = [String]()
     
     @MainActor
-    func loadImageData(from url: URL) async throws -> Data {
-        loadedImageURLs.append(url)
+    func loadImageData(by id: String, width: UInt, height: UInt) async throws -> Data {
+        loggedPhotoIDs.append(id)
         guard !dataStubs.isEmpty else { throw anyNSError() }
         let data = try dataStubs.removeFirst().get()
         return data
