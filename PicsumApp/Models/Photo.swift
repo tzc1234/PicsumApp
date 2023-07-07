@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Photo: Equatable, Hashable {
+struct Photo: Equatable {
     let id, author: String
     let width, height: Int
     let webURL, url: URL
