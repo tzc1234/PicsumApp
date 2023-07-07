@@ -55,6 +55,8 @@ extension PhotoListViewController {
     }
     
     func imageDataTask(at item: Int) -> Task<Void, Never>? {
-        cellControllers[item].imageDataTask
+        let indexPath = IndexPath(item: item, section: 0)
+        let ds = collectionView.dataSource as? UICollectionViewDiffableDataSource<Int, PhotoListCellController>
+        return ds?.itemIdentifier(for: indexPath)?.imageDataTask
     }
 }
