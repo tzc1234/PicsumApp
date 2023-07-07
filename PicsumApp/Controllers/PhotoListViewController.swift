@@ -31,12 +31,32 @@ final class PhotoListViewController: UICollectionViewController {
     }
     
     override func viewDidLoad() {
+        configureConllectionView()
+        setupBindings()
+        reloadPhotos()
+    }
+    
+    private func configureConllectionView() {
         collectionView.refreshControl = refreshControl
         collectionView.dataSource = dataSource
         collectionView.register(PhotoListCell.self, forCellWithReuseIdentifier: PhotoListCell.identifier)
+        collectionView.collectionViewLayout = makeLayout()
+    }
+    
+    private func makeLayout() -> UICollectionViewLayout {
+        let layout = UICollectionViewFlowLayout()
+        let spacing: CGFloat = 8
+        layout.minimumInteritemSpacing = spacing
+        layout.sectionInset = .init(top: spacing, left: spacing, bottom: spacing, right: spacing)
+        layout.scrollDirection = .vertical
         
-        setupBindings()
-        reloadPhotos()
+        let width = view.bounds.size.width
+        let numberOfItemsPerRow: CGFloat = 3
+        let availableWidth = width - spacing * (numberOfItemsPerRow + 1)
+        let itemDimension = floor(availableWidth / numberOfItemsPerRow)
+        layout.itemSize = .init(width: itemDimension, height: itemDimension)
+        
+        return layout
     }
     
     private func setupBindings() {
