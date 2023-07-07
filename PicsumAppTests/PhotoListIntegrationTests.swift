@@ -26,13 +26,13 @@ final class PhotoListIntegrationTests: XCTestCase {
     @MainActor
     func test_loadPhotosAction_requestsPhotosFromLoader() async {
         let (sut, loader) = makeSUT(photoStubs: [.success([]), .success([]), .success([])])
-        
+
         XCTAssertEqual(loader.loggedPages.count, 0)
-        
+
         sut.loadViewIfNeeded()
         await sut.reloadPhotosTask?.value
         XCTAssertEqual(loader.loggedPages.count, 1, "Expect one request once the view is loaded")
-        
+
         sut.simulateUserInitiatedReload()
         await sut.reloadPhotosTask?.value
         XCTAssertEqual(loader.loggedPages.count, 2, "Expect another request after user initiated a reload")
@@ -41,22 +41,22 @@ final class PhotoListIntegrationTests: XCTestCase {
         await sut.reloadPhotosTask?.value
         XCTAssertEqual(loader.loggedPages.count, 3, "Expect yet another request after user initiated another reload")
     }
-    
+
     @MainActor
     func test_loadPhotosAction_cancelsPreviousUnfinishedTaskBeforeNewRequest() async throws {
         let (sut, _) = makeSUT(photoStubs: [.success([]), .success([])])
-        
+
         sut.loadViewIfNeeded()
         let previousTask = try XCTUnwrap(sut.reloadPhotosTask)
-        
+
         XCTAssertEqual(previousTask.isCancelled, false)
-        
+
         sut.simulateUserInitiatedReload()
         await sut.reloadPhotosTask?.value
-        
+
         XCTAssertEqual(previousTask.isCancelled, true)
     }
-    
+
     @MainActor
     func test_loadingPhotosIndicator_isVisiableWhileLoadingPhotos() async {
         let (sut, loader) = makeSUT(photoStubs: [.success([]), .failure(anyNSError())])
@@ -66,7 +66,7 @@ final class PhotoListIntegrationTests: XCTestCase {
             indicatorLoadingStates.append(sut?.isShowingLoadingIndicator == true)
         }
         sut.loadViewIfNeeded()
-        
+
         await sut.reloadPhotosTask?.value
         XCTAssertEqual(indicatorLoadingStates, [true], "Expect showing loading indicator once the view is loaded")
         XCTAssertFalse(sut.isShowingLoadingIndicator, "Expect not showing loading indicator once the photos loading finished")
@@ -77,44 +77,45 @@ final class PhotoListIntegrationTests: XCTestCase {
         XCTAssertEqual(indicatorLoadingStates, [true, true], "Expect showing loading indicator again after user initiated a reload")
         XCTAssertFalse(sut.isShowingLoadingIndicator, "Expect not showing loading indicator agin after user initiated reload completes with error")
     }
-    
+
     @MainActor
     func test_loadPhotosCompletion_rendersSuccessfullyLoadedPhotos() async throws {
         let photo0 = makePhoto(id: "0", author: "author0")
         let photo1 = makePhoto(id: "1", author: "author1")
         let photo2 = makePhoto(id: "2", author: "author2")
-        let (sut, _) = makeSUT(photoStubs: [.success([photo0]), .success([photo0, photo1, photo2])])
-        
+        let (sut, _) = makeSUT(photoStubs: [.success([photo0]), .success([photo0, photo1, photo2])],
+                               dataStubs: [.failure(anyNSError())])
+
         sut.loadViewIfNeeded()
-        
+
         assertThat(sut, isRendering: [])
-        
+
         await sut.reloadPhotosTask?.value
-        
+
         assertThat(sut, isRendering: [photo0])
-        
+
         sut.simulateUserInitiatedReload()
         await sut.reloadPhotosTask?.value
-        
+
         assertThat(sut, isRendering: [photo0, photo1, photo2])
     }
-    
+
     @MainActor
     func test_loadPhotosCompletion_doesNotAlterCurrentRenderedPhotoViewsOnError() async throws {
         let photo0 = makePhoto(id: "0", author: "author0")
-        let (sut, _) = makeSUT(photoStubs: [.success([photo0]), .failure(anyNSError())])
-        
+        let (sut, _) = makeSUT(photoStubs: [.success([photo0]), .failure(anyNSError())], dataStubs: [.failure(anyNSError())])
+
         sut.loadViewIfNeeded()
-        
+
         assertThat(sut, isRendering: [])
-        
+
         await sut.reloadPhotosTask?.value
-        
+
         assertThat(sut, isRendering: [photo0])
-        
+
         sut.simulateUserInitiatedReload()
         await sut.reloadPhotosTask?.value
-        
+
         assertThat(sut, isRendering: [photo0])
     }
     
@@ -180,7 +181,7 @@ final class PhotoListIntegrationTests: XCTestCase {
         await sut.imageDataTask(at: 0)?.value
         XCTAssertEqual(loader.loggedPhotoIDs, [photo0.id], "Expect image URL request stay unchanged when photo view become invisiable")
         
-        sut.simulatePhotoViewWillVisibleAgain(view, at: 0)
+        sut.simulatePhotoViewBecomeVisibleAgain(view, at: 0)
         await sut.imageDataTask(at: 0)?.value
         XCTAssertEqual(loader.loggedPhotoIDs, [photo0.id, photo0.id], "Expect image URL request again once photo view will become visiable again")
     }
@@ -251,7 +252,7 @@ final class PhotoListIntegrationTests: XCTestCase {
         XCTAssertEqual(view0.renderedImage, .none, "Expect no image for first view while loading first image complete with error")
         
         sut.simulatePhotoViewNotVisible(view0, at: 0)
-        sut.simulatePhotoViewWillVisibleAgain(view0, at: 0)
+        sut.simulatePhotoViewBecomeVisibleAgain(view0, at: 0)
         await sut.imageDataTask(at: 0)?.value
         
         XCTAssertEqual(view0.renderedImage, imageData0, "Expect image for first view once loading first image completed successfully after first view visiable again")
@@ -273,6 +274,29 @@ final class PhotoListIntegrationTests: XCTestCase {
         await sut.imageDataTask(at: 0)?.value
         
         XCTAssertEqual(view0.renderedImage, .none, "Expect no image for first view once loading first image complete with invalid image data")
+    }
+    
+    @MainActor
+    func test_photoView_configuresViewCorrectlyWhenBecomingVisibleAgain() async throws {
+        let photo0 = makePhoto(id: "0", url: URL(string: "https://url-0.com")!)
+        let imageData0 = UIImage.make(withColor: .red).pngData()!
+        let (sut, _) = makeSUT(photoStubs: [.success([photo0])],
+                               dataStubs: [.failure(anyNSError()), .success(imageData0)])
+        
+        sut.loadViewIfNeeded()
+        await sut.reloadPhotosTask?.value
+        
+        let view0 = try XCTUnwrap(sut.simulatePhotoViewVisible(at: 0))
+        sut.simulatePhotoViewNotVisible(view0, at: 0)
+        sut.simulatePhotoViewBecomeVisibleAgain(view0, at: 0)
+        
+        XCTAssertEqual(view0.renderedImage, .none, "Expect no image when view become visiable again")
+        XCTAssertEqual(view0.isShowingImageLoadingIndicator, true, "Expected loading indicator when view becomes visible again")
+        
+        await sut.imageDataTask(at: 0)?.value
+        
+        XCTAssertEqual(view0.renderedImage, imageData0, "Expected rendered image when image loads successfully after view becomes visible again")
+        XCTAssertEqual(view0.isShowingImageLoadingIndicator, false, "Expected no loading indicator when image loads successfully after view becomes visible again")
     }
     
     @MainActor

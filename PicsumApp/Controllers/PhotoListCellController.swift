@@ -19,19 +19,26 @@ final class PhotoListCellController {
     
     @MainActor
     func cell(in collectionView: UICollectionView, for indexPath: IndexPath) -> PhotoListCell {
-        cell = collectionView.dequeueReusableCell(withReuseIdentifier: PhotoListCell.identifier, for: indexPath) as? PhotoListCell
-        cell?.authorLabel.text = viewModel.author
-        cell?.imageView.image = nil
-        cell?.imageView.isShimmering = true
+        cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: PhotoListCell.identifier, for: indexPath) as? PhotoListCell
         setupBindings()
         load()
         return cell!
     }
     
     @MainActor
-    func load() {
-        guard imageDataTask == nil else { return }
+    func load(for cell: UICollectionViewCell) {
+        guard let cell = cell as? PhotoListCell else { return }
         
+        self.cell = cell
+        load()
+    }
+    
+    @MainActor
+    private func load() {
+        cell?.imageView.image = nil
+        cell?.imageView.isShimmering = true
+        cell?.authorLabel.text = viewModel.author
         imageDataTask = Task { [weak viewModel] in
             await viewModel?.loadImage()
         }
@@ -40,6 +47,7 @@ final class PhotoListCellController {
     func cancelLoad() {
         imageDataTask?.cancel()
         imageDataTask = nil
+        releaseForReuse()
     }
     
     @MainActor
@@ -51,6 +59,10 @@ final class PhotoListCellController {
         viewModel.didLoadImage = { [weak cell] image in
             cell?.imageView.image = image
         }
+    }
+    
+    private func releaseForReuse() {
+        cell = nil
     }
 }
 

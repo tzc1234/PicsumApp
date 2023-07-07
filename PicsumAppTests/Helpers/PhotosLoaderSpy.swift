@@ -38,8 +38,6 @@ class PhotosLoaderSpy: PhotosLoader, ImageDataLoader {
     @MainActor
     func loadImageData(by id: String, width: UInt, height: UInt) async throws -> Data {
         loggedPhotoIDs.append(id)
-        guard !dataStubs.isEmpty else { throw anyNSError() }
-        let data = try dataStubs.removeFirst().get()
-        return data
+        return try dataStubs.removeFirst().get()
     }
 }

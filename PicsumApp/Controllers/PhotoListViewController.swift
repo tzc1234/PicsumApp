@@ -51,7 +51,7 @@ final class PhotoListViewController: UICollectionViewController {
         layout.scrollDirection = .vertical
         
         let width = view.bounds.size.width
-        let numberOfItemsPerRow: CGFloat = 3
+        let numberOfItemsPerRow: CGFloat = 2
         let availableWidth = width - spacing * (numberOfItemsPerRow + 1)
         let itemDimension = floor(availableWidth / numberOfItemsPerRow)
         layout.itemSize = .init(width: itemDimension, height: itemDimension)
@@ -102,6 +102,6 @@ final class PhotoListViewController: UICollectionViewController {
     }
     
     override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        cellController(forItemAt: indexPath)?.load()
+        cellController(forItemAt: indexPath)?.load(for: cell)
     }
 }

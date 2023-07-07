@@ -44,7 +44,7 @@ extension PhotoListViewController {
         d?.collectionView?(collectionView, didEndDisplaying: view, forItemAt: indexPath)
     }
     
-    func simulatePhotoViewWillVisibleAgain(_ view: PhotoListCell, at item: Int) {
+    func simulatePhotoViewBecomeVisibleAgain(_ view: PhotoListCell, at item: Int) {
         let d = collectionView.delegate
         let indexPath = IndexPath(item: item, section: 0)
         d?.collectionView?(collectionView, willDisplay: view, forItemAt: indexPath)
