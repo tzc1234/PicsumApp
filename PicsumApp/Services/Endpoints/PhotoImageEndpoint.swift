@@ -8,7 +8,7 @@
 import Foundation
 
 enum PhotoImageEndpoint {
-    case get(id: String, width: UInt, height: UInt)
+    case get(id: String, width: Int, height: Int)
     
     var url: URL {
         switch self {

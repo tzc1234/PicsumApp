@@ -18,7 +18,7 @@ final class RemoteImageDataLoader: ImageDataLoader {
         case invalidData
     }
     
-    func loadImageData(by id: String, width: UInt, height: UInt) async throws -> Data {
+    func loadImageData(by id: String, width: Int, height: Int) async throws -> Data {
         do {
             let url = PhotoImageEndpoint.get(id: id, width: width, height: height).url
             let (data, response) = try await client.get(from: url)

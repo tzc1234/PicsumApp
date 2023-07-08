@@ -37,8 +37,8 @@ final class PhotoImageViewModel<Image> {
         } else {
             let image = (try? await imageLoader.loadImageData(
                 by: photo.id,
-                width: UInt(photo.width),
-                height: UInt(photo.height))).flatMap(imageConverter)
+                width: photo.width,
+                height: photo.height)).flatMap(imageConverter)
             self.image = image
             didLoadImage?(image)
         }

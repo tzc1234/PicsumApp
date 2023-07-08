@@ -36,7 +36,7 @@ class PhotosLoaderSpy: PhotosLoader, ImageDataLoader {
     private(set) var loggedPhotoIDs = [String]()
     
     @MainActor
-    func loadImageData(by id: String, width: UInt, height: UInt) async throws -> Data {
+    func loadImageData(by id: String, width: Int, height: Int) async throws -> Data {
         loggedPhotoIDs.append(id)
         return try dataStubs.removeFirst().get()
     }

@@ -19,8 +19,8 @@ final class RemoteImageDataLoaderTests: XCTestCase {
     func test_loadImageData_passesCorrectParametersToClient() async {
         let (sut, client) = makeSUT(stubs: [.failure(anyNSError())])
         let id = "99"
-        let width: UInt = 500
-        let height: UInt = 500
+        let width = 500
+        let height = 500
         
         _ = try? await sut.loadImageData(by: id, width: width, height: height)
         

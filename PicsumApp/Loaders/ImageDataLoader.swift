@@ -8,5 +8,5 @@
 import Foundation
 
 protocol ImageDataLoader {
-    func loadImageData(by id: String, width: UInt, height: UInt) async throws -> Data
+    func loadImageData(by id: String, width: Int, height: Int) async throws -> Data
 }
