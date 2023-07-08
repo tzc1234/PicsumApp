@@ -29,7 +29,7 @@ extension PhotoListViewController {
     
     func photoView(at item: Int) -> PhotoListCell? {
         let ds = collectionView.dataSource
-        let indexPath = IndexPath(item: item, section: 0)
+        let indexPath = IndexPath(item: item, section: photoViewSection)
         return ds?.collectionView(collectionView, cellForItemAt: indexPath) as? PhotoListCell
     }
     
@@ -40,13 +40,13 @@ extension PhotoListViewController {
     
     func simulatePhotoViewNotVisible(_ view: PhotoListCell, at item: Int) {
         let d = collectionView.delegate
-        let indexPath = IndexPath(item: item, section: 0)
+        let indexPath = IndexPath(item: item, section: photoViewSection)
         d?.collectionView?(collectionView, didEndDisplaying: view, forItemAt: indexPath)
     }
     
     func simulatePhotoViewBecomeVisibleAgain(_ view: PhotoListCell, at item: Int) {
         let d = collectionView.delegate
-        let indexPath = IndexPath(item: item, section: 0)
+        let indexPath = IndexPath(item: item, section: photoViewSection)
         d?.collectionView?(collectionView, willDisplay: view, forItemAt: indexPath)
     }
     
@@ -55,8 +55,17 @@ extension PhotoListViewController {
     }
     
     func imageDataTask(at item: Int) -> Task<Void, Never>? {
-        let indexPath = IndexPath(item: item, section: 0)
+        cellController(at: item)?.imageDataTask
+    }
+    
+    func justAfterLoadingImage(at item: Int, action: @escaping () -> Void) {
+        let viewModel: PhotoImageViewModel<UIImage>? = cellController(at: item)?.viewModel
+        viewModel?.justAfterOnLoadImage = action
+    }
+    
+    private func cellController(at item: Int) -> PhotoListCellController? {
+        let indexPath = IndexPath(item: item, section: photoViewSection)
         let ds = collectionView.dataSource as? UICollectionViewDiffableDataSource<Int, PhotoListCellController>
-        return ds?.itemIdentifier(for: indexPath)?.imageDataTask
+        return ds?.itemIdentifier(for: indexPath)
     }
 }

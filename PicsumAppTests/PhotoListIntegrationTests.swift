@@ -198,13 +198,23 @@ final class PhotoListIntegrationTests: XCTestCase {
         let view0 = try XCTUnwrap(sut.simulatePhotoViewVisible(at: 0))
         let view1 = try XCTUnwrap(sut.simulatePhotoViewVisible(at: 1))
         
-        XCTAssertTrue(view0.isShowingImageLoadingIndicator, "Expect loading indicator for first view while loading first image")
-        XCTAssertTrue(view1.isShowingImageLoadingIndicator, "Expect loading indicator for second view while loading second image")
+        let exp0 = expectation(description: "wait for view0 justAfterOnLoadImage")
+        sut.justAfterLoadingImage(at: 0) {
+            XCTAssertTrue(view0.isShowingImageLoadingIndicator, "Expect loading indicator for first view while loading first image")
+            exp0.fulfill()
+        }
+        
+        let exp1 = expectation(description: "wait for view1 justAfterOnLoadImage")
+        sut.justAfterLoadingImage(at: 1) {
+            XCTAssertTrue(view1.isShowingImageLoadingIndicator, "Expect loading indicator for second view while loading second image")
+            exp1.fulfill()
+        }
+        
+        await fulfillment(of: [exp0, exp1])
         
         // Once trigger `.value` from whatever Task, all other tasks will complete at the same time.
         // Cannot find a better way to one by one triggering Tasks.
         await sut.imageDataTask(at: 0)?.value
-//        await sut.imageDataTask(at: 1)?.value
         
         XCTAssertFalse(view0.isShowingImageLoadingIndicator, "Expect no loading indicator for first view after loading first image completion")
         XCTAssertFalse(view1.isShowingImageLoadingIndicator, "Expect no loading indicator for second view after loading second image completion")
@@ -278,7 +288,7 @@ final class PhotoListIntegrationTests: XCTestCase {
     
     @MainActor
     func test_photoView_configuresViewCorrectlyWhenBecomingVisibleAgain() async throws {
-        let photo0 = makePhoto(id: "0", url: URL(string: "https://url-0.com")!)
+        let photo0 = makePhoto(id: "0")
         let imageData0 = UIImage.make(withColor: .red).pngData()!
         let (sut, _) = makeSUT(photoStubs: [.success([photo0])],
                                dataStubs: [.failure(anyNSError()), .success(imageData0)])
@@ -291,9 +301,15 @@ final class PhotoListIntegrationTests: XCTestCase {
         sut.simulatePhotoViewBecomeVisibleAgain(view0, at: 0)
         
         XCTAssertEqual(view0.renderedImage, .none, "Expect no image when view become visiable again")
-        XCTAssertEqual(view0.isShowingImageLoadingIndicator, true, "Expected loading indicator when view becomes visible again")
+        
+        var loggedLoadingStates = [Bool]()
+        sut.justAfterLoadingImage(at: 0) {
+            loggedLoadingStates.append(view0.isShowingImageLoadingIndicator)
+        }
         
         await sut.imageDataTask(at: 0)?.value
+        
+        XCTAssertEqual(loggedLoadingStates, [true, true], "Expected loading indicator when view was visible and becomes visible again")
         
         XCTAssertEqual(view0.renderedImage, imageData0, "Expected rendered image when image loads successfully after view becomes visible again")
         XCTAssertEqual(view0.isShowingImageLoadingIndicator, false, "Expected no loading indicator when image loads successfully after view becomes visible again")

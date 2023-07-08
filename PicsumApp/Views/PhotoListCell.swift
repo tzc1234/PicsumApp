@@ -15,10 +15,16 @@ final class PhotoListCell: UICollectionViewCell {
         return l
     }()
     
+    private(set) lazy var imageContainerView = {
+        let v = UIView()
+        v.backgroundColor = .systemGray5
+        v.translatesAutoresizingMaskIntoConstraints = false
+        return v
+    }()
+    
     private(set) lazy var imageView = {
         let iv = UIImageView()
         iv.contentMode = .scaleAspectFill
-        iv.backgroundColor = .systemGray5
         iv.translatesAutoresizingMaskIntoConstraints = false
         return iv
     }()
@@ -51,28 +57,34 @@ final class PhotoListCell: UICollectionViewCell {
         contentView.layer.cornerRadius = 8
         contentView.clipsToBounds = true
         
-        contentView.addSubview(placeholderView)
-        contentView.addSubview(imageView)
+        contentView.addSubview(imageContainerView)
+        imageContainerView.addSubview(placeholderView)
+        imageContainerView.addSubview(imageView)
         contentView.addSubview(blurView)
         contentView.addSubview(authorLabel)
         
         NSLayoutConstraint.activate([
-            imageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            imageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            imageView.topAnchor.constraint(equalTo: contentView.topAnchor),
-            imageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            imageContainerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            imageContainerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            imageContainerView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            imageContainerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             
-            placeholderView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            placeholderView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            placeholderView.centerXAnchor.constraint(equalTo: imageContainerView.centerXAnchor),
+            placeholderView.centerYAnchor.constraint(equalTo: imageContainerView.centerYAnchor),
+            
+            imageView.leadingAnchor.constraint(equalTo: imageContainerView.leadingAnchor),
+            imageView.trailingAnchor.constraint(equalTo: imageContainerView.trailingAnchor),
+            imageView.topAnchor.constraint(equalTo: imageContainerView.topAnchor),
+            imageView.bottomAnchor.constraint(equalTo: imageContainerView.bottomAnchor),
             
             blurView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             blurView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             blurView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            blurView.topAnchor.constraint(equalTo: authorLabel.topAnchor, constant: -4),
+            blurView.topAnchor.constraint(equalTo: authorLabel.topAnchor, constant: -8),
             
-            authorLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 4),
-            authorLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -4),
-            authorLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -4)
+            authorLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
+            authorLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -8),
+            authorLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8)
         ])
     }
     
