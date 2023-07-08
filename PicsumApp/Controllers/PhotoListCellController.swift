@@ -22,6 +22,7 @@ final class PhotoListCellController {
         cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: PhotoListCell.identifier, for: indexPath) as? PhotoListCell
         cell?.imageView.image = nil
+        setupBindings()
         load()
         return cell!
     }
@@ -37,7 +38,6 @@ final class PhotoListCellController {
     @MainActor
     private func load() {
         cell?.authorLabel.text = viewModel.author
-        setupBindings()
         imageDataTask = Task { [weak viewModel] in
             await viewModel?.loadImage()
         }
