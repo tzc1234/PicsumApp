@@ -18,7 +18,7 @@ final class LoadCachedImageDataUseCaseTests: XCTestCase {
     
     func test_loadImageData_requestsCachedDateForCorrectURL() async {
         let (sut, store) = makeSUT(retrieveStubs: [.failure(anyNSError())])
-        let url = URL(string: "https://laod-image-url.com")!
+        let url = URL(string: "https://load-image-url.com")!
         
         _ = try? await sut.loadImageData(for: url)
         
@@ -127,14 +127,4 @@ final class LoadCachedImageDataUseCaseTests: XCTestCase {
         }
     }
     
-}
-
-extension Date {
-    func adding(days: Int) -> Date {
-        Calendar(identifier: .gregorian).date(byAdding: .day, value: days, to: self)!
-    }
-
-    func adding(seconds: TimeInterval) -> Date {
-        self + seconds
-    }
 }
