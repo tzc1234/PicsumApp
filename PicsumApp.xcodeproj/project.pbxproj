@@ -28,6 +28,7 @@
 		BE5DFCF92A5C0CAF007BD8A7 /* PhotoImageDataLoaderAdapterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE5DFCF82A5C0CAF007BD8A7 /* PhotoImageDataLoaderAdapterTests.swift */; };
 		BE5DFCFB2A5C14FF007BD8A7 /* PhotoImageDataLoaderAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE5DFCFA2A5C14FF007BD8A7 /* PhotoImageDataLoaderAdapter.swift */; };
 		BE5DFCFD2A5C1AAD007BD8A7 /* ImageDataLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE5DFCFC2A5C1AAD007BD8A7 /* ImageDataLoader.swift */; };
+		BE5DFD002A5C43F0007BD8A7 /* LoadCachedImageDataUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE5DFCFF2A5C43F0007BD8A7 /* LoadCachedImageDataUseCaseTests.swift */; };
 		BE6560372A52D4A300CCD5D6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE6560362A52D4A300CCD5D6 /* AppDelegate.swift */; };
 		BE6560392A52D4A300CCD5D6 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE6560382A52D4A300CCD5D6 /* SceneDelegate.swift */; };
 		BE6560402A52D4A400CCD5D6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BE65603F2A52D4A400CCD5D6 /* Assets.xcassets */; };
@@ -82,6 +83,7 @@
 		BE5DFCF82A5C0CAF007BD8A7 /* PhotoImageDataLoaderAdapterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoImageDataLoaderAdapterTests.swift; sourceTree = "<group>"; };
 		BE5DFCFA2A5C14FF007BD8A7 /* PhotoImageDataLoaderAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoImageDataLoaderAdapter.swift; sourceTree = "<group>"; };
 		BE5DFCFC2A5C1AAD007BD8A7 /* ImageDataLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDataLoader.swift; sourceTree = "<group>"; };
+		BE5DFCFF2A5C43F0007BD8A7 /* LoadCachedImageDataUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadCachedImageDataUseCaseTests.swift; sourceTree = "<group>"; };
 		BE6560332A52D4A300CCD5D6 /* PicsumApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PicsumApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE6560362A52D4A300CCD5D6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		BE6560382A52D4A300CCD5D6 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -198,6 +200,14 @@
 			path = Helpers;
 			sourceTree = "<group>";
 		};
+		BE5DFCFE2A5C43AF007BD8A7 /* Cache */ = {
+			isa = PBXGroup;
+			children = (
+				BE5DFCFF2A5C43F0007BD8A7 /* LoadCachedImageDataUseCaseTests.swift */,
+			);
+			path = Cache;
+			sourceTree = "<group>";
+		};
 		BE65602A2A52D4A300CCD5D6 = {
 			isa = PBXGroup;
 			children = (
@@ -241,6 +251,7 @@
 			children = (
 				BE6560672A52DF7C00CCD5D6 /* Helpers */,
 				BE5DFCF62A5C0988007BD8A7 /* Services */,
+				BE5DFCFE2A5C43AF007BD8A7 /* Cache */,
 				BE65604D2A52D4A400CCD5D6 /* PhotoListViewModelTests.swift */,
 				BED8ECCC2A5340870077FFF9 /* PhotoListIntegrationTests.swift */,
 			);
@@ -419,6 +430,7 @@
 			files = (
 				BE5496862A570DF600D402A3 /* ClientSpy.swift in Sources */,
 				BE5DFCF92A5C0CAF007BD8A7 /* PhotoImageDataLoaderAdapterTests.swift in Sources */,
+				BE5DFD002A5C43F0007BD8A7 /* LoadCachedImageDataUseCaseTests.swift in Sources */,
 				BE5496882A570ED400D402A3 /* RemoteImageDataLoaderTests.swift in Sources */,
 				BE81030F2A559EB700CE012A /* PhotoListCell+TestHelpers.swift in Sources */,
 				BE54968E2A572B6B00D402A3 /* URLSessionHTTPClientTests.swift in Sources */,
