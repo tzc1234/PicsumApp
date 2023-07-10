@@ -28,13 +28,13 @@ final class LoadCachedImageDataUseCaseTests: XCTestCase {
     func test_loadImageData_deliversFailedErrorOnStoreError() async {
         let (sut, _) = makeSUT(retrieveStubs: [.failure(anyNSError())])
         
-        await expect(sut, withExpectedError: .failed)
+        await expect(sut, withError: .failed)
     }
     
     func test_loadImageData_deliversNotFoundErrorWhenNoDataFound() async {
         let (sut, _) = makeSUT(retrieveStubs: [.success(nil)])
         
-        await expect(sut, withExpectedError: .notFound)
+        await expect(sut, withError: .notFound)
     }
     
     func test_loadImageData_deliversNotFoundErrorWhenExpiredDataFound() async {
@@ -42,7 +42,15 @@ final class LoadCachedImageDataUseCaseTests: XCTestCase {
         let expireDate = expireDate(against: now)
         let (sut, _) = makeSUT(retrieveStubs: [.success((anyData(), expireDate))], currentDate: { now })
         
-        await expect(sut, withExpectedError: .notFound)
+        await expect(sut, withError: .notFound)
+    }
+    
+    func test_loadImageData_deliversNotFoundErrorWhenDataOnExpiration() async {
+        let now = Date()
+        let expirationData = expirationData(against: now)
+        let (sut, _) = makeSUT(retrieveStubs: [.success((anyData(), expirationData))], currentDate: { now })
+        
+        await expect(sut, withError: .notFound)
     }
     
     func test_loadImageData_deliversDataWhenNonExpiredDataFound() async throws {
@@ -72,7 +80,7 @@ final class LoadCachedImageDataUseCaseTests: XCTestCase {
     }
     
     private func expect(_ sut: LocalImageDataLoader,
-                        withExpectedError expectedError: LocalImageDataLoader.LoadError,
+                        withError expectedError: LocalImageDataLoader.LoadError,
                         file: StaticString = #filePath, line: UInt = #line) async {
         do {
             _ = try await sut.loadImageData(for: anyURL())
@@ -87,6 +95,10 @@ final class LoadCachedImageDataUseCaseTests: XCTestCase {
     }
     
     private func expireDate(against date: Date) -> Date {
+        date.adding(days: -maxCacheDays).adding(seconds: -1)
+    }
+    
+    private func expirationData(against date: Date) -> Date {
         date.adding(days: -maxCacheDays)
     }
     
