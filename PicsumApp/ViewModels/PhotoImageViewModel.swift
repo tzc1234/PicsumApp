@@ -18,10 +18,10 @@ final class PhotoImageViewModel<Image> {
     private var image: Image?
     
     private let photo: Photo
-    private let imageLoader: ImageDataLoader
+    private let imageLoader: PhotoImageDataLoader
     private let imageConverter: (Data) -> Image?
     
-    init(photo: Photo, imageLoader: ImageDataLoader, imageConverter: @escaping (Data) -> Image?) {
+    init(photo: Photo, imageLoader: PhotoImageDataLoader, imageConverter: @escaping (Data) -> Image?) {
         self.photo = photo
         self.imageLoader = imageLoader
         self.imageConverter = imageConverter

@@ -8,7 +8,7 @@
 import Foundation
 @testable import PicsumApp
 
-class PhotosLoaderSpy: PhotosLoader, ImageDataLoader {
+class PhotosLoaderSpy: PhotosLoader, PhotoImageDataLoader {
     // MARK: - PhotosLoader
     
     typealias PhotosResult = Swift.Result<[Photo], Error>
@@ -29,7 +29,7 @@ class PhotosLoaderSpy: PhotosLoader, ImageDataLoader {
         return try photoStubs.removeFirst().get()
     }
     
-    // MARK: - ImageDataLoader
+    // MARK: - PhotoImageDataLoader
     typealias DataResult = Swift.Result<Data, Error>
     
     private(set) var dataStubs: [DataResult]

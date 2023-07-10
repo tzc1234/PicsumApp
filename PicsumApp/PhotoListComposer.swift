@@ -8,7 +8,7 @@
 import UIKit
 
 enum PhotoListComposer {
-    static func composeWith(viewModel: PhotoListViewModel, imageLoader: ImageDataLoader) -> PhotoListViewController {
+    static func composeWith(viewModel: PhotoListViewModel, imageLoader: PhotoImageDataLoader) -> PhotoListViewController {
         let viewController = PhotoListViewController(viewModel: viewModel)
         
         viewModel.didLoad = { [weak viewController] photos in
