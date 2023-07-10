@@ -17,9 +17,18 @@ final class LoadCachedImageDataUseCaseTests: XCTestCase {
             self.store = store
         }
         
+        enum LoadError: Error {
+            case failed
+        }
+        
         func loadImageData(for url: URL) async throws -> Data {
-            store.retrieve(for: url)
-            throw anyNSError()
+            do {
+                try store.retrieve(for: url)
+            } catch {
+                throw LoadError.failed
+            }
+            
+            return Data()
         }
     }
     
@@ -30,7 +39,7 @@ final class LoadCachedImageDataUseCaseTests: XCTestCase {
     }
     
     func test_loadImageData_requestsCachedDateForCorrectURL() async {
-        let (sut, store) = makeSUT()
+        let (sut, store) = makeSUT(retrieveStubs: [.failure(anyNSError())])
         let url = URL(string: "https://laod-image-url.com")!
         
         _ = try? await sut.loadImageData(for: url)
@@ -38,11 +47,23 @@ final class LoadCachedImageDataUseCaseTests: XCTestCase {
         XCTAssertEqual(store.messages, [.retrieve(url)])
     }
     
+    func test_loadImageData_deliversFailedErrorOnStoreError() async {
+        let (sut, _) = makeSUT(retrieveStubs: [.failure(anyNSError())])
+        
+        do {
+            _ = try await sut.loadImageData(for: anyURL())
+            XCTFail("Should not success")
+        } catch {
+            XCTAssertEqual(error as? LocalImageDataLoader.LoadError, .failed)
+        }
+    }
+    
     // MARK: - Helpers
     
-    private func makeSUT(file: StaticString = #filePath,
+    private func makeSUT(retrieveStubs: [ImageDataStoreSpy.RetrieveStub] = [],
+                         file: StaticString = #filePath,
                          line: UInt = #line) -> (sut: LocalImageDataLoader, store: ImageDataStoreSpy) {
-        let store = ImageDataStoreSpy()
+        let store = ImageDataStoreSpy(retrieveStubs: retrieveStubs)
         let sut = LocalImageDataLoader(store: store)
         
         trackForMemoryLeaks(store, file: file, line: line)
@@ -52,16 +73,24 @@ final class LoadCachedImageDataUseCaseTests: XCTestCase {
     }
     
     class ImageDataStoreSpy {
-        private(set) var messages = [Message]()
+        typealias RetrieveStub = Result<Data, Error>
         
         enum Message: Equatable {
             case retrieve(URL)
         }
         
-        func retrieve(for url: URL) {
-            messages.append(.retrieve(url))
+        private(set) var messages = [Message]()
+        
+        private var retrieveStubs: [RetrieveStub]
+        
+        init(retrieveStubs: [RetrieveStub]) {
+            self.retrieveStubs = retrieveStubs
         }
         
+        func retrieve(for url: URL) throws {
+            messages.append(.retrieve(url))
+            try _ = retrieveStubs.removeFirst().get()
+        }
     }
     
 }
