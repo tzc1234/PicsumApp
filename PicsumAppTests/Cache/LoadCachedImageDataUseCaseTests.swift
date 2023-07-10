@@ -28,7 +28,7 @@ final class LoadCachedImageDataUseCaseTests: XCTestCase {
                     throw LoadError.notFound
                 }
                 
-                return Data()
+                return data
             } catch {
                 if case .notFound = error as? LoadError {
                     throw LoadError.notFound
@@ -74,6 +74,15 @@ final class LoadCachedImageDataUseCaseTests: XCTestCase {
         } catch {
             XCTAssertEqual(error as? LocalImageDataLoader.LoadError, .notFound)
         }
+    }
+    
+    func test_loadImageData_deliversDataWhenDataFound() async throws {
+        let data = anyData()
+        let (sut, _) = makeSUT(retrieveStubs: [.success(data)])
+        
+        let receivedData = try await sut.loadImageData(for: anyURL())
+        
+        XCTAssertEqual(receivedData, data)
     }
     
     // MARK: - Helpers

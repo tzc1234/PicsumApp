@@ -38,7 +38,7 @@ final class PhotoImageDataLoaderAdapterTests: XCTestCase {
     }
     
     func test_loadImageData_deliversDataOnSuccess() async throws {
-        let data = Data("any data".utf8)
+        let data = anyData()
         let (sut, _) = makeSUT(stubs: [.success(data)])
         
         let receivedData = try await sut.loadImageData(by: "1", width: 1, height: 1)
