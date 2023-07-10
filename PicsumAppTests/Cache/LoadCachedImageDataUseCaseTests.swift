@@ -28,36 +28,21 @@ final class LoadCachedImageDataUseCaseTests: XCTestCase {
     func test_loadImageData_deliversFailedErrorOnStoreError() async {
         let (sut, _) = makeSUT(retrieveStubs: [.failure(anyNSError())])
         
-        do {
-            _ = try await sut.loadImageData(for: anyURL())
-            XCTFail("Should not success")
-        } catch {
-            XCTAssertEqual(error as? LocalImageDataLoader.LoadError, .failed)
-        }
+        await expect(sut, withExpectedError: .failed)
     }
     
     func test_loadImageData_deliversNotFoundErrorWhenNoDataFound() async {
         let (sut, _) = makeSUT(retrieveStubs: [.success(nil)])
         
-        do {
-            _ = try await sut.loadImageData(for: anyURL())
-            XCTFail("Should not success")
-        } catch {
-            XCTAssertEqual(error as? LocalImageDataLoader.LoadError, .notFound)
-        }
+        await expect(sut, withExpectedError: .notFound)
     }
     
-    func test_loadImageData_deliversNotFoundErrorWhenExpiredDataFound() async throws {
+    func test_loadImageData_deliversNotFoundErrorWhenExpiredDataFound() async {
         let now = Date()
         let expireDate = expireDate(against: now)
         let (sut, _) = makeSUT(retrieveStubs: [.success((anyData(), expireDate))], currentDate: { now })
         
-        do {
-            _ = try await sut.loadImageData(for: anyURL())
-            XCTFail("Should not success")
-        } catch {
-            XCTAssertEqual(error as? LocalImageDataLoader.LoadError, .notFound)
-        }
+        await expect(sut, withExpectedError: .notFound)
     }
     
     func test_loadImageData_deliversDataWhenNonExpiredDataFound() async throws {
@@ -84,6 +69,17 @@ final class LoadCachedImageDataUseCaseTests: XCTestCase {
         trackForMemoryLeaks(sut, file: file, line: line)
         
         return (sut, store)
+    }
+    
+    private func expect(_ sut: LocalImageDataLoader,
+                        withExpectedError expectedError: LocalImageDataLoader.LoadError,
+                        file: StaticString = #filePath, line: UInt = #line) async {
+        do {
+            _ = try await sut.loadImageData(for: anyURL())
+            XCTFail("Should not success", file: file, line: line)
+        } catch {
+            XCTAssertEqual(error as? LocalImageDataLoader.LoadError, expectedError, file: file, line: line)
+        }
     }
     
     private func nonExpireDate(against date: Date) -> Date {
