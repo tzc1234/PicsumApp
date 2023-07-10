@@ -19,16 +19,23 @@ final class LoadCachedImageDataUseCaseTests: XCTestCase {
         
         enum LoadError: Error {
             case failed
+            case notFound
         }
         
         func loadImageData(for url: URL) async throws -> Data {
             do {
-                try store.retrieve(for: url)
+                guard let data = try await store.retrieve(for: url) else {
+                    throw LoadError.notFound
+                }
+                
+                return Data()
             } catch {
+                if case .notFound = error as? LoadError {
+                    throw LoadError.notFound
+                }
+                
                 throw LoadError.failed
             }
-            
-            return Data()
         }
     }
     
@@ -58,6 +65,17 @@ final class LoadCachedImageDataUseCaseTests: XCTestCase {
         }
     }
     
+    func test_loadImageData_deliversNotFoundErrorWhenNoDataFound() async {
+        let (sut, _) = makeSUT(retrieveStubs: [.success(nil)])
+        
+        do {
+            _ = try await sut.loadImageData(for: anyURL())
+            XCTFail("Should not success")
+        } catch {
+            XCTAssertEqual(error as? LocalImageDataLoader.LoadError, .notFound)
+        }
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(retrieveStubs: [ImageDataStoreSpy.RetrieveStub] = [],
@@ -73,7 +91,7 @@ final class LoadCachedImageDataUseCaseTests: XCTestCase {
     }
     
     class ImageDataStoreSpy {
-        typealias RetrieveStub = Result<Data, Error>
+        typealias RetrieveStub = Result<Data?, Error>
         
         enum Message: Equatable {
             case retrieve(URL)
@@ -87,9 +105,9 @@ final class LoadCachedImageDataUseCaseTests: XCTestCase {
             self.retrieveStubs = retrieveStubs
         }
         
-        func retrieve(for url: URL) throws {
+        func retrieve(for url: URL) async throws -> Data? {
             messages.append(.retrieve(url))
-            try _ = retrieveStubs.removeFirst().get()
+            return try retrieveStubs.removeFirst().get()
         }
     }
     
