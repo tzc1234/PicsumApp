@@ -31,7 +31,7 @@ final class PhotoImageDataLoaderAdapterTests: XCTestCase {
     }
     
     func test_loadImageData_passesCorrectURLToLoader() async {
-        let (sut, loader) = makeSUT()
+        let (sut, loader) = makeSUT(stubs: [.failure(anyNSError())])
         let id = "99"
         let width = 100
         let height = 200
@@ -41,14 +41,28 @@ final class PhotoImageDataLoaderAdapterTests: XCTestCase {
         let expectedURL = PhotoImageEndpoint.get(id: id, width: width, height: height).url
         XCTAssertEqual(loader.loggedURLs, [expectedURL])
     }
+    
+    func test_loadImageData_deliversErrorOnError() async {
+        let (sut, _) = makeSUT(stubs: [.failure(anyNSError())])
+        
+        do {
+            _ = try await sut.loadImageData(by: "1", width: 1, height: 1)
+            XCTFail("Should not success")
+        } catch {
+            
+        }
+    }
 
     // MARK: - Helpers
     
     private func makeSUT(stubs: [RemoteImageDataLoaderSpy.Stub] = [],
                          file: StaticString = #filePath,
                          line: UInt = #line) -> (sut: PhotoImageDataLoaderAdapter, loader: RemoteImageDataLoaderSpy) {
-        let loader = RemoteImageDataLoaderSpy()
+        let loader = RemoteImageDataLoaderSpy(stubs: stubs)
         let sut = PhotoImageDataLoaderAdapter(imageDataLoader: loader)
+        
+        trackForMemoryLeaks(loader, file: file, line: line)
+        trackForMemoryLeaks(sut, file: file, line: line)
         
         return (sut, loader)
     }
@@ -57,10 +71,15 @@ final class PhotoImageDataLoaderAdapterTests: XCTestCase {
         typealias Stub = Result<Data, Error>
         
         private(set) var loggedURLs = [URL]()
+        private var stubs: [Stub]
+        
+        init(stubs: [Stub]) {
+            self.stubs = stubs
+        }
         
         func loadImageData(for url: URL) async throws -> Data {
             loggedURLs.append(url)
-            throw anyNSError()
+            return try stubs.removeFirst().get()
         }
     }
     
