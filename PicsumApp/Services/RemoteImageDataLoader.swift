@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class RemoteImageDataLoader: ImageDataLoader {
+final class RemoteImageDataLoader {
     private let client: HTTPClient
     
     init(client: HTTPClient) {
@@ -18,9 +18,8 @@ final class RemoteImageDataLoader: ImageDataLoader {
         case invalidData
     }
     
-    func loadImageData(by id: String, width: Int, height: Int) async throws -> Data {
+    func loadImageData(for url: URL) async throws -> Data {
         do {
-            let url = PhotoImageEndpoint.get(id: id, width: width, height: height).url
             let (data, response) = try await client.get(from: url)
             guard response.statusCode == 200 else { throw Error.invalidData }
             

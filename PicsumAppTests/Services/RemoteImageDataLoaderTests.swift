@@ -18,20 +18,18 @@ final class RemoteImageDataLoaderTests: XCTestCase {
     
     func test_loadImageData_passesCorrectParametersToClient() async {
         let (sut, client) = makeSUT(stubs: [.failure(anyNSError())])
-        let id = "99"
-        let width = 500
-        let height = 500
+        let url = URL(string: "https://load-image-url.com")!
         
-        _ = try? await sut.loadImageData(by: id, width: width, height: height)
+        _ = try? await sut.loadImageData(for: url)
         
-        XCTAssertEqual(client.loggedURLs, [PhotoImageEndpoint.get(id: id, width: width, height: height).url])
+        XCTAssertEqual(client.loggedURLs, [url])
     }
     
     func test_loadImageData_deliversErrorOnClientError() async {
         let (sut, _) = makeSUT(stubs: [.failure(anyNSError())])
         
         do {
-            _ = try await sut.loadImageData(by: "1", width: 1, height: 1)
+            _ = try await sut.loadImageData(for: anyURL())
             XCTFail("Should not success")
         } catch {
             assertInvalidDataError(error)
@@ -45,7 +43,7 @@ final class RemoteImageDataLoaderTests: XCTestCase {
         
         for statusCode in simples {
             do {
-                _ = try await sut.loadImageData(by: "1", width: 1, height: 1)
+                _ = try await sut.loadImageData(for: anyURL())
                 XCTFail("Should not success in statusCode: \(statusCode)")
             } catch {
                 assertInvalidDataError(error)
@@ -57,7 +55,7 @@ final class RemoteImageDataLoaderTests: XCTestCase {
         let imageData = UIImage.make(withColor: .red).pngData()!
         let (sut, _) = makeSUT(stubs: [.success((imageData, HTTPURLResponse(statusCode: 200)))])
         
-        let data = try await sut.loadImageData(by: "1", width: 1, height: 1)
+        let data = try await sut.loadImageData(for: anyURL())
         
         XCTAssertEqual(data, imageData)
     }
