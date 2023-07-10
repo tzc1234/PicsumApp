@@ -26,6 +26,8 @@
 		BE54968C2A57156E00D402A3 /* RemoteImageDataLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE54968B2A57156E00D402A3 /* RemoteImageDataLoader.swift */; };
 		BE54968E2A572B6B00D402A3 /* URLSessionHTTPClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE54968D2A572B6B00D402A3 /* URLSessionHTTPClientTests.swift */; };
 		BE5DFCF92A5C0CAF007BD8A7 /* PhotoImageDataLoaderAdapterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE5DFCF82A5C0CAF007BD8A7 /* PhotoImageDataLoaderAdapterTests.swift */; };
+		BE5DFCFB2A5C14FF007BD8A7 /* PhotoImageDataLoaderAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE5DFCFA2A5C14FF007BD8A7 /* PhotoImageDataLoaderAdapter.swift */; };
+		BE5DFCFD2A5C1AAD007BD8A7 /* ImageDataLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE5DFCFC2A5C1AAD007BD8A7 /* ImageDataLoader.swift */; };
 		BE6560372A52D4A300CCD5D6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE6560362A52D4A300CCD5D6 /* AppDelegate.swift */; };
 		BE6560392A52D4A300CCD5D6 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE6560382A52D4A300CCD5D6 /* SceneDelegate.swift */; };
 		BE6560402A52D4A400CCD5D6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BE65603F2A52D4A400CCD5D6 /* Assets.xcassets */; };
@@ -78,6 +80,8 @@
 		BE54968B2A57156E00D402A3 /* RemoteImageDataLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteImageDataLoader.swift; sourceTree = "<group>"; };
 		BE54968D2A572B6B00D402A3 /* URLSessionHTTPClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLSessionHTTPClientTests.swift; sourceTree = "<group>"; };
 		BE5DFCF82A5C0CAF007BD8A7 /* PhotoImageDataLoaderAdapterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoImageDataLoaderAdapterTests.swift; sourceTree = "<group>"; };
+		BE5DFCFA2A5C14FF007BD8A7 /* PhotoImageDataLoaderAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoImageDataLoaderAdapter.swift; sourceTree = "<group>"; };
+		BE5DFCFC2A5C1AAD007BD8A7 /* ImageDataLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDataLoader.swift; sourceTree = "<group>"; };
 		BE6560332A52D4A300CCD5D6 /* PicsumApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PicsumApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE6560362A52D4A300CCD5D6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		BE6560382A52D4A300CCD5D6 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -166,6 +170,7 @@
 				BE5496832A5705E000D402A3 /* PhotosResponseConverter.swift */,
 				BE54968B2A57156E00D402A3 /* RemoteImageDataLoader.swift */,
 				BEE65CF42A5745E3001872BB /* URLSessionHTTPClient.swift */,
+				BE5DFCFA2A5C14FF007BD8A7 /* PhotoImageDataLoaderAdapter.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -270,6 +275,7 @@
 			children = (
 				BE65606E2A52EE8200CCD5D6 /* PhotosLoader.swift */,
 				BE4876D92A547B2A00F6AE3F /* PhotoImageDataLoader.swift */,
+				BE5DFCFC2A5C1AAD007BD8A7 /* ImageDataLoader.swift */,
 			);
 			path = Loaders;
 			sourceTree = "<group>";
@@ -392,6 +398,7 @@
 				BE54968C2A57156E00D402A3 /* RemoteImageDataLoader.swift in Sources */,
 				BE6560722A53237B00CCD5D6 /* PhotoListViewModel.swift in Sources */,
 				BE5496762A56BA1300D402A3 /* PhotoImageViewModel.swift in Sources */,
+				BE5DFCFB2A5C14FF007BD8A7 /* PhotoImageDataLoaderAdapter.swift in Sources */,
 				BE4876DA2A547B2A00F6AE3F /* PhotoImageDataLoader.swift in Sources */,
 				BE8103132A55C19700CE012A /* PhotoListCellController.swift in Sources */,
 				BE8103152A55C2C400CE012A /* PhotoListComposer.swift in Sources */,
@@ -400,6 +407,7 @@
 				BE5496842A5705E000D402A3 /* PhotosResponseConverter.swift in Sources */,
 				BE6560392A52D4A300CCD5D6 /* SceneDelegate.swift in Sources */,
 				BE4876D82A542E4900F6AE3F /* PhotoListCell.swift in Sources */,
+				BE5DFCFD2A5C1AAD007BD8A7 /* ImageDataLoader.swift in Sources */,
 				BE1FD4ED2A5423860021777F /* PhotoListViewController.swift in Sources */,
 				BEE65CF52A5745E3001872BB /* URLSessionHTTPClient.swift in Sources */,
 			);

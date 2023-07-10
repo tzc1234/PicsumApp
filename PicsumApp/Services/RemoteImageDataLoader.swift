@@ -7,10 +7,6 @@
 
 import Foundation
 
-protocol ImageDataLoader {
-    func loadImageData(for url: URL) async throws -> Data
-}
-
 final class RemoteImageDataLoader: ImageDataLoader {
     private let client: HTTPClient
     
