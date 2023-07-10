@@ -25,6 +25,7 @@
 		BE54968A2A57137600D402A3 /* HTTPURLResponse+TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE5496892A57137600D402A3 /* HTTPURLResponse+TestHelpers.swift */; };
 		BE54968C2A57156E00D402A3 /* RemoteImageDataLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE54968B2A57156E00D402A3 /* RemoteImageDataLoader.swift */; };
 		BE54968E2A572B6B00D402A3 /* URLSessionHTTPClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE54968D2A572B6B00D402A3 /* URLSessionHTTPClientTests.swift */; };
+		BE5DFCF92A5C0CAF007BD8A7 /* PhotoImageDataLoaderAdapterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE5DFCF82A5C0CAF007BD8A7 /* PhotoImageDataLoaderAdapterTests.swift */; };
 		BE6560372A52D4A300CCD5D6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE6560362A52D4A300CCD5D6 /* AppDelegate.swift */; };
 		BE6560392A52D4A300CCD5D6 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE6560382A52D4A300CCD5D6 /* SceneDelegate.swift */; };
 		BE6560402A52D4A400CCD5D6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BE65603F2A52D4A400CCD5D6 /* Assets.xcassets */; };
@@ -76,6 +77,7 @@
 		BE5496892A57137600D402A3 /* HTTPURLResponse+TestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HTTPURLResponse+TestHelpers.swift"; sourceTree = "<group>"; };
 		BE54968B2A57156E00D402A3 /* RemoteImageDataLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteImageDataLoader.swift; sourceTree = "<group>"; };
 		BE54968D2A572B6B00D402A3 /* URLSessionHTTPClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLSessionHTTPClientTests.swift; sourceTree = "<group>"; };
+		BE5DFCF82A5C0CAF007BD8A7 /* PhotoImageDataLoaderAdapterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoImageDataLoaderAdapterTests.swift; sourceTree = "<group>"; };
 		BE6560332A52D4A300CCD5D6 /* PicsumApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PicsumApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE6560362A52D4A300CCD5D6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		BE6560382A52D4A300CCD5D6 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -177,6 +179,7 @@
 				BE54967C2A56D24500D402A3 /* RemotePhotosLoaderTests.swift */,
 				BE5496872A570ED400D402A3 /* RemoteImageDataLoaderTests.swift */,
 				BE54968D2A572B6B00D402A3 /* URLSessionHTTPClientTests.swift */,
+				BE5DFCF82A5C0CAF007BD8A7 /* PhotoImageDataLoaderAdapterTests.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -407,6 +410,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BE5496862A570DF600D402A3 /* ClientSpy.swift in Sources */,
+				BE5DFCF92A5C0CAF007BD8A7 /* PhotoImageDataLoaderAdapterTests.swift in Sources */,
 				BE5496882A570ED400D402A3 /* RemoteImageDataLoaderTests.swift in Sources */,
 				BE81030F2A559EB700CE012A /* PhotoListCell+TestHelpers.swift in Sources */,
 				BE54968E2A572B6B00D402A3 /* URLSessionHTTPClientTests.swift in Sources */,
