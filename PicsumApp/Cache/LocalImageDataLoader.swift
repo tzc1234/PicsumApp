@@ -15,7 +15,9 @@ final class LocalImageDataLoader {
         self.store = store
         self.currentDate = currentDate
     }
-    
+}
+
+extension LocalImageDataLoader: ImageDataLoader {
     enum LoadError: Error {
         case failed
         case notFound
