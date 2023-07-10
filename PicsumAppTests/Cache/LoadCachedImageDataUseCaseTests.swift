@@ -83,13 +83,15 @@ final class LoadCachedImageDataUseCaseTests: XCTestCase {
     private func expect(_ sut: LocalImageDataLoader, store: ImageDataStoreSpy,
                         withError expectedError: LocalImageDataLoader.LoadError,
                         file: StaticString = #filePath, line: UInt = #line) async {
+        let url = anyURL()
+        
         do {
-            _ = try await sut.loadImageData(for: anyURL())
+            _ = try await sut.loadImageData(for: url)
             XCTFail("Should not success", file: file, line: line)
         } catch {
             XCTAssertEqual(error as? LocalImageDataLoader.LoadError, expectedError, file: file, line: line)
         }
-        XCTAssertEqual(store.messages, [.retrieve(anyURL())], file: file, line: line)
+        XCTAssertEqual(store.messages, [.retrieve(url)], file: file, line: line)
     }
     
     private func nonExpireDate(against date: Date) -> Date {
@@ -105,26 +107,5 @@ final class LoadCachedImageDataUseCaseTests: XCTestCase {
     }
     
     private var maxCacheDays: Int { 7 }
-    
-    class ImageDataStoreSpy: ImageDataStore {
-        typealias RetrieveStub = Result<(Data, Date)?, Error>
-        
-        enum Message: Equatable {
-            case retrieve(URL)
-        }
-        
-        private(set) var messages = [Message]()
-        
-        private var retrieveStubs: [RetrieveStub]
-        
-        init(retrieveStubs: [RetrieveStub]) {
-            self.retrieveStubs = retrieveStubs
-        }
-        
-        func retrieve(for url: URL) async throws -> (data: Data, timestamp: Date)? {
-            messages.append(.retrieve(url))
-            return try retrieveStubs.removeFirst().get()
-        }
-    }
     
 }
