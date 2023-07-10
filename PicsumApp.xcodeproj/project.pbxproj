@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		BE1FD4EA2A5421CE0021777F /* XCTestCase+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1FD4E92A5421CE0021777F /* XCTestCase+Helpers.swift */; };
+		BE1FD4EA2A5421CE0021777F /* SharedHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1FD4E92A5421CE0021777F /* SharedHelpers.swift */; };
 		BE1FD4ED2A5423860021777F /* PhotoListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1FD4EC2A5423860021777F /* PhotoListViewController.swift */; };
 		BE3691092A5566EE00DF0560 /* UIImage+TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3691082A5566EE00DF0560 /* UIImage+TestHelpers.swift */; };
 		BE4876D82A542E4900F6AE3F /* PhotoListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE4876D72A542E4900F6AE3F /* PhotoListCell.swift */; };
@@ -58,7 +58,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		BE1FD4E92A5421CE0021777F /* XCTestCase+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+Helpers.swift"; sourceTree = "<group>"; };
+		BE1FD4E92A5421CE0021777F /* SharedHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedHelpers.swift; sourceTree = "<group>"; };
 		BE1FD4EC2A5423860021777F /* PhotoListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoListViewController.swift; sourceTree = "<group>"; };
 		BE3691082A5566EE00DF0560 /* UIImage+TestHelpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+TestHelpers.swift"; sourceTree = "<group>"; };
 		BE4876D72A542E4900F6AE3F /* PhotoListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoListCell.swift; sourceTree = "<group>"; };
@@ -168,6 +168,28 @@
 			path = Services;
 			sourceTree = "<group>";
 		};
+		BE5DFCF62A5C0988007BD8A7 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				BE5DFCF72A5C0998007BD8A7 /* Helpers */,
+				BE73DE802A58495900B5F438 /* PhotoImageEndpointTests.swift */,
+				BE5496772A56CAFA00D402A3 /* PhotosEndpointTests.swift */,
+				BE54967C2A56D24500D402A3 /* RemotePhotosLoaderTests.swift */,
+				BE5496872A570ED400D402A3 /* RemoteImageDataLoaderTests.swift */,
+				BE54968D2A572B6B00D402A3 /* URLSessionHTTPClientTests.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		BE5DFCF72A5C0998007BD8A7 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				BE5496852A570DF600D402A3 /* ClientSpy.swift */,
+				BE5496892A57137600D402A3 /* HTTPURLResponse+TestHelpers.swift */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
 		BE65602A2A52D4A300CCD5D6 = {
 			isa = PBXGroup;
 			children = (
@@ -210,13 +232,9 @@
 			isa = PBXGroup;
 			children = (
 				BE6560672A52DF7C00CCD5D6 /* Helpers */,
+				BE5DFCF62A5C0988007BD8A7 /* Services */,
 				BE65604D2A52D4A400CCD5D6 /* PhotoListViewModelTests.swift */,
 				BED8ECCC2A5340870077FFF9 /* PhotoListIntegrationTests.swift */,
-				BE5496772A56CAFA00D402A3 /* PhotosEndpointTests.swift */,
-				BE73DE802A58495900B5F438 /* PhotoImageEndpointTests.swift */,
-				BE54967C2A56D24500D402A3 /* RemotePhotosLoaderTests.swift */,
-				BE5496872A570ED400D402A3 /* RemoteImageDataLoaderTests.swift */,
-				BE54968D2A572B6B00D402A3 /* URLSessionHTTPClientTests.swift */,
 			);
 			path = PicsumAppTests;
 			sourceTree = "<group>";
@@ -224,16 +242,14 @@
 		BE6560672A52DF7C00CCD5D6 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				BE1FD4E92A5421CE0021777F /* SharedHelpers.swift */,
 				BE6560682A52DF8900CCD5D6 /* XCTestCase+MemoryLeakTracking.swift */,
 				BED8ECCE2A53428C0077FFF9 /* PhotosLoaderSpy.swift */,
 				BED8ECD32A536D9E0077FFF9 /* UIRefreshControl+TestHelpers.swift */,
 				BED8ECD52A536DC90077FFF9 /* UIControl+TestHelpers.swift */,
-				BE1FD4E92A5421CE0021777F /* XCTestCase+Helpers.swift */,
 				BE3691082A5566EE00DF0560 /* UIImage+TestHelpers.swift */,
 				BE8103102A559F4C00CE012A /* PhotoListViewController+TestHelpers.swift */,
 				BE81030E2A559EB700CE012A /* PhotoListCell+TestHelpers.swift */,
-				BE5496852A570DF600D402A3 /* ClientSpy.swift */,
-				BE5496892A57137600D402A3 /* HTTPURLResponse+TestHelpers.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -405,7 +421,7 @@
 				BE6560692A52DF8900CCD5D6 /* XCTestCase+MemoryLeakTracking.swift in Sources */,
 				BE54967D2A56D24500D402A3 /* RemotePhotosLoaderTests.swift in Sources */,
 				BE5496782A56CAFA00D402A3 /* PhotosEndpointTests.swift in Sources */,
-				BE1FD4EA2A5421CE0021777F /* XCTestCase+Helpers.swift in Sources */,
+				BE1FD4EA2A5421CE0021777F /* SharedHelpers.swift in Sources */,
 				BED8ECCD2A5340870077FFF9 /* PhotoListIntegrationTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
