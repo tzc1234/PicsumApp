@@ -23,13 +23,8 @@ final class LocalImageDataLoader {
     
     func loadImageData(for url: URL) async throws -> Data {
         do {
-            guard let result = try await store.retrieve(for: url) else {
-                throw LoadError.notFound
-            }
-            
-            let maxCacheAge = Calendar(identifier: .gregorian).date(byAdding: .day, value: 7, to: result.timestamp)
-            
-            guard let maxCacheAge, maxCacheAge > currentDate() else {
+            guard let result = try await store.retrieve(for: url),
+                  CacheImageDataPolicy.validate(timestamp: result.timestamp, against: currentDate()) else {
                 throw LoadError.notFound
             }
             
@@ -37,5 +32,19 @@ final class LocalImageDataLoader {
         } catch {
             throw (error as? LoadError) == .notFound ? LoadError.notFound : LoadError.failed
         }
+    }
+}
+
+enum CacheImageDataPolicy {
+    private static let calendar = Calendar(identifier: .gregorian)
+    
+    private static var maxCacheDays: Int { 7 }
+    
+    static func validate(timestamp: Date, against date: Date) -> Bool {
+        guard let maxCacheAge = calendar.date(byAdding: .day, value: maxCacheDays, to: timestamp) else {
+            return false
+        }
+        
+        return maxCacheAge > date
     }
 }
