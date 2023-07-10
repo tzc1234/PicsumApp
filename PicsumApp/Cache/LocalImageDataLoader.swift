@@ -9,9 +9,11 @@ import Foundation
 
 final class LocalImageDataLoader {
     private let store: ImageDataStore
+    private let currentDate: () -> Date
     
-    init(store: ImageDataStore) {
+    init(store: ImageDataStore, currentDate: @escaping () -> Date = Date.init) {
         self.store = store
+        self.currentDate = currentDate
     }
     
     enum LoadError: Error {
@@ -21,11 +23,17 @@ final class LocalImageDataLoader {
     
     func loadImageData(for url: URL) async throws -> Data {
         do {
-            guard let data = try await store.retrieve(for: url) else {
+            guard let result = try await store.retrieve(for: url) else {
                 throw LoadError.notFound
             }
             
-            return data
+            let maxCacheAge = Calendar(identifier: .gregorian).date(byAdding: .day, value: 7, to: result.timestamp)
+            
+            guard let maxCacheAge, maxCacheAge > currentDate() else {
+                throw LoadError.notFound
+            }
+            
+            return result.data
         } catch {
             throw (error as? LoadError) == .notFound ? LoadError.notFound : LoadError.failed
         }
