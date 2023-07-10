@@ -17,8 +17,7 @@ class PhotoImageDataLoaderAdapter: PhotoImageDataLoader {
     
     func loadImageData(by id: String, width: Int, height: Int) async throws -> Data {
         let url = PhotoImageEndpoint.get(id: id, width: width, height: height).url
-        _ = try? await loader.loadImageData(for: url)
-        throw anyNSError()
+        return try await loader.loadImageData(for: url)
     }
 }
 
@@ -48,9 +47,16 @@ final class PhotoImageDataLoaderAdapterTests: XCTestCase {
         do {
             _ = try await sut.loadImageData(by: "1", width: 1, height: 1)
             XCTFail("Should not success")
-        } catch {
-            
-        }
+        } catch {}
+    }
+    
+    func test_loadImageData_deliversDataOnSuccess() async throws {
+        let data = Data("any data".utf8)
+        let (sut, _) = makeSUT(stubs: [.success(data)])
+        
+        let receivedData = try await sut.loadImageData(by: "1", width: 1, height: 1)
+        
+        XCTAssertEqual(receivedData, data)
     }
 
     // MARK: - Helpers
