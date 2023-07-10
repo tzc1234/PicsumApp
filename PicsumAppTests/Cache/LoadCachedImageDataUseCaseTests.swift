@@ -10,35 +10,6 @@ import XCTest
 
 final class LoadCachedImageDataUseCaseTests: XCTestCase {
 
-    class LocalImageDataLoader: ImageDataLoader {
-        private let store: ImageDataStoreSpy
-        
-        init(store: ImageDataStoreSpy) {
-            self.store = store
-        }
-        
-        enum LoadError: Error {
-            case failed
-            case notFound
-        }
-        
-        func loadImageData(for url: URL) async throws -> Data {
-            do {
-                guard let data = try await store.retrieve(for: url) else {
-                    throw LoadError.notFound
-                }
-                
-                return data
-            } catch {
-                if case .notFound = error as? LoadError {
-                    throw LoadError.notFound
-                }
-                
-                throw LoadError.failed
-            }
-        }
-    }
-    
     func test_init_noTriggerStore() {
         let (_, store) = makeSUT()
         
@@ -99,7 +70,7 @@ final class LoadCachedImageDataUseCaseTests: XCTestCase {
         return (sut, store)
     }
     
-    class ImageDataStoreSpy {
+    class ImageDataStoreSpy: ImageDataStore {
         typealias RetrieveStub = Result<Data?, Error>
         
         enum Message: Equatable {
