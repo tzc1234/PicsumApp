@@ -18,7 +18,7 @@ class ImageDataStoreSpy: ImageDataStore {
         case retrieve(URL)
         case deleteData(URL)
         case insert(URL)
-        case invalidateData
+        case invalidateAllData
     }
     
     struct Inserted: Equatable {
@@ -28,6 +28,7 @@ class ImageDataStoreSpy: ImageDataStore {
     
     private(set) var messages = [Message]()
     private(set) var insertedData = [Inserted]()
+    private(set) var invalidatedDates = [Date]()
     
     private var retrieveStubs: [RetrieveStub]
     private var deleteDataStubs: [DeleteDataStub]
@@ -63,8 +64,9 @@ class ImageDataStoreSpy: ImageDataStore {
         }
     }
     
-    func invalidateData() async throws {
-        messages.append(.invalidateData)
+    func invalidateAllData(exceed date: Date) async throws {
+        messages.append(.invalidateAllData)
+        invalidatedDates.append(date)
         try invalidateDataStubs.removeFirst().get()
     }
 }

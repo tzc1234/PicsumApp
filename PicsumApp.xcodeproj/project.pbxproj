@@ -55,6 +55,7 @@
 		BED8ECD62A536DC90077FFF9 /* UIControl+TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BED8ECD52A536DC90077FFF9 /* UIControl+TestHelpers.swift */; };
 		BEE65CF52A5745E3001872BB /* URLSessionHTTPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEE65CF42A5745E3001872BB /* URLSessionHTTPClient.swift */; };
 		BEE811C42A5D624900A2F7D7 /* InvalidateCachedImageDataUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEE811C32A5D624900A2F7D7 /* InvalidateCachedImageDataUseCaseTests.swift */; };
+		BEE811C62A5D69D900A2F7D7 /* CacheTestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEE811C52A5D69D900A2F7D7 /* CacheTestHelpers.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -120,6 +121,7 @@
 		BED8ECD52A536DC90077FFF9 /* UIControl+TestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIControl+TestHelpers.swift"; sourceTree = "<group>"; };
 		BEE65CF42A5745E3001872BB /* URLSessionHTTPClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLSessionHTTPClient.swift; sourceTree = "<group>"; };
 		BEE811C32A5D624900A2F7D7 /* InvalidateCachedImageDataUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvalidateCachedImageDataUseCaseTests.swift; sourceTree = "<group>"; };
+		BEE811C52A5D69D900A2F7D7 /* CacheTestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheTestHelpers.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -330,6 +332,7 @@
 			children = (
 				BED283B52A5C6DB100521BC8 /* Date+TestHelpers.swift */,
 				BED283B72A5C6E7500521BC8 /* ImageDataStoreSpy.swift */,
+				BEE811C52A5D69D900A2F7D7 /* CacheTestHelpers.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -472,6 +475,7 @@
 				BE81030F2A559EB700CE012A /* PhotoListCell+TestHelpers.swift in Sources */,
 				BED283B82A5C6E7500521BC8 /* ImageDataStoreSpy.swift in Sources */,
 				BE54968E2A572B6B00D402A3 /* URLSessionHTTPClientTests.swift in Sources */,
+				BEE811C62A5D69D900A2F7D7 /* CacheTestHelpers.swift in Sources */,
 				BED8ECCF2A53428C0077FFF9 /* PhotosLoaderSpy.swift in Sources */,
 				BED8ECD42A536D9E0077FFF9 /* UIRefreshControl+TestHelpers.swift in Sources */,
 				BE65604E2A52D4A400CCD5D6 /* PhotoListViewModelTests.swift in Sources */,

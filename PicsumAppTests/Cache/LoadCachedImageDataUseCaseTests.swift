@@ -110,6 +110,4 @@ final class LoadCachedImageDataUseCaseTests: XCTestCase {
         date.adding(days: -maxCacheDays)
     }
     
-    private var maxCacheDays: Int { 7 }
-    
 }

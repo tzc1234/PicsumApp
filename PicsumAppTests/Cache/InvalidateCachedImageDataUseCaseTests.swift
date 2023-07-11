@@ -25,7 +25,18 @@ final class InvalidateCachedImageDataUseCaseTests: XCTestCase {
         } catch {
             XCTAssertEqual(error as? LocalImageDataLoader.InvalidateError, .failed)
         }
-        XCTAssertEqual(store.messages, [.invalidateData])
+        XCTAssertEqual(store.messages, [.invalidateAllData])
+    }
+    
+    func test_invalidateImageData_succeedsOnStore() async throws {
+        let now = Date()
+        let (sut, store) = makeSUT(invalidateDataStubs: [.success(())], currentDate: { now })
+        
+        try await sut.invalidateImageData()
+        
+        let expirationDate = now.adding(days: -maxCacheDays)
+        XCTAssertEqual(store.invalidatedDates, [expirationDate])
+        XCTAssertEqual(store.messages, [.invalidateAllData])
     }
 
     // MARK: - Helpers
