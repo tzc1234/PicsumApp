@@ -54,6 +54,7 @@
 		BED8ECD42A536D9E0077FFF9 /* UIRefreshControl+TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BED8ECD32A536D9E0077FFF9 /* UIRefreshControl+TestHelpers.swift */; };
 		BED8ECD62A536DC90077FFF9 /* UIControl+TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BED8ECD52A536DC90077FFF9 /* UIControl+TestHelpers.swift */; };
 		BEE65CF52A5745E3001872BB /* URLSessionHTTPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEE65CF42A5745E3001872BB /* URLSessionHTTPClient.swift */; };
+		BEE811C42A5D624900A2F7D7 /* InvalidateCachedImageDataUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEE811C32A5D624900A2F7D7 /* InvalidateCachedImageDataUseCaseTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -118,6 +119,7 @@
 		BED8ECD32A536D9E0077FFF9 /* UIRefreshControl+TestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIRefreshControl+TestHelpers.swift"; sourceTree = "<group>"; };
 		BED8ECD52A536DC90077FFF9 /* UIControl+TestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIControl+TestHelpers.swift"; sourceTree = "<group>"; };
 		BEE65CF42A5745E3001872BB /* URLSessionHTTPClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLSessionHTTPClient.swift; sourceTree = "<group>"; };
+		BEE811C32A5D624900A2F7D7 /* InvalidateCachedImageDataUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvalidateCachedImageDataUseCaseTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -216,6 +218,7 @@
 				BED283B42A5C6D9C00521BC8 /* Helpers */,
 				BE5DFCFF2A5C43F0007BD8A7 /* LoadCachedImageDataUseCaseTests.swift */,
 				BE525AEB2A5D4672000D3071 /* CacheImageDataUseCaseTests.swift */,
+				BEE811C32A5D624900A2F7D7 /* InvalidateCachedImageDataUseCaseTests.swift */,
 			);
 			path = Cache;
 			sourceTree = "<group>";
@@ -478,6 +481,7 @@
 				BE54968A2A57137600D402A3 /* HTTPURLResponse+TestHelpers.swift in Sources */,
 				BED8ECD62A536DC90077FFF9 /* UIControl+TestHelpers.swift in Sources */,
 				BE73DE812A58495900B5F438 /* PhotoImageEndpointTests.swift in Sources */,
+				BEE811C42A5D624900A2F7D7 /* InvalidateCachedImageDataUseCaseTests.swift in Sources */,
 				BE6560692A52DF8900CCD5D6 /* XCTestCase+MemoryLeakTracking.swift in Sources */,
 				BE54967D2A56D24500D402A3 /* RemotePhotosLoaderTests.swift in Sources */,
 				BE5496782A56CAFA00D402A3 /* PhotosEndpointTests.swift in Sources */,
