@@ -65,7 +65,7 @@ extension LocalImageDataLoader {
     
     func invalidateImageData() async throws {
         do {
-            let expirationDate = CacheImageDataPolicy.calendar.date(byAdding: .day, value: -CacheImageDataPolicy.maxCacheDays, to: currentDate())!
+            let expirationDate = CacheImageDataPolicy.expirationDate(from: currentDate())
             try await store.invalidateAllData(exceed: expirationDate)
         } catch {
             throw InvalidateError.failed
@@ -74,14 +74,14 @@ extension LocalImageDataLoader {
 }
 
 enum CacheImageDataPolicy {
-    static let calendar = Calendar(identifier: .gregorian)
-    static var maxCacheDays: Int { 7 }
+    private static let calendar = Calendar(identifier: .gregorian)
+    private static var maxCacheDays: Int { 7 }
+    
+    static func expirationDate(from date: Date) -> Date {
+        calendar.date(byAdding: .day, value: -maxCacheDays, to: date)!
+    }
     
     static func validate(timestamp: Date, against date: Date) -> Bool {
-        guard let maxCacheAge = calendar.date(byAdding: .day, value: maxCacheDays, to: timestamp) else {
-            return false
-        }
-        
-        return maxCacheAge > date
+        timestamp > expirationDate(from: date)
     }
 }
