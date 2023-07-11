@@ -75,7 +75,7 @@ final class LoadCachedImageDataUseCaseTests: XCTestCase {
             retrieveStubs: retrieveStubs,
             deleteDataStubs: [],
             insertStubs: [],
-            invalidateDataStubs: [])
+            deleteAllDataStubs: [])
         let sut = LocalImageDataLoader(store: store, currentDate: currentDate)
         
         trackForMemoryLeaks(store, file: file, line: line)

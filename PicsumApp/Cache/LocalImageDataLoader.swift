@@ -66,7 +66,7 @@ extension LocalImageDataLoader {
     func invalidateImageData() async throws {
         do {
             let expirationDate = CacheImageDataPolicy.expirationDate(from: currentDate())
-            try await store.invalidateAllData(exceed: expirationDate)
+            try await store.deleteAllData(reach: expirationDate)
         } catch {
             throw InvalidateError.failed
         }

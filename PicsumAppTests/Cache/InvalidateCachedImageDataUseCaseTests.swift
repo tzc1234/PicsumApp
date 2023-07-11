@@ -17,7 +17,7 @@ final class InvalidateCachedImageDataUseCaseTests: XCTestCase {
     }
     
     func test_invalidateImageData_deliversErrorOnStoreError() async {
-        let (sut, store) = makeSUT(invalidateDataStubs: [.failure(anyNSError())])
+        let (sut, store) = makeSUT(deleteAllDataStubs: [.failure(anyNSError())])
         
         do {
             try await sut.invalidateImageData()
@@ -25,23 +25,23 @@ final class InvalidateCachedImageDataUseCaseTests: XCTestCase {
         } catch {
             XCTAssertEqual(error as? LocalImageDataLoader.InvalidateError, .failed)
         }
-        XCTAssertEqual(store.messages, [.invalidateAllData])
+        XCTAssertEqual(store.messages, [.deleteAllData])
     }
     
     func test_invalidateImageData_succeedsOnStore() async throws {
         let now = Date()
-        let (sut, store) = makeSUT(invalidateDataStubs: [.success(())], currentDate: { now })
+        let (sut, store) = makeSUT(deleteAllDataStubs: [.success(())], currentDate: { now })
         
         try await sut.invalidateImageData()
         
         let expirationDate = now.adding(days: -maxCacheDays)
-        XCTAssertEqual(store.invalidatedDates, [expirationDate])
-        XCTAssertEqual(store.messages, [.invalidateAllData])
+        XCTAssertEqual(store.datesForDeleteAllData, [expirationDate])
+        XCTAssertEqual(store.messages, [.deleteAllData])
     }
 
     // MARK: - Helpers
     
-    private func makeSUT(invalidateDataStubs: [ImageDataStoreSpy.InvalidateDataStub] = [],
+    private func makeSUT(deleteAllDataStubs: [ImageDataStoreSpy.DeleteAllDataStub] = [],
                          currentDate: @escaping () -> Date = Date.init,
                          file: StaticString = #filePath,
                          line: UInt = #line) -> (sut: LocalImageDataLoader, store: ImageDataStoreSpy) {
@@ -49,7 +49,7 @@ final class InvalidateCachedImageDataUseCaseTests: XCTestCase {
             retrieveStubs: [],
             deleteDataStubs: [],
             insertStubs: [],
-            invalidateDataStubs: invalidateDataStubs)
+            deleteAllDataStubs: deleteAllDataStubs)
         let sut = LocalImageDataLoader(store: store, currentDate: currentDate)
         
         trackForMemoryLeaks(store, file: file, line: line)

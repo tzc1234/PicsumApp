@@ -12,13 +12,13 @@ class ImageDataStoreSpy: ImageDataStore {
     typealias RetrieveStub = Result<(Data, Date)?, Error>
     typealias DeleteDataStub = Result<Void, Error>
     typealias InsertStub = Result<Void, Error>
-    typealias InvalidateDataStub = Result<Void, Error>
+    typealias DeleteAllDataStub = Result<Void, Error>
     
     enum Message: Equatable {
         case retrieve(URL)
         case deleteData(URL)
         case insert(URL)
-        case invalidateAllData
+        case deleteAllData
     }
     
     struct Inserted: Equatable {
@@ -28,19 +28,19 @@ class ImageDataStoreSpy: ImageDataStore {
     
     private(set) var messages = [Message]()
     private(set) var insertedData = [Inserted]()
-    private(set) var invalidatedDates = [Date]()
+    private(set) var datesForDeleteAllData = [Date]()
     
     private var retrieveStubs: [RetrieveStub]
     private var deleteDataStubs: [DeleteDataStub]
     private var insertStubs: [InsertStub]
-    private var invalidateDataStubs: [InvalidateDataStub]
+    private var deleteAllDataStubs: [DeleteAllDataStub]
     
     init(retrieveStubs: [RetrieveStub], deleteDataStubs: [DeleteDataStub],
-         insertStubs: [InsertStub], invalidateDataStubs: [InvalidateDataStub]) {
+         insertStubs: [InsertStub], deleteAllDataStubs: [DeleteAllDataStub]) {
         self.retrieveStubs = retrieveStubs
         self.deleteDataStubs = deleteDataStubs
         self.insertStubs = insertStubs
-        self.invalidateDataStubs = invalidateDataStubs
+        self.deleteAllDataStubs = deleteAllDataStubs
     }
     
     func retrieve(for url: URL) async throws -> (data: Data, timestamp: Date)? {
@@ -64,9 +64,9 @@ class ImageDataStoreSpy: ImageDataStore {
         }
     }
     
-    func invalidateAllData(exceed date: Date) async throws {
-        messages.append(.invalidateAllData)
-        invalidatedDates.append(date)
-        try invalidateDataStubs.removeFirst().get()
+    func deleteAllData(reach date: Date) async throws {
+        messages.append(.deleteAllData)
+        datesForDeleteAllData.append(date)
+        try deleteAllDataStubs.removeFirst().get()
     }
 }
