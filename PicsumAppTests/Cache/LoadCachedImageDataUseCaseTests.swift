@@ -17,36 +17,36 @@ final class LoadCachedImageDataUseCaseTests: XCTestCase {
     }
     
     func test_loadImageData_deliversFailedErrorOnStoreError() async {
-        let (sut, store) = makeSUT(retrieveStubs: [.failure(anyNSError())])
+        let (sut, store) = makeSUT(retrieveDataStubs: [.failure(anyNSError())])
         
         await expect(sut, store: store, withError: .failed)
     }
     
     func test_loadImageData_deliversErrorWhenNoDataFound() async {
-        let (sut, store) = makeSUT(retrieveStubs: [.success(nil)])
+        let (sut, store) = makeSUT(retrieveDataStubs: [.success(nil)])
         
         await expect(sut, store: store, withError: .notFound)
     }
     
     func test_loadImageData_deliversDataWhenDataFound() async throws {
         let data = anyData()
-        let (sut, store) = makeSUT(retrieveStubs: [.success(data)])
+        let (sut, store) = makeSUT(retrieveDataStubs: [.success(data)])
         let url = URL(string: "https://load-image-url.com")!
         
         let receivedData = try await sut.loadImageData(for: url)
         
         XCTAssertEqual(receivedData, data)
-        XCTAssertEqual(store.messages, [.retrieve(url)])
+        XCTAssertEqual(store.messages, [.retrieveData(url)])
     }
     
     // MARK: - Helpers
     
-    private func makeSUT(retrieveStubs: [ImageDataStoreSpy.RetrieveStub] = [],
+    private func makeSUT(retrieveDataStubs: [ImageDataStoreSpy.RetrieveDataStub] = [],
                          currentDate: @escaping () -> Date = Date.init,
                          file: StaticString = #filePath,
                          line: UInt = #line) -> (sut: LocalImageDataLoader, store: ImageDataStoreSpy) {
         let store = ImageDataStoreSpy(
-            retrieveStubs: retrieveStubs,
+            retrieveDataStubs: retrieveDataStubs,
             deleteDataStubs: [],
             insertStubs: [],
             deleteAllDataStubs: [])
@@ -69,7 +69,7 @@ final class LoadCachedImageDataUseCaseTests: XCTestCase {
         } catch {
             XCTAssertEqual(error as? LocalImageDataLoader.LoadError, expectedError, file: file, line: line)
         }
-        XCTAssertEqual(store.messages, [.retrieve(url)], file: file, line: line)
+        XCTAssertEqual(store.messages, [.retrieveData(url)], file: file, line: line)
     }
     
 }

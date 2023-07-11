@@ -9,13 +9,13 @@ import Foundation
 @testable import PicsumApp
 
 class ImageDataStoreSpy: ImageDataStore {
-    typealias RetrieveStub = Result<Data?, Error>
+    typealias RetrieveDataStub = Result<Data?, Error>
     typealias DeleteDataStub = Result<Void, Error>
     typealias InsertStub = Result<Void, Error>
     typealias DeleteAllDataStub = Result<Void, Error>
     
     enum Message: Equatable {
-        case retrieve(URL)
+        case retrieveData(URL)
         case deleteData(URL)
         case insert(URL)
         case deleteAllData
@@ -30,21 +30,21 @@ class ImageDataStoreSpy: ImageDataStore {
     private(set) var insertedData = [Inserted]()
     private(set) var datesForDeleteAllData = [Date]()
     
-    private var retrieveStubs: [RetrieveStub]
+    private var retrieveStubs: [RetrieveDataStub]
     private var deleteDataStubs: [DeleteDataStub]
     private var insertStubs: [InsertStub]
     private var deleteAllDataStubs: [DeleteAllDataStub]
     
-    init(retrieveStubs: [RetrieveStub], deleteDataStubs: [DeleteDataStub],
+    init(retrieveDataStubs: [RetrieveDataStub], deleteDataStubs: [DeleteDataStub],
          insertStubs: [InsertStub], deleteAllDataStubs: [DeleteAllDataStub]) {
-        self.retrieveStubs = retrieveStubs
+        self.retrieveStubs = retrieveDataStubs
         self.deleteDataStubs = deleteDataStubs
         self.insertStubs = insertStubs
         self.deleteAllDataStubs = deleteAllDataStubs
     }
     
-    func retrieve(for url: URL) async throws -> Data? {
-        messages.append(.retrieve(url))
+    func retrieveData(for url: URL) async throws -> Data? {
+        messages.append(.retrieveData(url))
         return try retrieveStubs.removeFirst().get()
     }
     

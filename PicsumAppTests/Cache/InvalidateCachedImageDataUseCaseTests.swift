@@ -46,7 +46,7 @@ final class InvalidateCachedImageDataUseCaseTests: XCTestCase {
                          file: StaticString = #filePath,
                          line: UInt = #line) -> (sut: LocalImageDataLoader, store: ImageDataStoreSpy) {
         let store = ImageDataStoreSpy(
-            retrieveStubs: [],
+            retrieveDataStubs: [],
             deleteDataStubs: [],
             insertStubs: [],
             deleteAllDataStubs: deleteAllDataStubs)

@@ -25,7 +25,7 @@ extension LocalImageDataLoader: ImageDataLoader {
     
     func loadImageData(for url: URL) async throws -> Data {
         do {
-            guard let data = try await store.retrieve(for: url) else {
+            guard let data = try await store.retrieveData(for: url) else {
                 throw LoadError.notFound
             }
             
