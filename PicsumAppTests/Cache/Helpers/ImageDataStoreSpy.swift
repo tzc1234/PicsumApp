@@ -11,20 +11,24 @@ import Foundation
 class ImageDataStoreSpy: ImageDataStore {
     typealias RetrieveStub = Result<(Data, Date)?, Error>
     typealias DeleteDataStub = Result<Void, Error>
+    typealias InsertStub = Result<Void, Error>
     
     enum Message: Equatable {
         case retrieve(URL)
         case deleteData(URL)
+        case insert(URL)
     }
     
     private(set) var messages = [Message]()
     
     private var retrieveStubs: [RetrieveStub]
     private var deleteDataStubs: [DeleteDataStub]
+    private var insertStubs: [InsertStub]
     
-    init(retrieveStubs: [RetrieveStub], deleteDataStubs: [DeleteDataStub]) {
+    init(retrieveStubs: [RetrieveStub], deleteDataStubs: [DeleteDataStub], insertStubs: [InsertStub]) {
         self.retrieveStubs = retrieveStubs
         self.deleteDataStubs = deleteDataStubs
+        self.insertStubs = insertStubs
     }
     
     func retrieve(for url: URL) async throws -> (data: Data, timestamp: Date)? {
@@ -35,5 +39,10 @@ class ImageDataStoreSpy: ImageDataStore {
     func deleteData(for url: URL) async throws {
         messages.append(.deleteData(url))
         try deleteDataStubs.removeFirst().get()
+    }
+    
+    func insert(data: Data, timestamp: Date, for url: URL) async throws {
+        messages.append(.insert(url))
+        try insertStubs.removeFirst().get()
     }
 }
