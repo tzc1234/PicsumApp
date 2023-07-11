@@ -71,7 +71,7 @@ final class LoadCachedImageDataUseCaseTests: XCTestCase {
                          currentDate: @escaping () -> Date = Date.init,
                          file: StaticString = #filePath,
                          line: UInt = #line) -> (sut: LocalImageDataLoader, store: ImageDataStoreSpy) {
-        let store = ImageDataStoreSpy(retrieveStubs: retrieveStubs)
+        let store = ImageDataStoreSpy(retrieveStubs: retrieveStubs, deleteDataStubs: [])
         let sut = LocalImageDataLoader(store: store, currentDate: currentDate)
         
         trackForMemoryLeaks(store, file: file, line: line)

@@ -9,4 +9,5 @@ import Foundation
 
 protocol ImageDataStore {
     func retrieve(for url: URL) async throws -> (data: Data, timestamp: Date)?
+    func deleteData(for url: URL) async throws
 }

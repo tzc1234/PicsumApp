@@ -37,6 +37,17 @@ extension LocalImageDataLoader: ImageDataLoader {
     }
 }
 
+extension LocalImageDataLoader {
+    enum SaveError: Error {
+        case existedDataRemovalFailed
+    }
+    
+    func save(data: Data, for url: URL) async throws {
+        try? await store.deleteData(for: url)
+        throw SaveError.existedDataRemovalFailed
+    }
+}
+
 enum CacheImageDataPolicy {
     private static let calendar = Calendar(identifier: .gregorian)
     
