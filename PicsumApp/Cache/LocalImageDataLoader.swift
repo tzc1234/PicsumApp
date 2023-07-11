@@ -25,12 +25,11 @@ extension LocalImageDataLoader: ImageDataLoader {
     
     func loadImageData(for url: URL) async throws -> Data {
         do {
-            guard let result = try await store.retrieve(for: url),
-                  CacheImageDataPolicy.validate(timestamp: result.timestamp, against: currentDate()) else {
+            guard let data = try await store.retrieve(for: url) else {
                 throw LoadError.notFound
             }
             
-            return result.data
+            return data
         } catch {
             throw (error as? LoadError) == .notFound ? LoadError.notFound : LoadError.failed
         }
@@ -79,9 +78,5 @@ enum CacheImageDataPolicy {
     
     static func expirationDate(from date: Date) -> Date {
         calendar.date(byAdding: .day, value: -maxCacheDays, to: date)!
-    }
-    
-    static func validate(timestamp: Date, against date: Date) -> Bool {
-        timestamp > expirationDate(from: date)
     }
 }

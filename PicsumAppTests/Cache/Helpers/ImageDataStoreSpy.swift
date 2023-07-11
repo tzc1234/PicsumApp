@@ -9,7 +9,7 @@ import Foundation
 @testable import PicsumApp
 
 class ImageDataStoreSpy: ImageDataStore {
-    typealias RetrieveStub = Result<(Data, Date)?, Error>
+    typealias RetrieveStub = Result<Data?, Error>
     typealias DeleteDataStub = Result<Void, Error>
     typealias InsertStub = Result<Void, Error>
     typealias DeleteAllDataStub = Result<Void, Error>
@@ -43,7 +43,7 @@ class ImageDataStoreSpy: ImageDataStore {
         self.deleteAllDataStubs = deleteAllDataStubs
     }
     
-    func retrieve(for url: URL) async throws -> (data: Data, timestamp: Date)? {
+    func retrieve(for url: URL) async throws -> Data? {
         messages.append(.retrieve(url))
         return try retrieveStubs.removeFirst().get()
     }

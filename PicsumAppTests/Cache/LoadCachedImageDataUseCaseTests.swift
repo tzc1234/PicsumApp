@@ -16,53 +16,27 @@ final class LoadCachedImageDataUseCaseTests: XCTestCase {
         XCTAssertEqual(store.messages.count, 0)
     }
     
-    func test_loadImageData_requestsCachedDateForCorrectURL() async {
-        let (sut, store) = makeSUT(retrieveStubs: [.failure(anyNSError())])
-        let url = URL(string: "https://load-image-url.com")!
-        
-        _ = try? await sut.loadImageData(for: url)
-        
-        XCTAssertEqual(store.messages, [.retrieve(url)])
-    }
-    
     func test_loadImageData_deliversFailedErrorOnStoreError() async {
         let (sut, store) = makeSUT(retrieveStubs: [.failure(anyNSError())])
         
         await expect(sut, store: store, withError: .failed)
     }
     
-    func test_loadImageData_deliversNotFoundErrorWhenNoDataFound() async {
+    func test_loadImageData_deliversErrorWhenNoDataFound() async {
         let (sut, store) = makeSUT(retrieveStubs: [.success(nil)])
         
         await expect(sut, store: store, withError: .notFound)
     }
     
-    func test_loadImageData_deliversNotFoundErrorWhenExpiredDataFound() async {
-        let now = Date()
-        let expireDate = expireDate(against: now)
-        let (sut, store) = makeSUT(retrieveStubs: [.success((anyData(), expireDate))], currentDate: { now })
-        
-        await expect(sut, store: store, withError: .notFound)
-    }
-    
-    func test_loadImageData_deliversNotFoundErrorWhenDataOnExpiration() async {
-        let now = Date()
-        let expirationData = expirationData(against: now)
-        let (sut, store) = makeSUT(retrieveStubs: [.success((anyData(), expirationData))], currentDate: { now })
-        
-        await expect(sut, store: store, withError: .notFound)
-    }
-    
-    func test_loadImageData_deliversDataWhenNonExpiredDataFound() async throws {
-        let now = Date()
-        let nonExpiredDate = nonExpireDate(against: now)
+    func test_loadImageData_deliversDataWhenDataFound() async throws {
         let data = anyData()
-        let (sut, store) = makeSUT(retrieveStubs: [.success((data, nonExpiredDate))], currentDate: { now })
+        let (sut, store) = makeSUT(retrieveStubs: [.success(data)])
+        let url = URL(string: "https://load-image-url.com")!
         
-        let receivedData = try await sut.loadImageData(for: anyURL())
+        let receivedData = try await sut.loadImageData(for: url)
         
         XCTAssertEqual(receivedData, data)
-        XCTAssertEqual(store.messages, [.retrieve(anyURL())])
+        XCTAssertEqual(store.messages, [.retrieve(url)])
     }
     
     // MARK: - Helpers
@@ -96,18 +70,6 @@ final class LoadCachedImageDataUseCaseTests: XCTestCase {
             XCTAssertEqual(error as? LocalImageDataLoader.LoadError, expectedError, file: file, line: line)
         }
         XCTAssertEqual(store.messages, [.retrieve(url)], file: file, line: line)
-    }
-    
-    private func nonExpireDate(against date: Date) -> Date {
-        date.adding(days: -maxCacheDays).adding(seconds: 1)
-    }
-    
-    private func expireDate(against date: Date) -> Date {
-        date.adding(days: -maxCacheDays).adding(seconds: -1)
-    }
-    
-    private func expirationData(against date: Date) -> Date {
-        date.adding(days: -maxCacheDays)
     }
     
 }
