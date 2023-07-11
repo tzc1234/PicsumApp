@@ -11,4 +11,5 @@ protocol ImageDataStore {
     func retrieve(for url: URL) async throws -> (data: Data, timestamp: Date)?
     func deleteData(for url: URL) async throws
     func insert(data: Data, timestamp: Date, for url: URL) async throws
+    func invalidateData() async throws
 }

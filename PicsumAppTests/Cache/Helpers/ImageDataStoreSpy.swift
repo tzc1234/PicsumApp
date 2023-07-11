@@ -12,11 +12,13 @@ class ImageDataStoreSpy: ImageDataStore {
     typealias RetrieveStub = Result<(Data, Date)?, Error>
     typealias DeleteDataStub = Result<Void, Error>
     typealias InsertStub = Result<Void, Error>
+    typealias InvalidateDataStub = Result<Void, Error>
     
     enum Message: Equatable {
         case retrieve(URL)
         case deleteData(URL)
         case insert(URL)
+        case invalidateData
     }
     
     struct Inserted: Equatable {
@@ -30,11 +32,14 @@ class ImageDataStoreSpy: ImageDataStore {
     private var retrieveStubs: [RetrieveStub]
     private var deleteDataStubs: [DeleteDataStub]
     private var insertStubs: [InsertStub]
+    private var invalidateDataStubs: [InvalidateDataStub]
     
-    init(retrieveStubs: [RetrieveStub], deleteDataStubs: [DeleteDataStub], insertStubs: [InsertStub]) {
+    init(retrieveStubs: [RetrieveStub], deleteDataStubs: [DeleteDataStub],
+         insertStubs: [InsertStub], invalidateDataStubs: [InvalidateDataStub]) {
         self.retrieveStubs = retrieveStubs
         self.deleteDataStubs = deleteDataStubs
         self.insertStubs = insertStubs
+        self.invalidateDataStubs = invalidateDataStubs
     }
     
     func retrieve(for url: URL) async throws -> (data: Data, timestamp: Date)? {
@@ -56,5 +61,10 @@ class ImageDataStoreSpy: ImageDataStore {
         } catch {
             throw error
         }
+    }
+    
+    func invalidateData() async throws {
+        messages.append(.invalidateData)
+        try invalidateDataStubs.removeFirst().get()
     }
 }

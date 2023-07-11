@@ -58,6 +58,17 @@ extension LocalImageDataLoader {
     }
 }
 
+extension LocalImageDataLoader {
+    enum InvalidateError: Error {
+        case failed
+    }
+    
+    func invalidateImageData() async throws {
+        try? await store.invalidateData()
+        throw InvalidateError.failed
+    }
+}
+
 enum CacheImageDataPolicy {
     private static let calendar = Calendar(identifier: .gregorian)
     

@@ -15,13 +15,30 @@ final class InvalidateCachedImageDataUseCaseTests: XCTestCase {
         
         XCTAssertEqual(store.messages.count, 0)
     }
+    
+    func test_invalidateImageData_deliversErrorOnStoreError() async {
+        let (sut, store) = makeSUT(invalidateDataStubs: [.failure(anyNSError())])
+        
+        do {
+            try await sut.invalidateImageData()
+            XCTFail("Should not success")
+        } catch {
+            XCTAssertEqual(error as? LocalImageDataLoader.InvalidateError, .failed)
+        }
+        XCTAssertEqual(store.messages, [.invalidateData])
+    }
 
     // MARK: - Helpers
     
-    private func makeSUT(currentDate: @escaping () -> Date = Date.init,
+    private func makeSUT(invalidateDataStubs: [ImageDataStoreSpy.InvalidateDataStub] = [],
+                         currentDate: @escaping () -> Date = Date.init,
                          file: StaticString = #filePath,
                          line: UInt = #line) -> (sut: LocalImageDataLoader, store: ImageDataStoreSpy) {
-        let store = ImageDataStoreSpy(retrieveStubs: [], deleteDataStubs: [], insertStubs: [])
+        let store = ImageDataStoreSpy(
+            retrieveStubs: [],
+            deleteDataStubs: [],
+            insertStubs: [],
+            invalidateDataStubs: invalidateDataStubs)
         let sut = LocalImageDataLoader(store: store, currentDate: currentDate)
         
         trackForMemoryLeaks(store, file: file, line: line)
