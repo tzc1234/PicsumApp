@@ -19,7 +19,13 @@ class ImageDataStoreSpy: ImageDataStore {
         case insert(URL)
     }
     
+    struct Inserted: Equatable {
+        let data: Data
+        let timestamp: Date
+    }
+    
     private(set) var messages = [Message]()
+    private(set) var insertedData = [Inserted]()
     
     private var retrieveStubs: [RetrieveStub]
     private var deleteDataStubs: [DeleteDataStub]
@@ -43,6 +49,12 @@ class ImageDataStoreSpy: ImageDataStore {
     
     func insert(data: Data, timestamp: Date, for url: URL) async throws {
         messages.append(.insert(url))
-        try insertStubs.removeFirst().get()
+
+        do {
+            try insertStubs.removeFirst().get()
+            insertedData.append(.init(data: data, timestamp: timestamp))
+        } catch {
+            throw error
+        }
     }
 }

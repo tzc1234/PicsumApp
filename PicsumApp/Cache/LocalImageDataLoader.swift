@@ -40,18 +40,18 @@ extension LocalImageDataLoader: ImageDataLoader {
 extension LocalImageDataLoader {
     enum SaveError: Error {
         case failed
-        case existedDataRemovalFailed
+        case oldDataRemovalFailed
     }
     
     func save(data: Data, for url: URL) async throws {
         do {
             try await store.deleteData(for: url)
         } catch {
-            throw SaveError.existedDataRemovalFailed
+            throw SaveError.oldDataRemovalFailed
         }
         
         do {
-            try await store.insert(data: data, timestamp: .init(), for: url)
+            try await store.insert(data: data, timestamp: currentDate(), for: url)
         } catch {
             throw SaveError.failed
         }

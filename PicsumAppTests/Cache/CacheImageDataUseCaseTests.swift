@@ -24,7 +24,7 @@ final class CacheImageDataUseCaseTests: XCTestCase {
             try await sut.save(data: anyData(), for: url)
             XCTFail("Should not success")
         } catch {
-            XCTAssertEqual(error as? LocalImageDataLoader.SaveError, .existedDataRemovalFailed)
+            XCTAssertEqual(error as? LocalImageDataLoader.SaveError, .oldDataRemovalFailed)
         }
         XCTAssertEqual(store.messages, [.deleteData(url)])
     }
@@ -39,6 +39,18 @@ final class CacheImageDataUseCaseTests: XCTestCase {
         } catch {
             XCTAssertEqual(error as? LocalImageDataLoader.SaveError, .failed)
         }
+        XCTAssertEqual(store.messages, [.deleteData(url), .insert(url)])
+    }
+    
+    func test_save_insertDataAndTimestampForURLSuccessfully() async throws {
+        let now = Date.distantFuture
+        let (sut, store) = makeSUT(deleteDataStubs: [.success(())], insertStubs: [.success(())], currentDate: { now })
+        let data = Data("data for save".utf8)
+        let url = URL(string: "https://save-image-url.com")!
+        
+        try await sut.save(data: data, for: url)
+        
+        XCTAssertEqual(store.insertedData, [.init(data: data, timestamp: now)])
         XCTAssertEqual(store.messages, [.deleteData(url), .insert(url)])
     }
     
