@@ -43,7 +43,6 @@ final class CoreDataImageDataStore {
     func deleteAllData(reach date: Date) async throws {
         try await perform { context in
             try ManagedImage.batchDelete(in: context, reach: date)
-            try context.save()
         }
     }
     

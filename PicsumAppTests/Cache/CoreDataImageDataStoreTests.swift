@@ -55,18 +55,20 @@ final class CoreDataImageDataStoreTests: XCTestCase {
     
     func test_insert_overridesOldDataByNewData() async throws {
         let sut = try makeSUT()
-        let url = anyURL()
+        let otherURL = URL(string: "https://other-data-url.com")!
+        let otherData = Data("other data".utf8)
+        let url = URL(string: "https://override-data-url.com")!
         let oldData = Data("old data".utf8)
         let newData = Data("new data".utf8)
         
+        try await insert(data: otherData, url: otherURL, to: sut)
         try await insert(data: oldData, url: url, to: sut)
-        let retrievedOldData = try await sut.retrieveData(for: url)
-        
         try await insert(data: newData, url: url, to: sut)
         let retrievedNewData = try await sut.retrieveData(for: url)
+        let retrievedOtherData = try await sut.retrieveData(for: otherURL)
         
-        XCTAssertEqual(retrievedOldData, oldData)
         XCTAssertEqual(retrievedNewData, newData)
+        XCTAssertEqual(retrievedOtherData, otherData)
     }
     
     func test_deleteData_ignoresWhenNoCache() async throws {
@@ -120,15 +122,15 @@ final class CoreDataImageDataStoreTests: XCTestCase {
         let lessThanDateInput = (
             data: Data("less than date data".utf8),
             date: date.adding(seconds: -1),
-            url: URL(string: "https://less-than-date.com")!)
+            url: URL(string: "https://less-than-date-data-url.com")!)
         let equalToDateInput = (
             data: Data("equal to date data".utf8),
             date: date,
-            url: URL(string: "https://equal-to-date.com")!)
+            url: URL(string: "https://equal-to-date-data-url.com")!)
         let moreThanDateInput = (
             data: Data("more than date data".utf8),
             date: date.adding(seconds: 1),
-            url: URL(string: "https://more-than-date.com")!)
+            url: URL(string: "https://more-than-date-data-url.com")!)
         
         for input in [lessThanDateInput, equalToDateInput, moreThanDateInput] {
             try await insert(data: input.data, timestamp: input.date, url: input.url, to: sut)
