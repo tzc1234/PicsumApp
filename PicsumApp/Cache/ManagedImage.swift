@@ -13,3 +13,13 @@ final class ManagedImage: NSManagedObject {
     @NSManaged var timestamp: Date
     @NSManaged var url: URL
 }
+
+extension ManagedImage {
+    static func find(in context: NSManagedObjectContext, for url: URL) throws -> ManagedImage? {
+        let request = NSFetchRequest<ManagedImage>(entityName: entity().name!)
+        request.predicate = NSPredicate(format: "url = %@", url as CVarArg)
+        request.returnsObjectsAsFaults = false
+        request.fetchLimit = 1
+        return try context.fetch(request).first
+    }
+}
