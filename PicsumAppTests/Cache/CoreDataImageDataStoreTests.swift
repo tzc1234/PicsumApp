@@ -28,4 +28,14 @@ final class CoreDataImageDataStoreTests: XCTestCase {
         XCTAssertNil(data)
     }
 
+    func test_retrieveDataTwice_deliversNilWhenNoCacheWithNoSideEffects() async throws {
+        let sut = CoreDataImageDataStore()
+        
+        let firstRetrievedData = try await sut.retrieveData(for: anyURL())
+        let lastRetrievedData = try await sut.retrieveData(for: anyURL())
+        
+        XCTAssertNil(firstRetrievedData)
+        XCTAssertNil(lastRetrievedData)
+    }
+    
 }
