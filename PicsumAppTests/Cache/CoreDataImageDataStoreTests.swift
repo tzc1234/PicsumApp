@@ -5,56 +5,8 @@
 //  Created by Tsz-Lung on 12/07/2023.
 //
 
-import CoreData
 import XCTest
 @testable import PicsumApp
-
-class CoreDataImageDataStore {
-    private let container: NSPersistentContainer
-    private let context: NSManagedObjectContext
-    
-    init() throws {
-        let modelName = "DataStore"
-        let modelURL = Bundle.main.url(forResource: modelName, withExtension: "momd")
-        let model = NSManagedObjectModel(contentsOf: modelURL!)
-        
-        let storeURL = URL(filePath: "/dev/null")
-        let description = NSPersistentStoreDescription(url: storeURL)
-        let container = NSPersistentContainer(name: modelName, managedObjectModel: model!)
-        container.persistentStoreDescriptions = [description]
-        
-        var loadError: Error?
-        container.loadPersistentStores { loadError = $1 }
-        try loadError.map { throw $0 }
-        
-        self.container = container
-        self.context = container.newBackgroundContext()
-    }
-    
-    func retrieveData(for url: URL) async throws -> Data? {
-        let context = self.context
-        return try await context.perform {
-            let request = NSFetchRequest<ManagedImage>(entityName: "ManagedImage")
-            request.predicate = NSPredicate(format: "url = %@", url as CVarArg)
-            request.returnsObjectsAsFaults = false
-            request.fetchLimit = 1
-            let image = try context.fetch(request).first
-            
-            return image?.data
-        }
-    }
-    
-    func insert(data: Data, timestamp: Date, for url: URL) async throws {
-        let context = self.context
-        try await context.perform {
-            let image = ManagedImage(context: context)
-            image.data = data
-            image.timestamp = timestamp
-            image.url = url
-            try context.save()
-        }
-    }
-}
 
 final class CoreDataImageDataStoreTests: XCTestCase {
 
@@ -93,7 +45,7 @@ final class CoreDataImageDataStoreTests: XCTestCase {
     // MARK: - Helpers
     
     private func makeSUT(file: StaticString = #filePath, line: UInt = #line) throws -> CoreDataImageDataStore {
-        let sut = try CoreDataImageDataStore()
+        let sut = try CoreDataImageDataStore(storeURL: URL(filePath: "/dev/null"))
         trackForMemoryLeaks(sut, file: file, line: line)
         return sut
     }

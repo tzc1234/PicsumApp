@@ -29,6 +29,7 @@
 		BE5DA2092A5E92CD000A90D3 /* CoreDataImageDataStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE5DA2082A5E92CD000A90D3 /* CoreDataImageDataStoreTests.swift */; };
 		BE5DA20C2A5EA070000A90D3 /* DataStore.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = BE5DA20A2A5EA070000A90D3 /* DataStore.xcdatamodeld */; };
 		BE5DA20E2A5EA1CE000A90D3 /* ManagedImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE5DA20D2A5EA1CE000A90D3 /* ManagedImage.swift */; };
+		BE5DA2102A5EBB42000A90D3 /* CoreDataImageDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE5DA20F2A5EBB42000A90D3 /* CoreDataImageDataStore.swift */; };
 		BE5DFCF92A5C0CAF007BD8A7 /* PhotoImageDataLoaderAdapterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE5DFCF82A5C0CAF007BD8A7 /* PhotoImageDataLoaderAdapterTests.swift */; };
 		BE5DFCFB2A5C14FF007BD8A7 /* PhotoImageDataLoaderAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE5DFCFA2A5C14FF007BD8A7 /* PhotoImageDataLoaderAdapter.swift */; };
 		BE5DFCFD2A5C1AAD007BD8A7 /* ImageDataLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE5DFCFC2A5C1AAD007BD8A7 /* ImageDataLoader.swift */; };
@@ -95,6 +96,7 @@
 		BE5DA2082A5E92CD000A90D3 /* CoreDataImageDataStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataImageDataStoreTests.swift; sourceTree = "<group>"; };
 		BE5DA20B2A5EA070000A90D3 /* DataStore.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DataStore.xcdatamodel; sourceTree = "<group>"; };
 		BE5DA20D2A5EA1CE000A90D3 /* ManagedImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedImage.swift; sourceTree = "<group>"; };
+		BE5DA20F2A5EBB42000A90D3 /* CoreDataImageDataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataImageDataStore.swift; sourceTree = "<group>"; };
 		BE5DFCF82A5C0CAF007BD8A7 /* PhotoImageDataLoaderAdapterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoImageDataLoaderAdapterTests.swift; sourceTree = "<group>"; };
 		BE5DFCFA2A5C14FF007BD8A7 /* PhotoImageDataLoaderAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoImageDataLoaderAdapter.swift; sourceTree = "<group>"; };
 		BE5DFCFC2A5C1AAD007BD8A7 /* ImageDataLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDataLoader.swift; sourceTree = "<group>"; };
@@ -333,8 +335,9 @@
 				BEC9C53A2A5C56730043B0C9 /* ImageDataStore.swift */,
 				BEC9C53C2A5C56930043B0C9 /* LocalImageDataLoader.swift */,
 				BEE811C72A5DE87200A2F7D7 /* CacheImageDataPolicy.swift */,
-				BE5DA20A2A5EA070000A90D3 /* DataStore.xcdatamodeld */,
+				BE5DA20F2A5EBB42000A90D3 /* CoreDataImageDataStore.swift */,
 				BE5DA20D2A5EA1CE000A90D3 /* ManagedImage.swift */,
+				BE5DA20A2A5EA070000A90D3 /* DataStore.xcdatamodeld */,
 			);
 			path = Cache;
 			sourceTree = "<group>";
@@ -463,6 +466,7 @@
 				BE5DA20E2A5EA1CE000A90D3 /* ManagedImage.swift in Sources */,
 				BE5DFCFB2A5C14FF007BD8A7 /* PhotoImageDataLoaderAdapter.swift in Sources */,
 				BE5DA20C2A5EA070000A90D3 /* DataStore.xcdatamodeld in Sources */,
+				BE5DA2102A5EBB42000A90D3 /* CoreDataImageDataStore.swift in Sources */,
 				BE4876DA2A547B2A00F6AE3F /* PhotoImageDataLoader.swift in Sources */,
 				BE8103132A55C19700CE012A /* PhotoListCellController.swift in Sources */,
 				BEC9C53D2A5C56930043B0C9 /* LocalImageDataLoader.swift in Sources */,
