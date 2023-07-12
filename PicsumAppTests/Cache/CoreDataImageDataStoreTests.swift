@@ -81,15 +81,25 @@ final class CoreDataImageDataStoreTests: XCTestCase {
         XCTAssertNil(afterDeleteData)
     }
     
-    func test_deleteData_removeCachedData() async throws {
+    func test_deleteData_removeCachedDataForURL() async throws {
         let sut = try makeSUT()
-        let url = anyURL()
+        let deletedDataInput = (
+            data: Data("deleted data".utf8),
+            url: URL(string: "https://deleted-data-url.com")!)
+        let remainedDataInput = (
+            data: Data("remained data".utf8),
+            url: URL(string: "https://remained-data-url.com")!)
         
-        try await insert(data: anyData(), url: url, to: sut)
-        try await delete(for: url, to: sut, withExpectedSaveCount: 1)
-        let afterDeleteData = try await sut.retrieveData(for: url)
+        for input in [deletedDataInput, remainedDataInput] {
+            try await insert(data: input.data, url: input.url, to: sut)
+        }
+        try await delete(for: deletedDataInput.url, to: sut, withExpectedSaveCount: 1)
         
-        XCTAssertNil(afterDeleteData)
+        let deletedData = try await sut.retrieveData(for: deletedDataInput.url)
+        let remainedData = try await sut.retrieveData(for: remainedDataInput.url)
+        
+        XCTAssertNil(deletedData)
+        XCTAssertEqual(remainedData, remainedDataInput.data)
     }
     
     func test_deleteAll_ignoresWhenNoCache() async throws {
