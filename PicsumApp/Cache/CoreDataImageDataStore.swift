@@ -7,7 +7,7 @@
 
 import CoreData
 
-final class CoreDataImageDataStore {
+final class CoreDataImageDataStore: ImageDataStore {
     private let container: NSPersistentContainer
     private let context: NSManagedObjectContext
     
@@ -78,7 +78,8 @@ extension CoreDataImageDataStore {
     }
     
     private static func loadModel() throws -> NSManagedObjectModel {
-        guard let model = Bundle.main.url(forResource: modelName, withExtension: "momd")
+        let bundle = Bundle(for: Self.self)
+        guard let model = bundle.url(forResource: modelName, withExtension: "momd")
             .flatMap({ NSManagedObjectModel(contentsOf: $0) }) else {
                 throw StoreError.modelNotFound
             }

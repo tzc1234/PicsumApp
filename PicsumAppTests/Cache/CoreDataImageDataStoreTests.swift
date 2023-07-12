@@ -139,13 +139,13 @@ final class CoreDataImageDataStoreTests: XCTestCase {
     
     // MARK: - Helpers
     
-    private func makeSUT(file: StaticString = #filePath, line: UInt = #line) throws -> CoreDataImageDataStore {
+    private func makeSUT(file: StaticString = #filePath, line: UInt = #line) throws -> ImageDataStore {
         let sut = try CoreDataImageDataStore(storeURL: URL(filePath: "/dev/null"))
         trackForMemoryLeaks(sut, file: file, line: line)
         return sut
     }
     
-    private func deleteAll(reach date: Date, to sut: CoreDataImageDataStore,
+    private func deleteAll(reach date: Date, to sut: ImageDataStore,
                            file: StaticString = #filePath, line: UInt = #line) async throws {
         let notificationSpy = ContextDidSaveNotificationSpy()
         
@@ -154,7 +154,7 @@ final class CoreDataImageDataStoreTests: XCTestCase {
         XCTAssertEqual(notificationSpy.saveCount, 1, "Expect save once, got \(notificationSpy.saveCount) instead", file: file, line: line)
     }
     
-    private func delete(for url: URL, to sut: CoreDataImageDataStore, withExpectedSaveCount saveCount: Int,
+    private func delete(for url: URL, to sut: ImageDataStore, withExpectedSaveCount saveCount: Int,
                         file: StaticString = #filePath, line: UInt = #line) async throws {
         let notificationSpy = ContextDidSaveNotificationSpy()
         
@@ -163,14 +163,14 @@ final class CoreDataImageDataStoreTests: XCTestCase {
         XCTAssertEqual(notificationSpy.saveCount, saveCount, "Expect save \(saveCount) time(s), got \(notificationSpy.saveCount) instead", file: file, line: line)
     }
     
-    private func insert(inputs: [DataInput], to sut: CoreDataImageDataStore,
+    private func insert(inputs: [DataInput], to sut: ImageDataStore,
                         file: StaticString = #filePath, line: UInt = #line) async throws {
         for input in inputs {
             try await insert(data: input.data, timestamp: input.date, url: input.url, to: sut, file: file, line: line)
         }
     }
     
-    private func insert(data: Data, timestamp: Date = Date(), url: URL, to sut: CoreDataImageDataStore,
+    private func insert(data: Data, timestamp: Date = Date(), url: URL, to sut: ImageDataStore,
                         file: StaticString = #filePath, line: UInt = #line) async throws {
         let notificationSpy = ContextDidSaveNotificationSpy()
         
