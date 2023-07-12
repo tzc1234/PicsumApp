@@ -69,6 +69,18 @@ final class CoreDataImageDataStoreTests: XCTestCase {
         XCTAssertEqual(retrievedNewData, newData)
     }
     
+    func test_deleteData_ignoresWhenNoCache() async throws {
+        let sut = try makeSUT()
+        let url = anyURL()
+        
+        let beforeDeleteData = try await sut.retrieveData(for: url)
+        try await sut.deleteData(for: url)
+        let afterDeleteData = try await sut.retrieveData(for: url)
+        
+        XCTAssertNil(beforeDeleteData)
+        XCTAssertNil(afterDeleteData)
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(file: StaticString = #filePath, line: UInt = #line) throws -> CoreDataImageDataStore {
