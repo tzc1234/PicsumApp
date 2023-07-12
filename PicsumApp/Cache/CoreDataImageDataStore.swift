@@ -42,10 +42,7 @@ final class CoreDataImageDataStore {
     
     func deleteAllData(reach date: Date) async throws {
         try await perform { context in
-            let fetch = NSFetchRequest<NSFetchRequestResult>(entityName: ManagedImage.entityName)
-            fetch.predicate = NSPredicate(format: "timestamp <= %@", date as CVarArg)
-            let request = NSBatchDeleteRequest(fetchRequest: fetch)
-            try context.execute(request)
+            try ManagedImage.batchDelete(in: context, reach: date)
             try context.save()
         }
     }

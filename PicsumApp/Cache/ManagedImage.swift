@@ -31,4 +31,11 @@ extension ManagedImage {
         let foundImage = try ManagedImage.find(in: context, for: url)
         return foundImage ?? ManagedImage(context: context)
     }
+    
+    static func batchDelete(in context: NSManagedObjectContext, reach date: Date) throws {
+        let fetch = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
+        fetch.predicate = NSPredicate(format: "timestamp <= %@", date as CVarArg)
+        let request = NSBatchDeleteRequest(fetchRequest: fetch)
+        try context.execute(request)
+    }
 }
