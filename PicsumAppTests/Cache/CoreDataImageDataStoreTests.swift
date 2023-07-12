@@ -74,10 +74,21 @@ final class CoreDataImageDataStoreTests: XCTestCase {
         let url = anyURL()
         
         let beforeDeleteData = try await sut.retrieveData(for: url)
-        try await sut.deleteData(for: url)
+        try await delete(for: url, to: sut, withExpectedSaveCount: 0)
         let afterDeleteData = try await sut.retrieveData(for: url)
         
         XCTAssertNil(beforeDeleteData)
+        XCTAssertNil(afterDeleteData)
+    }
+    
+    func test_deleteData_removeCachedData() async throws {
+        let sut = try makeSUT()
+        let url = anyURL()
+        
+        try await insert(data: anyData(), url: url, to: sut)
+        try await delete(for: url, to: sut, withExpectedSaveCount: 1)
+        let afterDeleteData = try await sut.retrieveData(for: url)
+        
         XCTAssertNil(afterDeleteData)
     }
     
@@ -89,13 +100,22 @@ final class CoreDataImageDataStoreTests: XCTestCase {
         return sut
     }
     
+    private func delete(for url: URL, to sut: CoreDataImageDataStore, withExpectedSaveCount saveCount: Int,
+                        file: StaticString = #filePath, line: UInt = #line) async throws {
+        let notificationSpy = ContextDidSaveNotificationSpy()
+        
+        try await  sut.deleteData(for: url)
+        
+        XCTAssertEqual(notificationSpy.saveCount, saveCount, "Expect save \(saveCount) time(s), got \(notificationSpy.saveCount) instead", file: file, line: line)
+    }
+    
     private func insert(data: Data, timestamp: Date = Date(), url: URL, to sut: CoreDataImageDataStore,
                         file: StaticString = #filePath, line: UInt = #line) async throws {
         let notificationSpy = ContextDidSaveNotificationSpy()
         
         try await sut.insert(data: data, timestamp: timestamp, for: url)
         
-        XCTAssertTrue(notificationSpy.saveCount > 0, file: file, line: line)
+        XCTAssertTrue(notificationSpy.saveCount > 0, "Expect at least save once", file: file, line: line)
     }
     
     private class ContextDidSaveNotificationSpy {

@@ -34,7 +34,10 @@ final class CoreDataImageDataStore {
     }
     
     func deleteData(for url: URL) async throws {
-        
+        if let image = try ManagedImage.find(in: context, for: url) {
+            context.delete(image)
+            try context.save()
+        }
     }
     
     private func perform<T>(_ action: @escaping (NSManagedObjectContext) throws -> T) async rethrows -> T {
