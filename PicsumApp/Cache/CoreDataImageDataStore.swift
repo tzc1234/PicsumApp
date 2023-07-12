@@ -24,7 +24,7 @@ final class CoreDataImageDataStore: ImageDataStore {
     
     func insert(data: Data, timestamp: Date, for url: URL) async throws {
         try await perform { context in
-            let image = try ManagedImage.findOrNewInstance(in: context, for: url)
+            let image = try ManagedImage.findOrCreateInstance(in: context, for: url)
             image.data = data
             image.timestamp = timestamp
             image.url = url
@@ -62,9 +62,8 @@ extension CoreDataImageDataStore {
     private static let modelName = "DataStore"
     
     private static func loadContainer(for storeURL: URL) throws -> NSPersistentContainer {
-        let description = NSPersistentStoreDescription(url: storeURL)
         let container = NSPersistentContainer(name: modelName, managedObjectModel: try loadModel())
-        container.persistentStoreDescriptions = [description]
+        container.persistentStoreDescriptions = [.init(url: storeURL)]
         
         var loadError: Error?
         container.loadPersistentStores { loadError = $1 }
