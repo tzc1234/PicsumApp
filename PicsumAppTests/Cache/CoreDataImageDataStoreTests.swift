@@ -31,15 +31,26 @@ final class CoreDataImageDataStoreTests: XCTestCase {
     
     func test_retrieveData_deliversDataWhenCached() async throws {
         let sut = try makeSUT()
-        let notificationSpy = ContextDidSaveNotificationSpy()
         let url = anyURL()
         let data = anyData()
         
-        try await sut.insert(data: data, timestamp: anyTimestamp(), for: url)
+        try await insert(data: data, url: url, to: sut)
         let retrievedData = try await sut.retrieveData(for: url)
-            
-        XCTAssertEqual(notificationSpy.saveCount, 1)
+        
         XCTAssertEqual(retrievedData, data)
+    }
+    
+    func test_retrieveDataTwice_deliversSameDataWhenCached() async throws {
+        let sut = try makeSUT()
+        let url = anyURL()
+        let data = anyData()
+        
+        try await insert(data: data, url: url, to: sut)
+        let firstRetrievedData = try await sut.retrieveData(for: url)
+        let lastRetrievedData = try await sut.retrieveData(for: url)
+        
+        XCTAssertEqual(firstRetrievedData, data)
+        XCTAssertEqual(lastRetrievedData, data)
     }
     
     // MARK: - Helpers
@@ -50,8 +61,13 @@ final class CoreDataImageDataStoreTests: XCTestCase {
         return sut
     }
     
-    private func anyTimestamp() -> Date {
-        Date()
+    private func insert(data: Data, timestamp: Date = Date(), url: URL, to sut: CoreDataImageDataStore,
+                        file: StaticString = #filePath, line: UInt = #line) async throws {
+        let notificationSpy = ContextDidSaveNotificationSpy()
+        
+        try await sut.insert(data: data, timestamp: timestamp, for: url)
+        
+        XCTAssertEqual(notificationSpy.saveCount, 1, file: file, line: line)
     }
     
     private class ContextDidSaveNotificationSpy {
