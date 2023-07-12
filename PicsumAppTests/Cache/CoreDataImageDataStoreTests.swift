@@ -21,7 +21,7 @@ class CoreDataImageDataStore {
 final class CoreDataImageDataStoreTests: XCTestCase {
 
     func test_retrieveData_deliversNilWhenNoCache() async throws {
-        let sut = CoreDataImageDataStore()
+        let sut = makeSUT()
         
         let data = try await sut.retrieveData(for: anyURL())
         
@@ -29,7 +29,7 @@ final class CoreDataImageDataStoreTests: XCTestCase {
     }
 
     func test_retrieveDataTwice_deliversNilWhenNoCacheWithNoSideEffects() async throws {
-        let sut = CoreDataImageDataStore()
+        let sut = makeSUT()
         
         let firstRetrievedData = try await sut.retrieveData(for: anyURL())
         let lastRetrievedData = try await sut.retrieveData(for: anyURL())
@@ -38,4 +38,11 @@ final class CoreDataImageDataStoreTests: XCTestCase {
         XCTAssertNil(lastRetrievedData)
     }
     
+    // MARK: - Helpers
+    
+    private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> CoreDataImageDataStore {
+        let sut = CoreDataImageDataStore()
+        trackForMemoryLeaks(sut, file: file, line: line)
+        return sut
+    }
 }
