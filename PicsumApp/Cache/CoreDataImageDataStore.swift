@@ -33,13 +33,21 @@ final class CoreDataImageDataStore {
     }
     
     func deleteData(for url: URL) async throws {
-        try ManagedImage.find(in: context, for: url)
-            .map(context.delete)
-            .map(context.save)
+        try await perform { context in
+            try ManagedImage.find(in: context, for: url)
+                .map(context.delete)
+                .map(context.save)
+        }
     }
     
     func deleteAllData(reach date: Date) async throws {
-        
+        try await perform { context in
+            let fetch = NSFetchRequest<NSFetchRequestResult>(entityName: ManagedImage.entityName)
+            fetch.predicate = NSPredicate(format: "timestamp <= %@", date as CVarArg)
+            let request = NSBatchDeleteRequest(fetchRequest: fetch)
+            try context.execute(request)
+            try context.save()
+        }
     }
     
     private func perform<T>(_ action: @escaping (NSManagedObjectContext) throws -> T) async rethrows -> T {

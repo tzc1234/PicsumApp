@@ -97,11 +97,41 @@ final class CoreDataImageDataStoreTests: XCTestCase {
         let url = anyURL()
         
         let beforeDeleteAllData = try await sut.retrieveData(for: url)
-        try await sut.deleteAllData(reach: anyDate())
+        try await deleteAll(reach: anyDate(), to: sut)
         let afterDeleteAllData = try await sut.retrieveData(for: url)
         
         XCTAssertNil(beforeDeleteAllData)
         XCTAssertNil(afterDeleteAllData)
+    }
+    
+    func test_deleteAll_removesDataLessThanOrEqualToTheDate() async throws {
+        let sut = try makeSUT()
+        let date = Date()
+        let lessThanDateInput = (
+            data: Data("less than date data".utf8),
+            date: date.adding(seconds: -1),
+            url: URL(string: "https://less-than-date.com")!)
+        let equalToDateInput = (
+            data: Data("equal to date data".utf8),
+            date: date,
+            url: URL(string: "https://equal-to-date.com")!)
+        let moreThanDateInput = (
+            data: Data("more than date data".utf8),
+            date: date.adding(seconds: 1),
+            url: URL(string: "https://more-than-date.com")!)
+        
+        for input in [lessThanDateInput, equalToDateInput, moreThanDateInput] {
+            try await insert(data: input.data, timestamp: input.date, url: input.url, to: sut)
+        }
+        try await deleteAll(reach: date, to: sut)
+        
+        let lessThanDateData = try await sut.retrieveData(for: lessThanDateInput.url)
+        let equalToDateData = try await sut.retrieveData(for: equalToDateInput.url)
+        let moreThanDateData = try await sut.retrieveData(for: moreThanDateInput.url)
+        
+        XCTAssertNil(lessThanDateData)
+        XCTAssertNil(equalToDateData)
+        XCTAssertEqual(moreThanDateData, moreThanDateInput.data)
     }
     
     // MARK: - Helpers
@@ -112,11 +142,20 @@ final class CoreDataImageDataStoreTests: XCTestCase {
         return sut
     }
     
+    private func deleteAll(reach date: Date, to sut: CoreDataImageDataStore,
+                           file: StaticString = #filePath, line: UInt = #line) async throws {
+        let notificationSpy = ContextDidSaveNotificationSpy()
+        
+        try await sut.deleteAllData(reach: date)
+        
+        XCTAssertEqual(notificationSpy.saveCount, 1, "Expect save once, got \(notificationSpy.saveCount) instead", file: file, line: line)
+    }
+    
     private func delete(for url: URL, to sut: CoreDataImageDataStore, withExpectedSaveCount saveCount: Int,
                         file: StaticString = #filePath, line: UInt = #line) async throws {
         let notificationSpy = ContextDidSaveNotificationSpy()
         
-        try await  sut.deleteData(for: url)
+        try await sut.deleteData(for: url)
         
         XCTAssertEqual(notificationSpy.saveCount, saveCount, "Expect save \(saveCount) time(s), got \(notificationSpy.saveCount) instead", file: file, line: line)
     }

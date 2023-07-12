@@ -15,8 +15,12 @@ final class ManagedImage: NSManagedObject {
 }
 
 extension ManagedImage {
+    static var entityName: String {
+        String(describing: Self.self)
+    }
+    
     static func find(in context: NSManagedObjectContext, for url: URL) throws -> ManagedImage? {
-        let request = NSFetchRequest<ManagedImage>(entityName: String(describing: Self.self))
+        let request = NSFetchRequest<ManagedImage>(entityName: entityName)
         request.predicate = NSPredicate(format: "url = %@", url as CVarArg)
         request.returnsObjectsAsFaults = false
         request.fetchLimit = 1
