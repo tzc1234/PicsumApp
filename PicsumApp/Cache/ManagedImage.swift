@@ -22,4 +22,9 @@ extension ManagedImage {
         request.fetchLimit = 1
         return try context.fetch(request).first
     }
+    
+    static func findOrNewInstance(in context: NSManagedObjectContext, for url: URL) throws -> ManagedImage {
+        let foundImage = try ManagedImage.find(in: context, for: url)
+        return foundImage ?? ManagedImage(context: context)
+    }
 }

@@ -25,11 +25,7 @@ final class CoreDataImageDataStore {
     
     func insert(data: Data, timestamp: Date, for url: URL) async throws {
         try await perform { context in
-            if let oldImage = try ManagedImage.find(in: context, for: url) {
-                context.delete(oldImage)
-            }
-            
-            let image = ManagedImage(context: context)
+            let image = try ManagedImage.findOrNewInstance(in: context, for: url)
             image.data = data
             image.timestamp = timestamp
             image.url = url
