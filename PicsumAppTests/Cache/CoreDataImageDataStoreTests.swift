@@ -103,7 +103,7 @@ final class CoreDataImageDataStoreTests: XCTestCase {
         let url = anyURL()
         
         let beforeDeleteAllData = try await sut.retrieveData(for: url)
-        try await deleteAll(reach: anyDate(), to: sut)
+        try await sut.deleteAllData(reach: anyDate())
         let afterDeleteAllData = try await sut.retrieveData(for: url)
         
         XCTAssertNil(beforeDeleteAllData)
@@ -127,7 +127,7 @@ final class CoreDataImageDataStoreTests: XCTestCase {
             url: URL(string: "https://more-than-date-data-url.com")!)
         
         try await insert(inputs: [lessThanDateInput, equalToDateInput, moreThanDateInput], to: sut)
-        try await deleteAll(reach: date, to: sut)
+        try await sut.deleteAllData(reach: date)
         let lessThanDateData = try await sut.retrieveData(for: lessThanDateInput.url)
         let equalToDateData = try await sut.retrieveData(for: equalToDateInput.url)
         let moreThanDateData = try await sut.retrieveData(for: moreThanDateInput.url)
@@ -143,15 +143,6 @@ final class CoreDataImageDataStoreTests: XCTestCase {
         let sut = try CoreDataImageDataStore(storeURL: URL(filePath: "/dev/null"))
         trackForMemoryLeaks(sut, file: file, line: line)
         return sut
-    }
-    
-    private func deleteAll(reach date: Date, to sut: ImageDataStore,
-                           file: StaticString = #filePath, line: UInt = #line) async throws {
-        let notificationSpy = ContextDidSaveNotificationSpy()
-        
-        try await sut.deleteAllData(reach: date)
-        
-        XCTAssertEqual(notificationSpy.saveCount, 1, "Expect save once, got \(notificationSpy.saveCount) instead", file: file, line: line)
     }
     
     private func delete(for url: URL, to sut: ImageDataStore, withExpectedSaveCount saveCount: Int,

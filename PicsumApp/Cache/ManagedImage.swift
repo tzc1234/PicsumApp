@@ -37,6 +37,5 @@ extension ManagedImage {
         fetch.predicate = NSPredicate(format: "timestamp <= %@", date as CVarArg)
         let request = NSBatchDeleteRequest(fetchRequest: fetch)
         try context.execute(request)
-        try context.save()
     }
 }
