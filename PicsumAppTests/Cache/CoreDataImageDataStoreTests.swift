@@ -55,20 +55,17 @@ final class CoreDataImageDataStoreTests: XCTestCase {
     
     func test_insert_overridesOldDataByNewData() async throws {
         let sut = try makeSUT()
-        let otherURL = URL(string: "https://other-data-url.com")!
-        let otherData = Data("other data".utf8)
-        let url = URL(string: "https://override-data-url.com")!
-        let oldData = Data("old data".utf8)
-        let newData = Data("new data".utf8)
+        let overrideDataURL = URL(string: "https://override-data-url.com")!
+        let oldDataInput = DataInput(data: Data("old data".utf8), url: overrideDataURL)
+        let newDataInput = DataInput(data: Data("new data".utf8), url: overrideDataURL)
+        let otherDataInput = DataInput(data: Data("other data".utf8), url: URL(string: "https://other-data-url.com")!)
         
-        try await insert(data: otherData, url: otherURL, to: sut)
-        try await insert(data: oldData, url: url, to: sut)
-        try await insert(data: newData, url: url, to: sut)
-        let retrievedNewData = try await sut.retrieveData(for: url)
-        let retrievedOtherData = try await sut.retrieveData(for: otherURL)
+        try await insert(inputs: [otherDataInput, oldDataInput, newDataInput], to: sut)
+        let retrievedData = try await sut.retrieveData(for: overrideDataURL)
+        let retrievedOtherData = try await sut.retrieveData(for: otherDataInput.url)
         
-        XCTAssertEqual(retrievedNewData, newData)
-        XCTAssertEqual(retrievedOtherData, otherData)
+        XCTAssertEqual(retrievedData, newDataInput.data)
+        XCTAssertEqual(retrievedOtherData, otherDataInput.data)
     }
     
     func test_deleteData_ignoresWhenNoCache() async throws {
@@ -85,18 +82,15 @@ final class CoreDataImageDataStoreTests: XCTestCase {
     
     func test_deleteData_removeCachedDataForURL() async throws {
         let sut = try makeSUT()
-        let deletedDataInput = (
+        let deletedDataInput = DataInput(
             data: Data("deleted data".utf8),
             url: URL(string: "https://deleted-data-url.com")!)
-        let remainedDataInput = (
+        let remainedDataInput = DataInput(
             data: Data("remained data".utf8),
             url: URL(string: "https://remained-data-url.com")!)
         
-        for input in [deletedDataInput, remainedDataInput] {
-            try await insert(data: input.data, url: input.url, to: sut)
-        }
+        try await insert(inputs: [deletedDataInput, remainedDataInput], to: sut)
         try await delete(for: deletedDataInput.url, to: sut, withExpectedSaveCount: 1)
-        
         let deletedData = try await sut.retrieveData(for: deletedDataInput.url)
         let remainedData = try await sut.retrieveData(for: remainedDataInput.url)
         
@@ -119,24 +113,21 @@ final class CoreDataImageDataStoreTests: XCTestCase {
     func test_deleteAll_removesDataLessThanOrEqualToTheDate() async throws {
         let sut = try makeSUT()
         let date = Date()
-        let lessThanDateInput = (
+        let lessThanDateInput = DataInput(
             data: Data("less than date data".utf8),
             date: date.adding(seconds: -1),
             url: URL(string: "https://less-than-date-data-url.com")!)
-        let equalToDateInput = (
+        let equalToDateInput = DataInput(
             data: Data("equal to date data".utf8),
             date: date,
             url: URL(string: "https://equal-to-date-data-url.com")!)
-        let moreThanDateInput = (
+        let moreThanDateInput = DataInput(
             data: Data("more than date data".utf8),
             date: date.adding(seconds: 1),
             url: URL(string: "https://more-than-date-data-url.com")!)
         
-        for input in [lessThanDateInput, equalToDateInput, moreThanDateInput] {
-            try await insert(data: input.data, timestamp: input.date, url: input.url, to: sut)
-        }
+        try await insert(inputs: [lessThanDateInput, equalToDateInput, moreThanDateInput], to: sut)
         try await deleteAll(reach: date, to: sut)
-        
         let lessThanDateData = try await sut.retrieveData(for: lessThanDateInput.url)
         let equalToDateData = try await sut.retrieveData(for: equalToDateInput.url)
         let moreThanDateData = try await sut.retrieveData(for: moreThanDateInput.url)
@@ -172,6 +163,13 @@ final class CoreDataImageDataStoreTests: XCTestCase {
         XCTAssertEqual(notificationSpy.saveCount, saveCount, "Expect save \(saveCount) time(s), got \(notificationSpy.saveCount) instead", file: file, line: line)
     }
     
+    private func insert(inputs: [DataInput], to sut: CoreDataImageDataStore,
+                        file: StaticString = #filePath, line: UInt = #line) async throws {
+        for input in inputs {
+            try await insert(data: input.data, timestamp: input.date, url: input.url, to: sut, file: file, line: line)
+        }
+    }
+    
     private func insert(data: Data, timestamp: Date = Date(), url: URL, to sut: CoreDataImageDataStore,
                         file: StaticString = #filePath, line: UInt = #line) async throws {
         let notificationSpy = ContextDidSaveNotificationSpy()
@@ -183,6 +181,18 @@ final class CoreDataImageDataStoreTests: XCTestCase {
     
     private func anyDate() -> Date {
         Date()
+    }
+    
+    private struct DataInput {
+        let data: Data
+        let date: Date
+        let url: URL
+        
+        init(data: Data, date: Date = Date(), url: URL) {
+            self.data = data
+            self.date = date
+            self.url = url
+        }
     }
     
     private class ContextDidSaveNotificationSpy {
