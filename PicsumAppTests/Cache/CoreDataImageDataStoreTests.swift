@@ -92,6 +92,18 @@ final class CoreDataImageDataStoreTests: XCTestCase {
         XCTAssertNil(afterDeleteData)
     }
     
+    func test_deleteAll_ignoresWhenNoCache() async throws {
+        let sut = try makeSUT()
+        let url = anyURL()
+        
+        let beforeDeleteAllData = try await sut.retrieveData(for: url)
+        try await sut.deleteAllData(reach: anyDate())
+        let afterDeleteAllData = try await sut.retrieveData(for: url)
+        
+        XCTAssertNil(beforeDeleteAllData)
+        XCTAssertNil(afterDeleteAllData)
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(file: StaticString = #filePath, line: UInt = #line) throws -> CoreDataImageDataStore {
@@ -116,6 +128,10 @@ final class CoreDataImageDataStoreTests: XCTestCase {
         try await sut.insert(data: data, timestamp: timestamp, for: url)
         
         XCTAssertTrue(notificationSpy.saveCount > 0, "Expect at least save once", file: file, line: line)
+    }
+    
+    private func anyDate() -> Date {
+        Date()
     }
     
     private class ContextDidSaveNotificationSpy {

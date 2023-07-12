@@ -38,6 +38,10 @@ final class CoreDataImageDataStore {
             .map(context.save)
     }
     
+    func deleteAllData(reach date: Date) async throws {
+        
+    }
+    
     private func perform<T>(_ action: @escaping (NSManagedObjectContext) throws -> T) async rethrows -> T {
         try await context.perform { [context] in
             try action(context)
