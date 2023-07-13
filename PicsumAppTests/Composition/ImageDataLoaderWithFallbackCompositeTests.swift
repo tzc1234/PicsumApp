@@ -18,7 +18,11 @@ class ImageDataLoaderWithFallbackComposite: ImageDataLoader {
     }
     
     func loadImageData(for url: URL) async throws -> Data {
-        try await primary.loadImageData(for: url)
+        do {
+            return try await primary.loadImageData(for: url)
+        } catch {
+            return try await fallback.loadImageData(for: url)
+        }
     }
 }
 
@@ -29,6 +33,17 @@ final class ImageDataLoaderWithFallbackCompositeTests: XCTestCase {
         let data = anyData()
         let primary = ImageDataLoaderSpy(stubs: [.success(data)])
         let fallback = ImageDataLoaderSpy(stubs: [.failure(anyNSError())])
+        let sut = ImageDataLoaderWithFallbackComposite(primary: primary, fallback: fallback)
+        
+        let receivedData = try await sut.loadImageData(for: anyURL())
+        
+        XCTAssertEqual(receivedData, data)
+    }
+    
+    func test_loadImageData_deliversFallbackDataOnPrimaryError() async throws {
+        let data = anyData()
+        let primary = ImageDataLoaderSpy(stubs: [.failure(anyNSError())])
+        let fallback = ImageDataLoaderSpy(stubs: [.success(data)])
         let sut = ImageDataLoaderWithFallbackComposite(primary: primary, fallback: fallback)
         
         let receivedData = try await sut.loadImageData(for: anyURL())
