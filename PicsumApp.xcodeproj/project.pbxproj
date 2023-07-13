@@ -67,6 +67,7 @@
 		BEE811C82A5DE87200A2F7D7 /* CacheImageDataPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEE811C72A5DE87200A2F7D7 /* CacheImageDataPolicy.swift */; };
 		BEF0B5272A6002DF0024625A /* ImageDataLoaderCacheDecorator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEF0B5262A6002DF0024625A /* ImageDataLoaderCacheDecorator.swift */; };
 		BEF0B52D2A6008C30024625A /* ImageDataLoaderWithFallbackCompositeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEF0B52C2A6008C30024625A /* ImageDataLoaderWithFallbackCompositeTests.swift */; };
+		BEF0B52F2A600CA40024625A /* ImageDataLoaderWithFallbackComposite.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEF0B52E2A600CA40024625A /* ImageDataLoaderWithFallbackComposite.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -144,6 +145,7 @@
 		BEE811C72A5DE87200A2F7D7 /* CacheImageDataPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheImageDataPolicy.swift; sourceTree = "<group>"; };
 		BEF0B5262A6002DF0024625A /* ImageDataLoaderCacheDecorator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDataLoaderCacheDecorator.swift; sourceTree = "<group>"; };
 		BEF0B52C2A6008C30024625A /* ImageDataLoaderWithFallbackCompositeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDataLoaderWithFallbackCompositeTests.swift; sourceTree = "<group>"; };
+		BEF0B52E2A600CA40024625A /* ImageDataLoaderWithFallbackComposite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDataLoaderWithFallbackComposite.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -181,6 +183,7 @@
 				BE8103142A55C2C400CE012A /* PhotoListComposer.swift */,
 				BE5DFCFA2A5C14FF007BD8A7 /* PhotoImageDataLoaderAdapter.swift */,
 				BEF0B5262A6002DF0024625A /* ImageDataLoaderCacheDecorator.swift */,
+				BEF0B52E2A600CA40024625A /* ImageDataLoaderWithFallbackComposite.swift */,
 			);
 			path = Composition;
 			sourceTree = "<group>";
@@ -554,6 +557,7 @@
 				BE4876D82A542E4900F6AE3F /* PhotoListCell.swift in Sources */,
 				BE5DFCFD2A5C1AAD007BD8A7 /* ImageDataLoader.swift in Sources */,
 				BE1FD4ED2A5423860021777F /* PhotoListViewController.swift in Sources */,
+				BEF0B52F2A600CA40024625A /* ImageDataLoaderWithFallbackComposite.swift in Sources */,
 				BEE65CF52A5745E3001872BB /* URLSessionHTTPClient.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
