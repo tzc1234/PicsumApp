@@ -50,5 +50,16 @@ final class ImageDataLoaderWithFallbackCompositeTests: XCTestCase {
         
         XCTAssertEqual(receivedData, data)
     }
+    
+    func test_loadImageData_deliversErrorOnBothOnError() async {
+        let primary = ImageDataLoaderSpy(stubs: [.failure(anyNSError())])
+        let fallback = ImageDataLoaderSpy(stubs: [.failure(anyNSError())])
+        let sut = ImageDataLoaderWithFallbackComposite(primary: primary, fallback: fallback)
+        
+        do {
+            _ = try await sut.loadImageData(for: anyURL())
+            XCTFail("should not success")
+        } catch {}
+    }
 
 }
