@@ -15,8 +15,6 @@ final class PhotoImageViewModel<Image> {
     /// For testing purpose, cannot find a better way to observe the loading state just after loading for async/await.
     var justAfterOnLoadImage: (() -> Void)?
     
-    private var image: Image?
-    
     private let photo: Photo
     private let imageLoader: PhotoImageDataLoader
     private let imageConverter: (Data) -> Image?
@@ -32,17 +30,14 @@ final class PhotoImageViewModel<Image> {
         onLoadImage?(true)
         justAfterOnLoadImage?()
         
-        if let image {
-            didLoadImage?(image)
-        } else {
-            let image = (try? await imageLoader.loadImageData(
-                by: photo.id,
-                width: photo.width,
-                height: photo.height)).flatMap(imageConverter)
-            self.image = image
-            didLoadImage?(image)
-        }
+        let image = (try? await imageLoader.loadImageData(
+            by: photo.id,
+            width: Self.photoDimension,
+            height: Self.photoDimension)).flatMap(imageConverter)
+        didLoadImage?(image)
         
         onLoadImage?(false)
     }
+    
+    private static var photoDimension: Int { 500 }
 }
