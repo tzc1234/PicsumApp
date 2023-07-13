@@ -65,6 +65,7 @@
 		BEE811C42A5D624900A2F7D7 /* InvalidateCachedImageDataUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEE811C32A5D624900A2F7D7 /* InvalidateCachedImageDataUseCaseTests.swift */; };
 		BEE811C62A5D69D900A2F7D7 /* CacheTestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEE811C52A5D69D900A2F7D7 /* CacheTestHelpers.swift */; };
 		BEE811C82A5DE87200A2F7D7 /* CacheImageDataPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEE811C72A5DE87200A2F7D7 /* CacheImageDataPolicy.swift */; };
+		BEF0B5272A6002DF0024625A /* ImageDataLoaderCacheDecorator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEF0B5262A6002DF0024625A /* ImageDataLoaderCacheDecorator.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -140,6 +141,7 @@
 		BEE811C32A5D624900A2F7D7 /* InvalidateCachedImageDataUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvalidateCachedImageDataUseCaseTests.swift; sourceTree = "<group>"; };
 		BEE811C52A5D69D900A2F7D7 /* CacheTestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheTestHelpers.swift; sourceTree = "<group>"; };
 		BEE811C72A5DE87200A2F7D7 /* CacheImageDataPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheImageDataPolicy.swift; sourceTree = "<group>"; };
+		BEF0B5262A6002DF0024625A /* ImageDataLoaderCacheDecorator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDataLoaderCacheDecorator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -176,6 +178,7 @@
 				BED008B82A5FE763002D94F5 /* ImageDataCache.swift */,
 				BE8103142A55C2C400CE012A /* PhotoListComposer.swift */,
 				BE5DFCFA2A5C14FF007BD8A7 /* PhotoImageDataLoaderAdapter.swift */,
+				BEF0B5262A6002DF0024625A /* ImageDataLoaderCacheDecorator.swift */,
 			);
 			path = Composition;
 			sourceTree = "<group>";
@@ -500,6 +503,7 @@
 				BE54968C2A57156E00D402A3 /* RemoteImageDataLoader.swift in Sources */,
 				BE6560722A53237B00CCD5D6 /* PhotoListViewModel.swift in Sources */,
 				BE5496762A56BA1300D402A3 /* PhotoImageViewModel.swift in Sources */,
+				BEF0B5272A6002DF0024625A /* ImageDataLoaderCacheDecorator.swift in Sources */,
 				BE5DA20E2A5EA1CE000A90D3 /* ManagedImage.swift in Sources */,
 				BE5DFCFB2A5C14FF007BD8A7 /* PhotoImageDataLoaderAdapter.swift in Sources */,
 				BE5DA20C2A5EA070000A90D3 /* DataStore.xcdatamodeld in Sources */,
