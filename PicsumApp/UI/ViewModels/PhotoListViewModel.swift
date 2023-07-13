@@ -28,11 +28,14 @@ final class PhotoListViewModel {
     
     func loadPhotos() {
         resetCurrentPage()
+        onLoad?(true)
         
         loadPhotosTask?.cancel()
-        loadPhotosTask = loadPhotosFromLoader { [weak self] in
+        loadPhotosTask = loadPhotosFromLoader(photosLoaded: { [weak self] in
             self?.photos = $0
-        }
+        }, completion: { [weak self] in
+            self?.onLoad?(false)
+        })
     }
     
     func loadMorePhotos() {
@@ -43,20 +46,15 @@ final class PhotoListViewModel {
         }
     }
     
-    private func resetCurrentPage() {
-        currentPage = 1
-    }
-    
-    private func loadPhotosFromLoader(completion: @escaping ([Photo]) -> Void) -> Task<Void, Never> {
-        onLoad?(true)
-        
-        return Task { @MainActor in
+    private func loadPhotosFromLoader(photosLoaded: @escaping ([Photo]) -> Void,
+                                      completion: (() -> Void)? = nil) -> Task<Void, Never> {
+        Task { @MainActor in
             do {
                 let photos = try await loader.load(page: currentPage)
                 guard !Task.isCancelled else { return }
                 
                 updatePaging(by: photos)
-                completion(photos)
+                photosLoaded(photos)
                 didLoad?(self.photos)
                 onError?(nil)
             } catch {
@@ -65,8 +63,12 @@ final class PhotoListViewModel {
                 onError?(Self.errorMessage)
             }
             
-            onLoad?(false)
+            completion?()
         }
+    }
+    
+    private func resetCurrentPage() {
+        currentPage = 1
     }
     
     private func updatePaging(by photos: [Photo]) {
