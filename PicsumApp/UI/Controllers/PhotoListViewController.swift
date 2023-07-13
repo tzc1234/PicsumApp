@@ -20,9 +20,7 @@ final class PhotoListViewController: UICollectionViewController {
         }
     }()
     
-    private(set) var reloadPhotosTask: Task<Void, Never>?
-    
-    private var viewModel: PhotoListViewModel?
+    private(set) var viewModel: PhotoListViewModel?
     
     convenience init(viewModel: PhotoListViewModel) {
         self.init(collectionViewLayout: UICollectionViewFlowLayout())
@@ -80,10 +78,7 @@ final class PhotoListViewController: UICollectionViewController {
     }
     
     @objc private func reloadPhotos() {
-        reloadPhotosTask?.cancel()
-        reloadPhotosTask = Task {
-            await viewModel?.loadPhotos()
-        }
+        viewModel?.loadPhotos()
     }
     
     func display(_ cellControllers: [PhotoListCellController]) {

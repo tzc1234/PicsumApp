@@ -54,6 +54,10 @@ extension PhotoListViewController {
         0
     }
     
+    var reloadPhotosTask: Task<Void, Never>? {
+        viewModel?.loadPhotosTask
+    }
+    
     func imageDataTask(at item: Int) -> Task<Void, Never>? {
         cellController(at: item)?.viewModel.imageDataTask
     }

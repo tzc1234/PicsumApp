@@ -17,27 +17,29 @@ final class PhotoListViewModel {
     private var photos = [Photo]()
     private var currentPage = 1
     private var hasMorePage = true
+    private(set) var loadPhotosTask: Task<Void, Never>?
+    private(set) var loadMorePhotosTask: Task<Void, Never>?
+    
     private let loader: PhotosLoader
     
     init(loader: PhotosLoader) {
         self.loader = loader
     }
     
-    func loadPhotos() async {
+    func loadPhotos() {
         resetCurrentPage()
         
-        await loadPhotosFromLoader {
-            photos = $0
-            didLoad?(photos)
+        loadPhotosTask?.cancel()
+        loadPhotosTask = loadPhotosFromLoader { [weak self] in
+            self?.photos = $0
         }
     }
     
-    func loadMorePhotos() async {
+    func loadMorePhotos() {
         guard hasMorePage else { return }
         
-        await loadPhotosFromLoader {
-            photos += $0
-            didLoad?(photos)
+        loadMorePhotosTask = loadPhotosFromLoader { [weak self] in
+            self?.photos += $0
         }
     }
     
@@ -45,20 +47,26 @@ final class PhotoListViewModel {
         currentPage = 1
     }
     
-    @MainActor
-    private func loadPhotosFromLoader(completion: ([Photo]) -> Void) async {
+    private func loadPhotosFromLoader(completion: @escaping ([Photo]) -> Void) -> Task<Void, Never> {
         onLoad?(true)
         
-        do {
-            let photos = try await loader.load(page: currentPage)
-            updatePaging(by: photos)
-            completion(photos)
-            onError?(nil)
-        } catch {
-            onError?(Self.errorMessage)
+        return Task { @MainActor in
+            do {
+                let photos = try await loader.load(page: currentPage)
+                guard !Task.isCancelled else { return }
+                
+                updatePaging(by: photos)
+                completion(photos)
+                didLoad?(self.photos)
+                onError?(nil)
+            } catch {
+                guard !Task.isCancelled else { return }
+                
+                onError?(Self.errorMessage)
+            }
+            
+            onLoad?(false)
         }
-        
-        onLoad?(false)
     }
     
     private func updatePaging(by photos: [Photo]) {
