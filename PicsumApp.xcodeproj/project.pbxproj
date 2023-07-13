@@ -259,7 +259,6 @@
 				BE54967C2A56D24500D402A3 /* RemotePhotosLoaderTests.swift */,
 				BE5496872A570ED400D402A3 /* RemoteImageDataLoaderTests.swift */,
 				BE54968D2A572B6B00D402A3 /* URLSessionHTTPClientTests.swift */,
-				BE5DFCF82A5C0CAF007BD8A7 /* PhotoImageDataLoaderAdapterTests.swift */,
 			);
 			path = Networking;
 			sourceTree = "<group>";
@@ -327,9 +326,8 @@
 				BE6560672A52DF7C00CCD5D6 /* Helpers */,
 				BE5DFCF62A5C0988007BD8A7 /* Networking */,
 				BE5DFCFE2A5C43AF007BD8A7 /* Cache */,
-				BE65604D2A52D4A400CCD5D6 /* PhotoListViewModelTests.swift */,
-				BED8ECCC2A5340870077FFF9 /* PhotoListIntegrationTests.swift */,
-				BE3635632A5FF8C30039EECD /* ImageDataLoaderCacheDecoratorTests.swift */,
+				BEF0B5292A60054D0024625A /* UI */,
+				BEF0B5282A6004DC0024625A /* Composition */,
 			);
 			path = PicsumAppTests;
 			sourceTree = "<group>";
@@ -339,13 +337,7 @@
 			children = (
 				BE1FD4E92A5421CE0021777F /* SharedHelpers.swift */,
 				BE6560682A52DF8900CCD5D6 /* XCTestCase+MemoryLeakTracking.swift */,
-				BED8ECCE2A53428C0077FFF9 /* PhotosLoaderSpy.swift */,
-				BED8ECD32A536D9E0077FFF9 /* UIRefreshControl+TestHelpers.swift */,
-				BED8ECD52A536DC90077FFF9 /* UIControl+TestHelpers.swift */,
 				BE3691082A5566EE00DF0560 /* UIImage+TestHelpers.swift */,
-				BE8103102A559F4C00CE012A /* PhotoListViewController+TestHelpers.swift */,
-				BE81030E2A559EB700CE012A /* PhotoListCell+TestHelpers.swift */,
-				BE3635652A5FF9970039EECD /* ImageDataLoaderSpy.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -387,6 +379,46 @@
 				BED283B72A5C6E7500521BC8 /* ImageDataStoreSpy.swift */,
 				BEE811C52A5D69D900A2F7D7 /* CacheTestHelpers.swift */,
 				BEB90FB62A5F0A6500A22904 /* ContextDidSaveNotificationSpy.swift */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
+		BEF0B5282A6004DC0024625A /* Composition */ = {
+			isa = PBXGroup;
+			children = (
+				BEF0B52B2A6005D30024625A /* Helpers */,
+				BE5DFCF82A5C0CAF007BD8A7 /* PhotoImageDataLoaderAdapterTests.swift */,
+				BE3635632A5FF8C30039EECD /* ImageDataLoaderCacheDecoratorTests.swift */,
+			);
+			path = Composition;
+			sourceTree = "<group>";
+		};
+		BEF0B5292A60054D0024625A /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				BEF0B52A2A6005640024625A /* Helpers */,
+				BE65604D2A52D4A400CCD5D6 /* PhotoListViewModelTests.swift */,
+				BED8ECCC2A5340870077FFF9 /* PhotoListIntegrationTests.swift */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
+		BEF0B52A2A6005640024625A /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				BED8ECCE2A53428C0077FFF9 /* PhotosLoaderSpy.swift */,
+				BED8ECD32A536D9E0077FFF9 /* UIRefreshControl+TestHelpers.swift */,
+				BED8ECD52A536DC90077FFF9 /* UIControl+TestHelpers.swift */,
+				BE8103102A559F4C00CE012A /* PhotoListViewController+TestHelpers.swift */,
+				BE81030E2A559EB700CE012A /* PhotoListCell+TestHelpers.swift */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
+		BEF0B52B2A6005D30024625A /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				BE3635652A5FF9970039EECD /* ImageDataLoaderSpy.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
