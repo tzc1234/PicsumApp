@@ -8,7 +8,6 @@
 import UIKit
 
 final class PhotoListCellController {
-    private(set) var imageDataTask: Task<Void, Never>?
     private var cell: PhotoListCell?
     
     let viewModel: PhotoImageViewModel<UIImage> // expose for testing
@@ -17,7 +16,6 @@ final class PhotoListCellController {
         self.viewModel = viewModel
     }
     
-    @MainActor
     func cell(in collectionView: UICollectionView, for indexPath: IndexPath) -> PhotoListCell {
         cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: PhotoListCell.identifier, for: indexPath) as? PhotoListCell
@@ -27,7 +25,6 @@ final class PhotoListCellController {
         return cell!
     }
     
-    @MainActor
     func load(for cell: UICollectionViewCell) {
         guard let newCell = cell as? PhotoListCell else { return }
 
@@ -35,21 +32,16 @@ final class PhotoListCellController {
         load()
     }
     
-    @MainActor
     private func load() {
         cell?.authorLabel.text = viewModel.author
-        imageDataTask = Task { [weak viewModel] in
-            await viewModel?.loadImage()
-        }
+        viewModel.loadImage()
     }
     
     func cancelLoad() {
-        imageDataTask?.cancel()
-        imageDataTask = nil
         releaseForReuse()
+        viewModel.cancelLoad()
     }
     
-    @MainActor
     private func setupBindings() {
         viewModel.onLoadImage = { [weak self] isLoading in
             self?.cell?.imageContainerView.isShimmering = isLoading

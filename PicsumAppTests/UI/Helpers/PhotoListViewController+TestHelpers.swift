@@ -55,7 +55,7 @@ extension PhotoListViewController {
     }
     
     func imageDataTask(at item: Int) -> Task<Void, Never>? {
-        cellController(at: item)?.imageDataTask
+        cellController(at: item)?.viewModel.imageDataTask
     }
     
     func justAfterLoadingImage(at item: Int, action: @escaping () -> Void) {
