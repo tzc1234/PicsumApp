@@ -36,7 +36,7 @@ extension LocalImageDataLoader: ImageDataLoader {
     }
 }
 
-extension LocalImageDataLoader {
+extension LocalImageDataLoader: ImageDataCache {
     enum SaveError: Error {
         case failed
         case oldDataRemovalFailed
