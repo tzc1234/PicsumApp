@@ -8,19 +8,46 @@
 import XCTest
 @testable import PicsumApp
 
-class ImageDataLoaderCacheDecorator {
+class ImageDataLoaderCacheDecorator: ImageDataLoader {
+    private let loader: ImageDataLoader
+    
     init(loader: ImageDataLoader) {
-        
+        self.loader = loader
+    }
+    
+    func loadImageData(for url: URL) async throws -> Data {
+        _ = try await loader.loadImageData(for: url)
+        return Data()
     }
 }
 
 final class ImageDataLoaderCacheDecoratorTests: XCTestCase {
 
     func test_init_noTriggerOnLoader() {
-        let loader = RemoteImageDataLoaderSpy(stubs: [])
-        _ = ImageDataLoaderCacheDecorator(loader: loader)
+        let (_, loader) = makeSUT()
         
         XCTAssertEqual(loader.loggedURLs.count, 0)
     }
+    
+    func test_loadImageData_loadFromLoader() async throws {
+        let (sut, loader) = makeSUT(stubs: [.success(anyData())])
+        let url = anyURL()
+        
+        _ = try await sut.loadImageData(for: url)
+        
+        XCTAssertEqual(loader.loggedURLs, [url])
+    }
 
+    // MARK: - Helpers
+    
+    private func makeSUT(stubs: [RemoteImageDataLoaderSpy.Stub] = [],
+                         file: StaticString = #filePath,
+                         line: UInt = #line) -> (sut: ImageDataLoaderCacheDecorator, loader: RemoteImageDataLoaderSpy) {
+        let loader = RemoteImageDataLoaderSpy(stubs: stubs)
+        let sut = ImageDataLoaderCacheDecorator(loader: loader)
+        trackForMemoryLeaks(loader, file: file, line: line)
+        trackForMemoryLeaks(sut, file: file, line: line)
+        return (sut, loader)
+    }
+    
 }
