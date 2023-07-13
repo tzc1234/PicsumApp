@@ -66,6 +66,7 @@
 		BEE811C62A5D69D900A2F7D7 /* CacheTestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEE811C52A5D69D900A2F7D7 /* CacheTestHelpers.swift */; };
 		BEE811C82A5DE87200A2F7D7 /* CacheImageDataPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEE811C72A5DE87200A2F7D7 /* CacheImageDataPolicy.swift */; };
 		BEF0B5272A6002DF0024625A /* ImageDataLoaderCacheDecorator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEF0B5262A6002DF0024625A /* ImageDataLoaderCacheDecorator.swift */; };
+		BEF0B52D2A6008C30024625A /* ImageDataLoaderWithFallbackCompositeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEF0B52C2A6008C30024625A /* ImageDataLoaderWithFallbackCompositeTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -142,6 +143,7 @@
 		BEE811C52A5D69D900A2F7D7 /* CacheTestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheTestHelpers.swift; sourceTree = "<group>"; };
 		BEE811C72A5DE87200A2F7D7 /* CacheImageDataPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheImageDataPolicy.swift; sourceTree = "<group>"; };
 		BEF0B5262A6002DF0024625A /* ImageDataLoaderCacheDecorator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDataLoaderCacheDecorator.swift; sourceTree = "<group>"; };
+		BEF0B52C2A6008C30024625A /* ImageDataLoaderWithFallbackCompositeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDataLoaderWithFallbackCompositeTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -389,6 +391,7 @@
 				BEF0B52B2A6005D30024625A /* Helpers */,
 				BE5DFCF82A5C0CAF007BD8A7 /* PhotoImageDataLoaderAdapterTests.swift */,
 				BE3635632A5FF8C30039EECD /* ImageDataLoaderCacheDecoratorTests.swift */,
+				BEF0B52C2A6008C30024625A /* ImageDataLoaderWithFallbackCompositeTests.swift */,
 			);
 			path = Composition;
 			sourceTree = "<group>";
@@ -572,6 +575,7 @@
 				BED8ECCF2A53428C0077FFF9 /* PhotosLoaderSpy.swift in Sources */,
 				BED8ECD42A536D9E0077FFF9 /* UIRefreshControl+TestHelpers.swift in Sources */,
 				BE65604E2A52D4A400CCD5D6 /* PhotoListViewModelTests.swift in Sources */,
+				BEF0B52D2A6008C30024625A /* ImageDataLoaderWithFallbackCompositeTests.swift in Sources */,
 				BED283B62A5C6DB100521BC8 /* Date+TestHelpers.swift in Sources */,
 				BE3635642A5FF8C30039EECD /* ImageDataLoaderCacheDecoratorTests.swift in Sources */,
 				BE3691092A5566EE00DF0560 /* UIImage+TestHelpers.swift in Sources */,
