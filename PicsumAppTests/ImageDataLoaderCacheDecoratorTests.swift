@@ -37,6 +37,15 @@ final class ImageDataLoaderCacheDecoratorTests: XCTestCase {
         
         XCTAssertEqual(loader.loggedURLs, [url])
     }
+    
+    func test_loadImageData_deliversErrorOnLoaderError() async {
+        let (sut, _) = makeSUT(stubs: [.failure(anyNSError())])
+        
+        do {
+            _ = try await sut.loadImageData(for: anyURL())
+            XCTFail("Should not success")
+        } catch {}
+    }
 
     // MARK: - Helpers
     
