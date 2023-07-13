@@ -1,5 +1,5 @@
 //
-//  RemoteImageDataLoaderSpy.swift
+//  ImageDataLoaderSpy.swift
 //  PicsumAppTests
 //
 //  Created by Tsz-Lung on 13/07/2023.
@@ -8,7 +8,7 @@
 import Foundation
 @testable import PicsumApp
 
-class RemoteImageDataLoaderSpy: ImageDataLoader {
+class ImageDataLoaderSpy: ImageDataLoader {
     typealias Stub = Result<Data, Error>
     
     private(set) var loggedURLs = [URL]()

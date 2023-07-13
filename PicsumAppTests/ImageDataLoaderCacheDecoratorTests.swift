@@ -76,11 +76,11 @@ final class ImageDataLoaderCacheDecoratorTests: XCTestCase {
 
     // MARK: - Helpers
     
-    private func makeSUT(stubs: [RemoteImageDataLoaderSpy.Stub] = [],
+    private func makeSUT(stubs: [ImageDataLoaderSpy.Stub] = [],
                          cache: CacheSpy = .init(),
                          file: StaticString = #filePath,
-                         line: UInt = #line) -> (sut: ImageDataLoaderCacheDecorator, loader: RemoteImageDataLoaderSpy) {
-        let loader = RemoteImageDataLoaderSpy(stubs: stubs)
+                         line: UInt = #line) -> (sut: ImageDataLoaderCacheDecorator, loader: ImageDataLoaderSpy) {
+        let loader = ImageDataLoaderSpy(stubs: stubs)
         let sut = ImageDataLoaderCacheDecorator(loader: loader, cache: cache)
         trackForMemoryLeaks(loader, file: file, line: line)
         trackForMemoryLeaks(sut, file: file, line: line)

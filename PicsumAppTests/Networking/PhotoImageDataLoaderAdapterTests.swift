@@ -48,10 +48,10 @@ final class PhotoImageDataLoaderAdapterTests: XCTestCase {
 
     // MARK: - Helpers
     
-    private func makeSUT(stubs: [RemoteImageDataLoaderSpy.Stub] = [],
+    private func makeSUT(stubs: [ImageDataLoaderSpy.Stub] = [],
                          file: StaticString = #filePath,
-                         line: UInt = #line) -> (sut: PhotoImageDataLoaderAdapter, loader: RemoteImageDataLoaderSpy) {
-        let loader = RemoteImageDataLoaderSpy(stubs: stubs)
+                         line: UInt = #line) -> (sut: PhotoImageDataLoaderAdapter, loader: ImageDataLoaderSpy) {
+        let loader = ImageDataLoaderSpy(stubs: stubs)
         let sut = PhotoImageDataLoaderAdapter(imageDataLoader: loader)
         
         trackForMemoryLeaks(loader, file: file, line: line)
