@@ -59,21 +59,5 @@ final class PhotoImageDataLoaderAdapterTests: XCTestCase {
         
         return (sut, loader)
     }
-    
-    private class RemoteImageDataLoaderSpy: ImageDataLoader {
-        typealias Stub = Result<Data, Error>
-        
-        private(set) var loggedURLs = [URL]()
-        private var stubs: [Stub]
-        
-        init(stubs: [Stub]) {
-            self.stubs = stubs
-        }
-        
-        func loadImageData(for url: URL) async throws -> Data {
-            loggedURLs.append(url)
-            return try stubs.removeFirst().get()
-        }
-    }
-    
+
 }
