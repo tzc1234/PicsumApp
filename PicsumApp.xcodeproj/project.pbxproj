@@ -165,6 +165,46 @@
 			path = Controllers;
 			sourceTree = "<group>";
 		};
+		BE36355F2A5FEA520039EECD /* Composition */ = {
+			isa = PBXGroup;
+			children = (
+				BE5DFCFC2A5C1AAD007BD8A7 /* ImageDataLoader.swift */,
+				BED008B82A5FE763002D94F5 /* ImageDataCache.swift */,
+				BE8103142A55C2C400CE012A /* PhotoListComposer.swift */,
+				BE5DFCFA2A5C14FF007BD8A7 /* PhotoImageDataLoaderAdapter.swift */,
+			);
+			path = Composition;
+			sourceTree = "<group>";
+		};
+		BE3635602A5FEACF0039EECD /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				BE6560702A53236900CCD5D6 /* ViewModels */,
+				BE1FD4EB2A5423740021777F /* Controllers */,
+				BE4876D62A542E2D00F6AE3F /* Views */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
+		BE3635612A5FEB080039EECD /* Infrastructure */ = {
+			isa = PBXGroup;
+			children = (
+				BE54967F2A5702C900D402A3 /* HTTPClient.swift */,
+				BEE65CF42A5745E3001872BB /* URLSessionHTTPClient.swift */,
+			);
+			path = Infrastructure;
+			sourceTree = "<group>";
+		};
+		BE3635622A5FEBA20039EECD /* Infrastructure */ = {
+			isa = PBXGroup;
+			children = (
+				BE5DA20F2A5EBB42000A90D3 /* CoreDataImageDataStore.swift */,
+				BE5DA20D2A5EA1CE000A90D3 /* ManagedImage.swift */,
+				BE5DA20A2A5EA070000A90D3 /* DataStore.xcdatamodeld */,
+			);
+			path = Infrastructure;
+			sourceTree = "<group>";
+		};
 		BE4876D62A542E2D00F6AE3F /* Views */ = {
 			isa = PBXGroup;
 			children = (
@@ -191,21 +231,19 @@
 			path = Endpoints;
 			sourceTree = "<group>";
 		};
-		BE54967E2A57029200D402A3 /* Services */ = {
+		BE54967E2A57029200D402A3 /* Networking */ = {
 			isa = PBXGroup;
 			children = (
+				BE3635612A5FEB080039EECD /* Infrastructure */,
 				BE5496792A56CFBF00D402A3 /* Endpoints */,
-				BE54967F2A5702C900D402A3 /* HTTPClient.swift */,
 				BE5496812A57032B00D402A3 /* RemotePhotosLoader.swift */,
 				BE5496832A5705E000D402A3 /* PhotosResponseConverter.swift */,
 				BE54968B2A57156E00D402A3 /* RemoteImageDataLoader.swift */,
-				BEE65CF42A5745E3001872BB /* URLSessionHTTPClient.swift */,
-				BE5DFCFA2A5C14FF007BD8A7 /* PhotoImageDataLoaderAdapter.swift */,
 			);
-			path = Services;
+			path = Networking;
 			sourceTree = "<group>";
 		};
-		BE5DFCF62A5C0988007BD8A7 /* Services */ = {
+		BE5DFCF62A5C0988007BD8A7 /* Networking */ = {
 			isa = PBXGroup;
 			children = (
 				BE5DFCF72A5C0998007BD8A7 /* Helpers */,
@@ -216,7 +254,7 @@
 				BE54968D2A572B6B00D402A3 /* URLSessionHTTPClientTests.swift */,
 				BE5DFCF82A5C0CAF007BD8A7 /* PhotoImageDataLoaderAdapterTests.swift */,
 			);
-			path = Services;
+			path = Networking;
 			sourceTree = "<group>";
 		};
 		BE5DFCF72A5C0998007BD8A7 /* Helpers */ = {
@@ -262,16 +300,13 @@
 		BE6560352A52D4A300CCD5D6 /* PicsumApp */ = {
 			isa = PBXGroup;
 			children = (
-				BE54967E2A57029200D402A3 /* Services */,
+				BE65606D2A52EE6800CCD5D6 /* Features */,
+				BE54967E2A57029200D402A3 /* Networking */,
 				BEC9C5392A5C564B0043B0C9 /* Cache */,
-				BE65606A2A52EDFA00CCD5D6 /* Models */,
-				BE65606D2A52EE6800CCD5D6 /* Loaders */,
-				BE6560702A53236900CCD5D6 /* ViewModels */,
-				BE1FD4EB2A5423740021777F /* Controllers */,
-				BE4876D62A542E2D00F6AE3F /* Views */,
+				BE3635602A5FEACF0039EECD /* UI */,
+				BE36355F2A5FEA520039EECD /* Composition */,
 				BE6560362A52D4A300CCD5D6 /* AppDelegate.swift */,
 				BE6560382A52D4A300CCD5D6 /* SceneDelegate.swift */,
-				BE8103142A55C2C400CE012A /* PhotoListComposer.swift */,
 				BE65603F2A52D4A400CCD5D6 /* Assets.xcassets */,
 				BE6560412A52D4A400CCD5D6 /* LaunchScreen.storyboard */,
 				BE6560442A52D4A400CCD5D6 /* Info.plist */,
@@ -283,7 +318,7 @@
 			isa = PBXGroup;
 			children = (
 				BE6560672A52DF7C00CCD5D6 /* Helpers */,
-				BE5DFCF62A5C0988007BD8A7 /* Services */,
+				BE5DFCF62A5C0988007BD8A7 /* Networking */,
 				BE5DFCFE2A5C43AF007BD8A7 /* Cache */,
 				BE65604D2A52D4A400CCD5D6 /* PhotoListViewModelTests.swift */,
 				BED8ECCC2A5340870077FFF9 /* PhotoListIntegrationTests.swift */,
@@ -306,23 +341,14 @@
 			path = Helpers;
 			sourceTree = "<group>";
 		};
-		BE65606A2A52EDFA00CCD5D6 /* Models */ = {
+		BE65606D2A52EE6800CCD5D6 /* Features */ = {
 			isa = PBXGroup;
 			children = (
 				BE65606B2A52EE1100CCD5D6 /* Photo.swift */,
-			);
-			path = Models;
-			sourceTree = "<group>";
-		};
-		BE65606D2A52EE6800CCD5D6 /* Loaders */ = {
-			isa = PBXGroup;
-			children = (
 				BE65606E2A52EE8200CCD5D6 /* PhotosLoader.swift */,
 				BE4876D92A547B2A00F6AE3F /* PhotoImageDataLoader.swift */,
-				BE5DFCFC2A5C1AAD007BD8A7 /* ImageDataLoader.swift */,
-				BED008B82A5FE763002D94F5 /* ImageDataCache.swift */,
 			);
-			path = Loaders;
+			path = Features;
 			sourceTree = "<group>";
 		};
 		BE6560702A53236900CCD5D6 /* ViewModels */ = {
@@ -337,12 +363,10 @@
 		BEC9C5392A5C564B0043B0C9 /* Cache */ = {
 			isa = PBXGroup;
 			children = (
+				BE3635622A5FEBA20039EECD /* Infrastructure */,
 				BEC9C53A2A5C56730043B0C9 /* ImageDataStore.swift */,
 				BEC9C53C2A5C56930043B0C9 /* LocalImageDataLoader.swift */,
 				BEE811C72A5DE87200A2F7D7 /* CacheImageDataPolicy.swift */,
-				BE5DA20F2A5EBB42000A90D3 /* CoreDataImageDataStore.swift */,
-				BE5DA20D2A5EA1CE000A90D3 /* ManagedImage.swift */,
-				BE5DA20A2A5EA070000A90D3 /* DataStore.xcdatamodeld */,
 			);
 			path = Cache;
 			sourceTree = "<group>";
