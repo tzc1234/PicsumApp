@@ -19,7 +19,7 @@ class ImageDataLoaderCacheDecorator: ImageDataLoader {
     
     func loadImageData(for url: URL) async throws -> Data {
         let data = try await loader.loadImageData(for: url)
-        try await cache.save(data: data, for: url)
+        try? await cache.save(data: data, for: url)
         return data
     }
 }
@@ -78,6 +78,17 @@ final class ImageDataLoaderCacheDecoratorTests: XCTestCase {
             
         XCTAssertEqual(cache.cachedData.count, 0)
     }
+    
+    func test_loadImageData_ignoresCacheErrorWhenFailsOnCache() async {
+        let cache = CacheSpy()
+        let (sut, _) = makeSUT(stubs: [.success(anyData())], cache: cache)
+        
+        do {
+            _ = try await sut.loadImageData(for: anyURL())
+        } catch {
+            XCTFail("Should not fail")
+        }
+    }
 
     // MARK: - Helpers
     
@@ -97,6 +108,7 @@ final class ImageDataLoaderCacheDecoratorTests: XCTestCase {
         
         func save(data: Data, for url: URL) async throws {
             cachedData.append(.init(data: data, url: url))
+            throw anyNSError()
         }
         
         struct Cached: Equatable {
