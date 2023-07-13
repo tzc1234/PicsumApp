@@ -16,8 +16,7 @@ class ImageDataLoaderCacheDecorator: ImageDataLoader {
     }
     
     func loadImageData(for url: URL) async throws -> Data {
-        _ = try await loader.loadImageData(for: url)
-        return Data()
+        try await loader.loadImageData(for: url)
     }
 }
 
@@ -45,6 +44,15 @@ final class ImageDataLoaderCacheDecoratorTests: XCTestCase {
             _ = try await sut.loadImageData(for: anyURL())
             XCTFail("Should not success")
         } catch {}
+    }
+    
+    func test_loadImageData_deliversDataOnLoaderSuccess() async throws {
+        let data = anyData()
+        let (sut, _) = makeSUT(stubs: [.success(data)])
+        
+        let receivedData = try await sut.loadImageData(for: anyURL())
+        
+        XCTAssertEqual(receivedData, data)
     }
 
     // MARK: - Helpers
