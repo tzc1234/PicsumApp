@@ -58,11 +58,6 @@ extension PhotoListViewController {
         cellController(at: item)?.viewModel.imageDataTask
     }
     
-    func justAfterLoadingImage(at item: Int, action: @escaping () -> Void) {
-        let viewModel: PhotoImageViewModel<UIImage>? = cellController(at: item)?.viewModel
-        viewModel?.justAfterOnLoadImage = action
-    }
-    
     private func cellController(at item: Int) -> PhotoListCellController? {
         let indexPath = IndexPath(item: item, section: photoViewSection)
         let ds = collectionView.dataSource as? UICollectionViewDiffableDataSource<Int, PhotoListCellController>

@@ -19,6 +19,7 @@ final class PhotoListCellController {
     func cell(in collectionView: UICollectionView, for indexPath: IndexPath) -> PhotoListCell {
         cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: PhotoListCell.identifier, for: indexPath) as? PhotoListCell
+        cell?.contentView.layoutIfNeeded()
         cell?.imageView.image = nil
         setupBindings()
         load()

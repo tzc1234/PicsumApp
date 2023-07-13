@@ -103,7 +103,7 @@ final class PhotoListIntegrationTests: XCTestCase {
     @MainActor
     func test_loadPhotosCompletion_doesNotAlterCurrentRenderedPhotoViewsOnError() async throws {
         let photo0 = makePhoto(id: "0", author: "author0")
-        let (sut, _) = makeSUT(photoStubs: [.success([photo0]), .failure(anyNSError())], dataStubs: [.failure(anyNSError())])
+        let (sut, _) = makeSUT(photoStubs: [.success([photo0]), .failure(anyNSError())], dataStubs: [anySuccessData()])
 
         sut.loadViewIfNeeded()
 
@@ -120,9 +120,9 @@ final class PhotoListIntegrationTests: XCTestCase {
     }
     
     @MainActor
-    func test_photoView_loadsImageByIDWhenVisiable() async {
-        let photo0 = makePhoto(id: "0", url: URL(string: "https://url-0.com")!)
-        let photo1 = makePhoto(id: "1", url: URL(string: "https://url-1.com")!)
+    func test_photoView_loadsImageWhenVisiable() async {
+        let photo0 = makePhoto(id: "0")
+        let photo1 = makePhoto(id: "1")
         let (sut, loader) = makeSUT(
             photoStubs: [.success([photo0, photo1])],
             dataStubs: [anySuccessData(), anySuccessData()])
@@ -130,44 +130,43 @@ final class PhotoListIntegrationTests: XCTestCase {
         sut.loadViewIfNeeded()
         await sut.reloadPhotosTask?.value
         
-        XCTAssertEqual(loader.loggedPhotoIDs, [], "Expect no image URL requests until views become visiable")
+        XCTAssertEqual(loader.loggedPhotoIDs, [], "Expect no image requests until views become visiable")
         
         sut.simulatePhotoViewVisible(at: 0)
         await sut.imageDataTask(at: 0)?.value
-        XCTAssertEqual(loader.loggedPhotoIDs, [photo0.id], "Expect first image URL request once first photo view become visiable")
+        XCTAssertEqual(loader.loggedPhotoIDs, [photo0.id], "Expect first image request once first photo view become visiable")
         
         sut.simulatePhotoViewVisible(at: 1)
         await sut.imageDataTask(at: 1)?.value
-        XCTAssertEqual(loader.loggedPhotoIDs, [photo0.id, photo1.id], "Expect second image URL request once second photo view become visiable")
+        XCTAssertEqual(loader.loggedPhotoIDs, [photo0.id, photo1.id], "Expect second image request once second photo view become visiable")
     }
     
     @MainActor
     func test_photoView_cancelsImageDataTaskWhenNotVisibleAnymore() async throws {
-        let photo0 = makePhoto(id: "0", url: URL(string: "https://url-0.com")!)
-        let photo1 = makePhoto(id: "1", url: URL(string: "https://url-1.com")!)
-        let (sut, _) = makeSUT(photoStubs: [.success([photo0, photo1])], dataStubs: [anySuccessData(), anySuccessData()])
+        let photo0 = makePhoto(id: "0")
+        let photo1 = makePhoto(id: "1")
+        let imageData1 = UIImage.make(withColor: .blue).pngData()!
+        let (sut, _) = makeSUT(photoStubs: [.success([photo0, photo1])], dataStubs: [.success(anyData()), .success(imageData1)])
         
         sut.loadViewIfNeeded()
         await sut.reloadPhotosTask?.value
         
         let view0 = try XCTUnwrap(sut.simulatePhotoViewVisible(at: 0))
         let view1 = try XCTUnwrap(sut.simulatePhotoViewVisible(at: 1))
-        let task0 = try XCTUnwrap(sut.imageDataTask(at: 0))
-        let task1 = try XCTUnwrap(sut.imageDataTask(at: 1))
         
-        XCTAssertFalse(task0.isCancelled, "Expect the first image data task started when first photo view is visible")
-        XCTAssertFalse(task1.isCancelled, "Expect the second image data task started when excond photo view is visible")
+        XCTAssertNil(view0.renderedImage, "Expect no image data when first view's task is not completed")
+        XCTAssertNil(view1.renderedImage, "Expect no image data when second view's task is not completed")
         
         sut.simulatePhotoViewNotVisible(view0, at: 0)
-        sut.simulatePhotoViewNotVisible(view1, at: 1)
+        await sut.imageDataTask(at: 1)?.value
         
-        XCTAssertTrue(task0.isCancelled, "Expect the first image data task is cancelled when first photo view is not visible anymore")
-        XCTAssertTrue(task1.isCancelled, "Expect the second image data task is cancelled when second photo view is not visible anymore")
+        XCTAssertNil(view0.renderedImage, "Expect no image data because first view's task is cancelled when it is not visible anymore")
+        XCTAssertEqual(view1.renderedImage, imageData1, "Expect the second image is loaded after its data task is completed")
     }
     
     @MainActor
-    func test_photoView_loadsImageByIDWhileInvisibleViewIsVisibleAgain() async throws {
-        let photo0 = makePhoto(id: "0", url: URL(string: "https://url-0.com")!)
+    func test_photoView_loadsImageWhileInvisibleViewIsVisibleAgain() async throws {
+        let photo0 = makePhoto(id: "0")
         let (sut, loader) = makeSUT(photoStubs: [.success([photo0])], dataStubs: [anySuccessData(), anySuccessData()])
         
         sut.loadViewIfNeeded()
@@ -175,21 +174,21 @@ final class PhotoListIntegrationTests: XCTestCase {
         
         let view = try XCTUnwrap(sut.simulatePhotoViewVisible(at: 0))
         await sut.imageDataTask(at: 0)?.value
-        XCTAssertEqual(loader.loggedPhotoIDs, [photo0.id], "Expect image URL request once photo view become visiable")
+        XCTAssertEqual(loader.loggedPhotoIDs, [photo0.id], "Expect image request once photo view become visiable")
         
         sut.simulatePhotoViewNotVisible(view, at: 0)
         await sut.imageDataTask(at: 0)?.value
-        XCTAssertEqual(loader.loggedPhotoIDs, [photo0.id], "Expect image URL request stay unchanged when photo view become invisiable")
+        XCTAssertEqual(loader.loggedPhotoIDs, [photo0.id], "Expect image request stay unchanged when photo view become invisiable")
         
         sut.simulatePhotoViewBecomeVisibleAgain(view, at: 0)
         await sut.imageDataTask(at: 0)?.value
-        XCTAssertEqual(loader.loggedPhotoIDs, [photo0.id, photo0.id], "Expect image URL request again once photo view will become visiable again")
+        XCTAssertEqual(loader.loggedPhotoIDs, [photo0.id, photo0.id], "Expect image request again once photo view will become visiable again")
     }
     
     @MainActor
     func test_photoViewLoadingIndicator_isVisibleWhileLoadingImage() async throws {
-        let photo0 = makePhoto(id: "0", url: URL(string: "https://url-0.com")!)
-        let photo1 = makePhoto(id: "1", url: URL(string: "https://url-1.com")!)
+        let photo0 = makePhoto(id: "0")
+        let photo1 = makePhoto(id: "1")
         let (sut, _) = makeSUT(photoStubs: [.success([photo0, photo1])], dataStubs: [anySuccessData(), anySuccessData()])
         
         sut.loadViewIfNeeded()
@@ -198,22 +197,11 @@ final class PhotoListIntegrationTests: XCTestCase {
         let view0 = try XCTUnwrap(sut.simulatePhotoViewVisible(at: 0))
         let view1 = try XCTUnwrap(sut.simulatePhotoViewVisible(at: 1))
         
-        let exp0 = expectation(description: "wait for view0 justAfterOnLoadImage")
-        sut.justAfterLoadingImage(at: 0) {
-            XCTAssertTrue(view0.isShowingImageLoadingIndicator, "Expect loading indicator for first view while loading first image")
-            exp0.fulfill()
-        }
+        XCTAssertTrue(view0.isShowingImageLoadingIndicator, "Expect loading indicator for first view while loading first image")
+        XCTAssertTrue(view1.isShowingImageLoadingIndicator, "Expect loading indicator for second view while loading second image")
         
-        let exp1 = expectation(description: "wait for view1 justAfterOnLoadImage")
-        sut.justAfterLoadingImage(at: 1) {
-            XCTAssertTrue(view1.isShowingImageLoadingIndicator, "Expect loading indicator for second view while loading second image")
-            exp1.fulfill()
-        }
-        
-        await fulfillment(of: [exp0, exp1])
-        
-        // Once trigger `.value` from whatever Task, all other tasks will complete at the same time.
-        // Cannot find a better way to one by one triggering Tasks.
+        // Once trigger `value` from whatever Task, all pending tasks will complete at the same time.
+        // This is annoying! Cannot find a better way to one by one triggering Tasks.
         await sut.imageDataTask(at: 0)?.value
         
         XCTAssertFalse(view0.isShowingImageLoadingIndicator, "Expect no loading indicator for first view after loading first image completion")
@@ -221,9 +209,9 @@ final class PhotoListIntegrationTests: XCTestCase {
     }
     
     @MainActor
-    func test_photoView_rendersImageLoadedFromURL() async throws {
-        let photo0 = makePhoto(id: "0", url: URL(string: "https://url-0.com")!)
-        let photo1 = makePhoto(id: "1", url: URL(string: "https://url-1.com")!)
+    func test_photoView_rendersImageLoadedFromPhoto() async throws {
+        let photo0 = makePhoto(id: "0")
+        let photo1 = makePhoto(id: "1")
         let imageData0 = UIImage.make(withColor: .red).pngData()!
         let imageData1 = UIImage.make(withColor: .blue).pngData()!
         let (sut, _) = makeSUT(photoStubs: [.success([photo0, photo1])], dataStubs: [.success(imageData0), .success(imageData1)])
@@ -245,49 +233,6 @@ final class PhotoListIntegrationTests: XCTestCase {
     
     @MainActor
     func test_photoView_rendersNoImageOnError() async throws {
-        let photo0 = makePhoto(id: "0", url: URL(string: "https://url-0.com")!)
-        let imageData0 = UIImage.make(withColor: .red).pngData()!
-        let (sut, _) = makeSUT(photoStubs: [.success([photo0])],
-                               dataStubs: [.failure(anyNSError()), .success(imageData0)])
-        
-        sut.loadViewIfNeeded()
-        await sut.reloadPhotosTask?.value
-        
-        let view0 = try XCTUnwrap(sut.simulatePhotoViewVisible(at: 0))
-        
-        XCTAssertEqual(view0.renderedImage, .none, "Expect no image for first view while loading first image")
-        
-        await sut.imageDataTask(at: 0)?.value
-        
-        XCTAssertEqual(view0.renderedImage, .none, "Expect no image for first view while loading first image complete with error")
-        
-        sut.simulatePhotoViewNotVisible(view0, at: 0)
-        sut.simulatePhotoViewBecomeVisibleAgain(view0, at: 0)
-        await sut.imageDataTask(at: 0)?.value
-        
-        XCTAssertEqual(view0.renderedImage, imageData0, "Expect image for first view once loading first image completed successfully after first view visiable again")
-    }
-    
-    @MainActor
-    func test_photoView_rendersNoImageOnInvalidImageData() async throws {
-        let photo0 = makePhoto(id: "0", url: URL(string: "https://url-0.com")!)
-        let invalidData = Data("invalid data".utf8)
-        let (sut, _) = makeSUT(photoStubs: [.success([photo0])], dataStubs: [.success(invalidData)])
-        
-        sut.loadViewIfNeeded()
-        await sut.reloadPhotosTask?.value
-        
-        let view0 = try XCTUnwrap(sut.simulatePhotoViewVisible(at: 0))
-        
-        XCTAssertEqual(view0.renderedImage, .none, "Expect no image for first view while loading first image")
-        
-        await sut.imageDataTask(at: 0)?.value
-        
-        XCTAssertEqual(view0.renderedImage, .none, "Expect no image for first view once loading first image complete with invalid image data")
-    }
-    
-    @MainActor
-    func test_photoView_configuresViewCorrectlyWhenBecomingVisibleAgain() async throws {
         let photo0 = makePhoto(id: "0")
         let imageData0 = UIImage.make(withColor: .red).pngData()!
         let (sut, _) = makeSUT(photoStubs: [.success([photo0])],
@@ -297,22 +242,58 @@ final class PhotoListIntegrationTests: XCTestCase {
         await sut.reloadPhotosTask?.value
         
         let view0 = try XCTUnwrap(sut.simulatePhotoViewVisible(at: 0))
+        
+        XCTAssertEqual(view0.renderedImage, .none, "Expect no image for view while loading")
+        
+        await sut.imageDataTask(at: 0)?.value
+        
+        XCTAssertEqual(view0.renderedImage, .none, "Expect no image for view while loading image complete with error")
+        
+        sut.simulatePhotoViewNotVisible(view0, at: 0)
+        sut.simulatePhotoViewBecomeVisibleAgain(view0, at: 0)
+        await sut.imageDataTask(at: 0)?.value
+        
+        XCTAssertEqual(view0.renderedImage, imageData0, "Expect an image for view once loading image completed successfully after view visiable again")
+    }
+    
+    @MainActor
+    func test_photoView_rendersNoImageOnInvalidImageData() async throws {
+        let photo0 = makePhoto(id: "0")
+        let invalidData = Data("invalid data".utf8)
+        let (sut, _) = makeSUT(photoStubs: [.success([photo0])], dataStubs: [.success(invalidData)])
+        
+        sut.loadViewIfNeeded()
+        await sut.reloadPhotosTask?.value
+        
+        let view0 = try XCTUnwrap(sut.simulatePhotoViewVisible(at: 0))
+        
+        XCTAssertEqual(view0.renderedImage, .none, "Expect no image for view while loading first image")
+        
+        await sut.imageDataTask(at: 0)?.value
+        
+        XCTAssertEqual(view0.renderedImage, .none, "Expect no image for view once loading image complete with invalid image data")
+    }
+    
+    @MainActor
+    func test_photoView_configuresViewCorrectlyWhenBecomingVisibleAgain() async throws {
+        let photo0 = makePhoto(id: "0")
+        let imageData0 = UIImage.make(withColor: .red).pngData()!
+        let (sut, _) = makeSUT(photoStubs: [.success([photo0])], dataStubs: [.failure(anyNSError()), .success(imageData0)])
+        
+        sut.loadViewIfNeeded()
+        await sut.reloadPhotosTask?.value
+        
+        let view0 = try XCTUnwrap(sut.simulatePhotoViewVisible(at: 0))
         sut.simulatePhotoViewNotVisible(view0, at: 0)
         sut.simulatePhotoViewBecomeVisibleAgain(view0, at: 0)
         
         XCTAssertEqual(view0.renderedImage, .none, "Expect no image when view become visiable again")
-        
-        var loggedLoadingStates = [Bool]()
-        sut.justAfterLoadingImage(at: 0) {
-            loggedLoadingStates.append(view0.isShowingImageLoadingIndicator)
-        }
+        XCTAssertTrue(view0.isShowingImageLoadingIndicator, "Expected loading indicator when view was visible and becomes visible again")
         
         await sut.imageDataTask(at: 0)?.value
         
-        XCTAssertEqual(loggedLoadingStates, [true, true], "Expected loading indicator when view was visible and becomes visible again")
-        
         XCTAssertEqual(view0.renderedImage, imageData0, "Expected rendered image when image loads successfully after view becomes visible again")
-        XCTAssertEqual(view0.isShowingImageLoadingIndicator, false, "Expected no loading indicator when image loads successfully after view becomes visible again")
+        XCTAssertFalse(view0.isShowingImageLoadingIndicator, "Expected no loading indicator when image loads successfully after view becomes visible again")
     }
     
     @MainActor
