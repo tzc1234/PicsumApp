@@ -10,7 +10,7 @@ import UIKit
 final class PhotoListCell: UICollectionViewCell {
     private(set) lazy var authorLabel = {
         let l = UILabel()
-        l.font = .preferredFont(forTextStyle: .caption2)
+        l.font = .preferredFont(forTextStyle: .caption1)
         l.translatesAutoresizingMaskIntoConstraints = false
         return l
     }()
