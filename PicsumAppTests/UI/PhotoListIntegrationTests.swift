@@ -59,23 +59,23 @@ final class PhotoListIntegrationTests: XCTestCase {
 
     @MainActor
     func test_loadingPhotosIndicator_isVisiableWhileLoadingPhotos() async {
-        let (sut, loader) = makeSUT(photoStubs: [.success([]), .failure(anyNSError())])
+        let (sut, _) = makeSUT(photoStubs: [.success([]), .failure(anyNSError())])
 
-        var indicatorLoadingStates = [Bool]()
-        loader.beforeLoad = { [weak sut] in
-            indicatorLoadingStates.append(sut?.isShowingLoadingIndicator == true)
-        }
         sut.loadViewIfNeeded()
 
+        XCTAssertTrue(sut.isShowingLoadingIndicator, "Expect an loading indicator once the view is loaded")
+        
         await sut.loadPhotosTask?.value
-        XCTAssertEqual(indicatorLoadingStates, [true], "Expect showing loading indicator once the view is loaded")
-        XCTAssertFalse(sut.isShowingLoadingIndicator, "Expect not showing loading indicator once the photos loading finished")
+        
+        XCTAssertFalse(sut.isShowingLoadingIndicator, "Expect no loading indicator once photos loading completed")
 
         sut.simulateUserInitiatedReload()
 
+        XCTAssertTrue(sut.isShowingLoadingIndicator, "Expect an loading indicator again after user initiated a reload")
+        
         await sut.loadPhotosTask?.value
-        XCTAssertEqual(indicatorLoadingStates, [true, true], "Expect showing loading indicator again after user initiated a reload")
-        XCTAssertFalse(sut.isShowingLoadingIndicator, "Expect not showing loading indicator agin after user initiated reload completes with error")
+        
+        XCTAssertFalse(sut.isShowingLoadingIndicator, "Expect no loading indicator agin after user initiated reload completes with error")
     }
 
     @MainActor
