@@ -13,8 +13,8 @@ final class PhotoListViewModel {
     var onLoad: Observer<Bool>?
     var onError: Observer<String?>?
     var didLoad: Observer<[Photo]>?
-     
-    private var photos = [Photo]()
+    var didLoadMore: Observer<[Photo]>?
+    
     private var currentPage = 1
     private var hasMorePage = true
     private var isLoadingMore = false
@@ -32,8 +32,8 @@ final class PhotoListViewModel {
         onLoad?(true)
         
         loadPhotosTask?.cancel()
-        loadPhotosTask = loadPhotosFromLoader(photosLoaded: { [weak self] in
-            self?.photos = $0
+        loadPhotosTask = loadPhotosFromLoader(photosLoaded: { [weak self] photos in
+            self?.didLoad?(photos)
         }, completion: { [weak self] in
             self?.onLoad?(false)
         })
@@ -43,15 +43,15 @@ final class PhotoListViewModel {
         guard hasMorePage && !isLoadingMore else { return }
         
         isLoadingMore = true
-        loadMorePhotosTask = loadPhotosFromLoader(photosLoaded: { [weak self] in
-            self?.photos += $0
+        loadMorePhotosTask = loadPhotosFromLoader(photosLoaded: { [weak self] photos in
+            self?.didLoadMore?(photos)
         }, completion: { [weak self] in
             self?.isLoadingMore = false
         })
     }
     
     private func loadPhotosFromLoader(photosLoaded: @escaping ([Photo]) -> Void,
-                                      completion: (() -> Void)? = nil) -> Task<Void, Never> {
+                                      completion: @escaping () -> Void) -> Task<Void, Never> {
         Task { @MainActor in
             do {
                 let photos = try await loader.load(page: currentPage)
@@ -59,7 +59,6 @@ final class PhotoListViewModel {
                 
                 updatePaging(by: photos)
                 photosLoaded(photos)
-                didLoad?(self.photos)
                 onError?(nil)
             } catch {
                 guard !Task.isCancelled else { return }
@@ -67,7 +66,7 @@ final class PhotoListViewModel {
                 onError?(Self.errorMessage)
             }
             
-            completion?()
+            completion()
         }
     }
     

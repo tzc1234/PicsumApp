@@ -336,8 +336,10 @@ final class PhotoListIntegrationTests: XCTestCase {
         let imageData0 = UIImage.make(withColor: .red).pngData()!
         let imageData1 = UIImage.make(withColor: .blue).pngData()!
         let imageData2 = UIImage.make(withColor: .green).pngData()!
-        let (sut, _) = makeSUT(photoStubs: [.success([photo0]), .success([photo1, photo2])],
-                               dataStubs: [.success(imageData0), .success(imageData1), .success(imageData2)])
+        let (sut, _) = makeSUT(
+            photoStubs: [.success([photo0]), .success([photo1, photo2])],
+            dataStubs: [.success(imageData0), anySuccessData(), .success(imageData1), anySuccessData(), .success(imageData2)]
+        )
         
         sut.loadViewIfNeeded()
         await sut.loadPhotosTask?.value
@@ -353,10 +355,8 @@ final class PhotoListIntegrationTests: XCTestCase {
         
         XCTAssertEqual(sut.numberOfRenderedPhotoView(), 3, "Expect three views rendered after second page loaded")
         
-        let view1 = try XCTUnwrap(sut.simulatePhotoViewVisible(at: 1))
-        let view2 = try XCTUnwrap(sut.simulatePhotoViewVisible(at: 2))
-        await sut.imageDataTask(at: 1)?.value
-        
+        let view1 = try XCTUnwrap(sut.photoView(at: 1))
+        let view2 = try XCTUnwrap(sut.photoView(at: 2))
         XCTAssertEqual(view0.renderedImage, imageData0, "Expected rendered image for first view keep unchange")
         XCTAssertEqual(view1.renderedImage, imageData1, "Expected rendered image for second view when second view become visible")
         XCTAssertEqual(view2.renderedImage, imageData2, "Expected rendered image for third view when third view become visible")
