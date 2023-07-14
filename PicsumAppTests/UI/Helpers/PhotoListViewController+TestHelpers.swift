@@ -34,14 +34,15 @@ extension PhotoListViewController {
     }
     
     func photoView(at item: Int) -> PhotoListCell? {
-        let ds = collectionView.dataSource
         let indexPath = IndexPath(item: item, section: photoViewSection)
-        return ds?.collectionView(collectionView, cellForItemAt: indexPath) as? PhotoListCell
+        return collectionView.cellForItem(at: indexPath) as? PhotoListCell
     }
     
     @discardableResult
     func simulatePhotoViewVisible(at item: Int) -> PhotoListCell? {
-        photoView(at: item)
+        let ds = collectionView.dataSource
+        let indexPath = IndexPath(item: item, section: photoViewSection)
+        return ds?.collectionView(collectionView, cellForItemAt: indexPath) as? PhotoListCell
     }
     
     func simulatePhotoViewInvisible(_ view: PhotoListCell, at item: Int) {

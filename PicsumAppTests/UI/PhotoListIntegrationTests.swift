@@ -415,7 +415,7 @@ final class PhotoListIntegrationTests: XCTestCase {
     
     private func assertThat(_ sut: PhotoListViewController, hasViewConfigureFor photo: Photo, at index: Int,
                             file: StaticString = #file, line: UInt = #line) {
-        guard let view = sut.photoView(at: index) else {
+        guard let view = sut.simulatePhotoViewVisible(at: index) else {
             XCTFail("Expect a photo view at index \(index)", file: file, line: line)
             return
         }
