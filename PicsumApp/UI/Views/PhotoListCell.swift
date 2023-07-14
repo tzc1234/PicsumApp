@@ -44,6 +44,16 @@ final class PhotoListCell: UICollectionViewCell {
         return bv
     }()
     
+    var isShimmering = false {
+        didSet {
+            if isShimmering {
+                imageContainerView.startShimmering()
+            } else {
+                imageContainerView.stopShimmering()
+            }
+        }
+    }
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         configureUI()

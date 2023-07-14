@@ -35,7 +35,6 @@ final class PhotoImageViewModel<Image> {
                 width: Self.photoDimension,
                 height: Self.photoDimension)).flatMap(self.imageConverter)
             
-            // This behaviour can't be tested normally.
             guard !Task.isCancelled else { return }
             
             self.didLoadImage?(image)

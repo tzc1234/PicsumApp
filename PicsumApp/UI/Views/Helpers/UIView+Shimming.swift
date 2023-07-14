@@ -8,25 +8,9 @@
 import UIKit
 
 extension UIView {
-    public var isShimmering: Bool {
-        set {
-            if newValue {
-                startShimmering()
-            } else {
-                stopShimmering()
-            }
-        }
+    private var shimmerAnimationKey: String { "shimmer" }
 
-        get {
-            layer.mask?.animation(forKey: shimmerAnimationKey) != nil
-        }
-    }
-
-    private var shimmerAnimationKey: String {
-        "shimmer"
-    }
-
-    private func startShimmering() {
+    func startShimmering() {
         let white = UIColor.white.cgColor
         let alpha = UIColor.white.withAlphaComponent(0.75).cgColor
         let width = bounds.width
@@ -48,7 +32,7 @@ extension UIView {
         gradient.add(animation, forKey: shimmerAnimationKey)
     }
 
-    private func stopShimmering() {
+    func stopShimmering() {
         layer.mask = nil
     }
 }

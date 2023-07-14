@@ -38,7 +38,7 @@ extension PhotoListViewController {
         photoView(at: item)
     }
     
-    func simulatePhotoViewNotVisible(_ view: PhotoListCell, at item: Int) {
+    func simulatePhotoViewInvisible(_ view: PhotoListCell, at item: Int) {
         let d = collectionView.delegate
         let indexPath = IndexPath(item: item, section: photoViewSection)
         d?.collectionView?(collectionView, didEndDisplaying: view, forItemAt: indexPath)
@@ -54,7 +54,7 @@ extension PhotoListViewController {
         0
     }
     
-    var reloadPhotosTask: Task<Void, Never>? {
+    var loadPhotosTask: Task<Void, Never>? {
         viewModel?.loadPhotosTask
     }
     

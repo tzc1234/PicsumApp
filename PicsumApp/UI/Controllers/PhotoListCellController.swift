@@ -45,7 +45,7 @@ final class PhotoListCellController {
     
     private func setupBindings() {
         viewModel.onLoadImage = { [weak self] isLoading in
-            self?.cell?.imageContainerView.isShimmering = isLoading
+            self?.cell?.isShimmering = isLoading
         }
         
         viewModel.didLoadImage = { [weak self] image in
