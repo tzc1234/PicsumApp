@@ -43,18 +43,19 @@ final class PhotoListIntegrationTests: XCTestCase {
     }
 
     @MainActor
-    func test_loadPhotosAction_cancelsPreviousUnfinishedTaskBeforeNewRequest() async throws {
-        let (sut, _) = makeSUT(photoStubs: [.success([]), .success([])])
+    func test_loadPhotosAction_cancelsPreviousUnfinishedPhotosLoadingBeforeNewPhotosLoading() async throws {
+        let photo0 = makePhoto(id: "0")
+        let photo1 = makePhoto(id: "1")
+        let (sut, _) = makeSUT(photoStubs: [.success([photo0]), .success([photo0, photo1])])
 
         sut.loadViewIfNeeded()
-        let previousTask = try XCTUnwrap(sut.loadPhotosTask)
 
-        XCTAssertEqual(previousTask.isCancelled, false)
+        XCTAssertEqual(sut.numberOfRenderedPhotoView(), 0, "Expect no rendered view while inital photo loading is not completed")
 
         sut.simulateUserInitiatedReload()
         await sut.loadPhotosTask?.value
 
-        XCTAssertEqual(previousTask.isCancelled, true)
+        XCTAssertEqual(sut.numberOfRenderedPhotoView(), 2, "Expect two rendered view after user initiated photo loading is completed")
     }
 
     @MainActor
