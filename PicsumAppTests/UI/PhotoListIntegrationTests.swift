@@ -9,6 +9,10 @@ import XCTest
 import UIKit
 @testable import PicsumApp
 
+// *** About complete the async tasks:
+// Once trigger `value` from whatever task, all pending tasks will complete at the same time.
+// This is annoying! Cannot find a better way to trigger tasks one by one, limit the testability.
+
 final class PhotoListIntegrationTests: XCTestCase {
     
     func test_photosList_hasTitle() {
@@ -230,8 +234,6 @@ final class PhotoListIntegrationTests: XCTestCase {
         XCTAssertTrue(view0.isShowingImageLoadingIndicator, "Expect loading indicator for first view while loading first image")
         XCTAssertTrue(view1.isShowingImageLoadingIndicator, "Expect loading indicator for second view while loading second image")
         
-        // Once trigger `value` from whatever Task, all pending tasks will complete at the same time.
-        // This is annoying! Cannot find a better way to one by one triggering Tasks.
         await sut.imageDataTask(at: 0)?.value
         
         XCTAssertFalse(view0.isShowingImageLoadingIndicator, "Expect no loading indicator for first view after loading first image completion")
