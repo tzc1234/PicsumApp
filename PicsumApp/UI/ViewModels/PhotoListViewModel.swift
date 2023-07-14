@@ -17,6 +17,7 @@ final class PhotoListViewModel {
     private var photos = [Photo]()
     private var currentPage = 1
     private var hasMorePage = true
+    private var isLoadingMore = false
     private(set) var loadPhotosTask: Task<Void, Never>?
     private(set) var loadMorePhotosTask: Task<Void, Never>?
     
@@ -39,11 +40,14 @@ final class PhotoListViewModel {
     }
     
     func loadMorePhotos() {
-        guard hasMorePage else { return }
+        guard hasMorePage && !isLoadingMore else { return }
         
-        loadMorePhotosTask = loadPhotosFromLoader { [weak self] in
+        isLoadingMore = true
+        loadMorePhotosTask = loadPhotosFromLoader(photosLoaded: { [weak self] in
             self?.photos += $0
-        }
+        }, completion: { [weak self] in
+            self?.isLoadingMore = false
+        })
     }
     
     private func loadPhotosFromLoader(photosLoaded: @escaping ([Photo]) -> Void,

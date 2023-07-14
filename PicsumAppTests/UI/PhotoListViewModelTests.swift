@@ -120,6 +120,22 @@ final class PhotoListViewModelTests: XCTestCase {
         
         XCTAssertEqual(loader.loggedPages, [1])
     }
+    
+    func test_loadMore_ignoreWhenPreviousLoadMoreActionNotCompleted() async {
+        let photoSet0 = [makePhoto(id: "id0")]
+        let photoSet1 = [makePhoto(id: "id1")]
+        let photoSet2 = [makePhoto(id: "id2")]
+        let (sut, loader) = makeSUT(stubs: [.success(photoSet0), .success(photoSet1), .success(photoSet2)])
+        
+        sut.loadPhotos()
+        await sut.loadPhotosTask?.value
+        
+        sut.loadMorePhotos()
+        sut.loadMorePhotos()
+        await sut.loadMorePhotosTask?.value
+        
+        XCTAssertEqual(loader.loggedPages, [1, 2])
+    }
 
     // MARK: - Helpers
     
