@@ -19,6 +19,12 @@ extension PhotoListViewController {
         collectionView.refreshControl?.simulatePullToRefresh()
     }
     
+    func simulateUserInitiatedLoadMore() {
+        let scrollView = DraggingScrollView()
+        scrollView.setContentOffset(.init(x: 0, y: 9999), animated: false)
+        scrollViewDidScroll(scrollView)
+    }
+    
     var isShowingLoadingIndicator: Bool {
         collectionView.refreshControl?.isRefreshing == true
     }
@@ -58,6 +64,10 @@ extension PhotoListViewController {
         viewModel?.loadPhotosTask
     }
     
+    var loadMorePhotosTask: Task<Void, Never>? {
+        viewModel?.loadMorePhotosTask
+    }
+    
     func imageDataTask(at item: Int) -> Task<Void, Never>? {
         cellController(at: item)?.viewModel.imageDataTask
     }
@@ -67,4 +77,8 @@ extension PhotoListViewController {
         let ds = collectionView.dataSource as? UICollectionViewDiffableDataSource<Int, PhotoListCellController>
         return ds?.itemIdentifier(for: indexPath)
     }
+}
+
+private class DraggingScrollView: UIScrollView {
+    override var isDragging: Bool { true }
 }

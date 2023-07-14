@@ -329,6 +329,40 @@ final class PhotoListIntegrationTests: XCTestCase {
     }
     
     @MainActor
+    func test_photoView_rendersMoreViewWhenNextPageLoadingCompleted() async throws {
+        let photo0 = makePhoto(id: "0")
+        let photo1 = makePhoto(id: "1")
+        let photo2 = makePhoto(id: "2")
+        let imageData0 = UIImage.make(withColor: .red).pngData()!
+        let imageData1 = UIImage.make(withColor: .blue).pngData()!
+        let imageData2 = UIImage.make(withColor: .green).pngData()!
+        let (sut, _) = makeSUT(photoStubs: [.success([photo0]), .success([photo1, photo2])],
+                               dataStubs: [.success(imageData0), .success(imageData1), .success(imageData2)])
+        
+        sut.loadViewIfNeeded()
+        await sut.loadPhotosTask?.value
+        
+        let view0 = try XCTUnwrap(sut.simulatePhotoViewVisible(at: 0))
+        await sut.imageDataTask(at: 0)?.value
+        
+        XCTAssertEqual(sut.numberOfRenderedPhotoView(), 1, "Expect one view rendered after first page loaded")
+        XCTAssertEqual(view0.renderedImage, imageData0, "Expected rendered image for first view when first view become visible")
+        
+        sut.simulateUserInitiatedLoadMore()
+        await sut.loadMorePhotosTask?.value
+        
+        XCTAssertEqual(sut.numberOfRenderedPhotoView(), 3, "Expect three views rendered after second page loaded")
+        
+        let view1 = try XCTUnwrap(sut.simulatePhotoViewVisible(at: 1))
+        let view2 = try XCTUnwrap(sut.simulatePhotoViewVisible(at: 2))
+        await sut.imageDataTask(at: 1)?.value
+        
+        XCTAssertEqual(view0.renderedImage, imageData0, "Expected rendered image for first view keep unchange")
+        XCTAssertEqual(view1.renderedImage, imageData1, "Expected rendered image for second view when second view become visible")
+        XCTAssertEqual(view2.renderedImage, imageData2, "Expected rendered image for third view when third view become visible")
+    }
+    
+    @MainActor
     func test_errorView_showErrorWhenPhotoRequestOnError() async throws {
         let (sut, _) = makeSUT(photoStubs: [.success([]), .failure(anyNSError())])
         let window = UIWindow()

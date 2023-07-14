@@ -99,4 +99,15 @@ final class PhotoListViewController: UICollectionViewController {
     override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         cellController(forItemAt: indexPath)?.load(for: cell)
     }
+    
+    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        guard scrollView.isDragging else { return }
+        
+        let offsetY = scrollView.contentOffset.y
+        let contentHeight = scrollView.contentSize.height
+        let frameHeight = scrollView.frame.height
+        if offsetY > contentHeight - frameHeight {
+            viewModel?.loadMorePhotos()
+        }
+    }
 }
