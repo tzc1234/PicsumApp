@@ -81,14 +81,14 @@ final class PhotoListViewController: UICollectionViewController {
         viewModel?.loadPhotos()
     }
     
-    func set(_ cellControllers: [PhotoListCellController]) {
+    func display(_ cellControllers: [PhotoListCellController]) {
         var snapshot = NSDiffableDataSourceSnapshot<Int, PhotoListCellController>()
         snapshot.appendSections([0])
         snapshot.appendItems(cellControllers, toSection: 0)
         dataSource.applySnapshotUsingReloadData(snapshot)
     }
     
-    func append(_ cellControllers: [PhotoListCellController]) {
+    func displayMore(_ cellControllers: [PhotoListCellController]) {
         var snapshot = dataSource.snapshot()
         snapshot.appendItems(cellControllers, toSection: 0)
         dataSource.apply(snapshot, animatingDifferences: true)

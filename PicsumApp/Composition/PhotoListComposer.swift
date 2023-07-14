@@ -13,17 +13,17 @@ enum PhotoListComposer {
         let viewController = PhotoListViewController(viewModel: viewModel)
         
         viewModel.didLoad = { [weak viewController] photos in
-            viewController?.set(convert(from: photos, imageLoader: imageLoader))
+            viewController?.display(cellControllers(from: photos, imageLoader: imageLoader))
         }
         
         viewModel.didLoadMore = { [weak viewController] photos in
-            viewController?.append(convert(from: photos, imageLoader: imageLoader))
+            viewController?.displayMore(cellControllers(from: photos, imageLoader: imageLoader))
         }
         
         return viewController
     }
     
-    private static func convert(from photos: [Photo],
+    private static func cellControllers(from photos: [Photo],
                         imageLoader: PhotoImageDataLoader) -> [PhotoListCellController] {
         photos.map { photo in
             let viewModel = PhotoImageViewModel(
