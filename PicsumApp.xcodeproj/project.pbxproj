@@ -47,6 +47,7 @@
 		BE6560722A53237B00CCD5D6 /* PhotoListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE6560712A53237B00CCD5D6 /* PhotoListViewModel.swift */; };
 		BE73DE812A58495900B5F438 /* PhotoImageEndpointTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE73DE802A58495900B5F438 /* PhotoImageEndpointTests.swift */; };
 		BE73DE832A584B5A00B5F438 /* PhotoImageEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE73DE822A584B5A00B5F438 /* PhotoImageEndpoint.swift */; };
+		BE756CE12A628EE4000636F0 /* SceneDelegateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE756CE02A628EE4000636F0 /* SceneDelegateTests.swift */; };
 		BE81030F2A559EB700CE012A /* PhotoListCell+TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE81030E2A559EB700CE012A /* PhotoListCell+TestHelpers.swift */; };
 		BE8103112A559F4C00CE012A /* PhotoListViewController+TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8103102A559F4C00CE012A /* PhotoListViewController+TestHelpers.swift */; };
 		BE8103132A55C19700CE012A /* PhotoListCellController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8103122A55C19700CE012A /* PhotoListCellController.swift */; };
@@ -125,6 +126,7 @@
 		BE6560712A53237B00CCD5D6 /* PhotoListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoListViewModel.swift; sourceTree = "<group>"; };
 		BE73DE802A58495900B5F438 /* PhotoImageEndpointTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoImageEndpointTests.swift; sourceTree = "<group>"; };
 		BE73DE822A584B5A00B5F438 /* PhotoImageEndpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoImageEndpoint.swift; sourceTree = "<group>"; };
+		BE756CE02A628EE4000636F0 /* SceneDelegateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegateTests.swift; sourceTree = "<group>"; };
 		BE81030E2A559EB700CE012A /* PhotoListCell+TestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PhotoListCell+TestHelpers.swift"; sourceTree = "<group>"; };
 		BE8103102A559F4C00CE012A /* PhotoListViewController+TestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PhotoListViewController+TestHelpers.swift"; sourceTree = "<group>"; };
 		BE8103122A55C19700CE012A /* PhotoListCellController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoListCellController.swift; sourceTree = "<group>"; };
@@ -333,6 +335,7 @@
 				BE5DFCFE2A5C43AF007BD8A7 /* Cache */,
 				BEF0B5292A60054D0024625A /* UI */,
 				BEF0B5282A6004DC0024625A /* Composition */,
+				BE756CE02A628EE4000636F0 /* SceneDelegateTests.swift */,
 			);
 			path = PicsumAppTests;
 			sourceTree = "<group>";
@@ -595,6 +598,7 @@
 				BE5496782A56CAFA00D402A3 /* PhotosEndpointTests.swift in Sources */,
 				BE1FD4EA2A5421CE0021777F /* SharedHelpers.swift in Sources */,
 				BED8ECCD2A5340870077FFF9 /* PhotoListIntegrationTests.swift in Sources */,
+				BE756CE12A628EE4000636F0 /* SceneDelegateTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
