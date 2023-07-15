@@ -41,6 +41,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.makeKeyAndVisible()
     }
     
+    func sceneWillResignActive(_ scene: UIScene) {
+        Task {
+            try? await localImageDataLoader?.invalidateImageData()
+        }
+    }
+    
     private func makeImageLoader() -> ImageDataLoader {
         guard let localImageDataLoader else {
             return remoteImageDataLoader
