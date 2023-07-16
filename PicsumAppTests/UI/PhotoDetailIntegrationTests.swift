@@ -11,6 +11,7 @@ import XCTest
 class PhotoDetailViewController: UIViewController {
     private(set) lazy var authorLabel = UILabel()
     private(set) lazy var webURLLabel = UILabel()
+    private(set) lazy var imageView = UIImageView()
     
     private(set) var task: Task<Void, Never>?
     
@@ -66,6 +67,17 @@ final class PhotoDetailIntegrationTests: XCTestCase {
         await sut.completeTaskNow()
         
         XCTAssertEqual(loader.loggedURLs, [photo.url])
+    }
+    
+    @MainActor
+    func test_detailView_doesNotRenderPhotoImageOnLoaderError() async {
+        let photo = makePhoto()
+        let (sut, _) = makeSUT(photo: photo, dataStubs: [.failure(anyNSError())])
+        
+        sut.layoutIfNeeded()
+        await sut.completeTaskNow()
+        
+        XCTAssertNil(sut.imageData)
     }
 
     // MARK: - Helpers
@@ -123,5 +135,9 @@ extension PhotoDetailViewController {
     
     var webURLText: String? {
         webURLLabel.text
+    }
+    
+    var imageData: Data? {
+        imageView.image?.pngData()
     }
 }
