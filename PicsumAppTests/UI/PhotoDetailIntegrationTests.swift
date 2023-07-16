@@ -14,6 +14,7 @@ class PhotoDetailViewController: UIViewController {
     private(set) lazy var imageView = UIImageView()
     
     private(set) var task: Task<Void, Never>?
+    private(set) var isLoading = false
     
     private let photo: Photo
     private let imageDataLoader: ImageDataLoader
@@ -32,10 +33,13 @@ class PhotoDetailViewController: UIViewController {
         authorLabel.text = photo.author
         webURLLabel.text = photo.webURL.absoluteString
         
+        isLoading = true
         task = Task {
             if let data = try? await imageDataLoader.loadImageData(for: photo.url) {
                 imageView.image = UIImage(data: data)
             }
+            
+            isLoading = false
         }
     }
     
@@ -94,6 +98,18 @@ final class PhotoDetailIntegrationTests: XCTestCase {
         XCTAssertEqual(sut.imageData, imageData)
     }
     
+    @MainActor
+    func test_detailViewLoadingIndicator_showsBeforeImageRequestCompleted() async {
+        let (sut, _) = makeSUT(dataStubs: [.success(anyData())])
+        
+        sut.layoutIfNeeded()
+        
+        XCTAssertTrue(sut.isShowingLoadingIndicator, "Expect a loading indicator once image request started")
+        
+        await sut.completeTaskNow()
+        
+        XCTAssertFalse(sut.isShowingLoadingIndicator, "Expect no loading indicator after image request completed")
+    }
 
     // MARK: - Helpers
     
@@ -154,5 +170,9 @@ extension PhotoDetailViewController {
     
     var imageData: Data? {
         imageView.image?.pngData()
+    }
+    
+    var isShowingLoadingIndicator: Bool {
+        isLoading
     }
 }
