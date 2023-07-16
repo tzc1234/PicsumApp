@@ -10,7 +10,7 @@ import UIKit
 enum PhotoListComposer {
     static func composeWith(viewModel: PhotoListViewModel,
                             imageLoader: PhotoImageDataLoader,
-                            selection: @escaping (Photo) -> Void = { _ in }) -> PhotoListViewController {
+                            selection: @escaping (Photo) -> Void) -> PhotoListViewController {
         let viewController = PhotoListViewController(viewModel: viewModel)
         
         viewModel.didLoad = { [weak viewController] photos in
