@@ -32,7 +32,7 @@ final class PhotoDetailIntegrationTests: XCTestCase {
         let photo = makePhoto(url: URL(string: "https://image-url.com")!)
         let (sut, loader) = makeSUT(photo: photo, dataStubs: [.success(anyData())])
         
-        sut.layoutIfNeeded()
+        sut.simulatePhotoDetailViewWillAppear()
         await sut.completeTaskNow()
         
         XCTAssertEqual(loader.loggedURLs, [photo.url])
@@ -55,7 +55,7 @@ final class PhotoDetailIntegrationTests: XCTestCase {
         let imageData = UIImage.make(withColor: .red).pngData()!
         let (sut, _) = makeSUT(photo: photo, dataStubs: [.success(imageData)])
         
-        sut.layoutIfNeeded()
+        sut.simulatePhotoDetailViewWillAppear()
         await sut.completeTaskNow()
         
         XCTAssertEqual(sut.imageData, imageData)
@@ -65,7 +65,7 @@ final class PhotoDetailIntegrationTests: XCTestCase {
     func test_detailViewLoadingIndicator_showsBeforeImageRequestCompleted() async {
         let (sut, _) = makeSUT(dataStubs: [.success(anyData())])
         
-        sut.layoutIfNeeded()
+        sut.simulatePhotoDetailViewWillAppear()
         
         XCTAssertTrue(sut.isShowingLoadingIndicator, "Expect a loading indicator once image request started")
         
@@ -78,7 +78,7 @@ final class PhotoDetailIntegrationTests: XCTestCase {
     func test_reloadIndicator_showsAfterImageRequestOnLoaderError() async {
         let (sut, _) = makeSUT(dataStubs: [.failure(anyNSError()), .success(anyData())])
         
-        sut.layoutIfNeeded()
+        sut.simulatePhotoDetailViewWillAppear()
         
         XCTAssertFalse(sut.isShowingReloadIndicator, "Expect no reload indicator once image request started")
         

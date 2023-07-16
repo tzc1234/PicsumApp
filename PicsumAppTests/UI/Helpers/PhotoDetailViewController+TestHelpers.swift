@@ -13,6 +13,10 @@ extension PhotoDetailViewController {
         view.layoutIfNeeded()
     }
     
+    func simulatePhotoDetailViewWillAppear() {
+        viewWillAppear(false)
+    }
+    
     func completeTaskNow() async {
         await task?.value
     }
