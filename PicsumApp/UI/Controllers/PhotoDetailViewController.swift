@@ -24,6 +24,9 @@ final class PhotoDetailViewController: UIViewController {
     }()
     private(set) lazy var webURLLabel = {
         let l = UILabel()
+        let tap = UITapGestureRecognizer(target: self, action: #selector(openWeb))
+        l.addGestureRecognizer(tap)
+        l.isUserInteractionEnabled = true
         l.font = .preferredFont(forTextStyle: .subheadline)
         return l
     }()
@@ -71,14 +74,13 @@ final class PhotoDetailViewController: UIViewController {
         self.imageDataLoader = imageDataLoader
         super.init(nibName: nil, bundle: nil)
         self.title = "Photo"
-        self.authorLabel.text = photo.author
-        self.webURLLabel.text = photo.webURL.absoluteString
     }
     
     required init?(coder: NSCoder) { nil }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupLabels()
         configureUI()
     }
     
@@ -88,6 +90,15 @@ final class PhotoDetailViewController: UIViewController {
         if imageView.image == nil {
             loadImage()
         }
+    }
+    
+    private func setupLabels() {
+        authorLabel.text = photo.author
+        
+        let url = photo.webURL.absoluteString
+        let attributedStr = NSMutableAttributedString(string: url)
+        attributedStr.addAttribute(.link, value: url, range: .init(location: 0, length: url.count))
+        webURLLabel.attributedText = attributedStr
     }
     
     private func configureUI() {
@@ -119,10 +130,14 @@ final class PhotoDetailViewController: UIViewController {
             
             stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
             stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8),
-            stackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            stackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -8)
         ])
         
         view.layoutIfNeeded()
+    }
+    
+    @objc private func openWeb() {
+        UIApplication.shared.open(photo.webURL)
     }
     
     @objc private func loadImage() {
