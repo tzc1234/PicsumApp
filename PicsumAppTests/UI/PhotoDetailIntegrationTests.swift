@@ -33,7 +33,9 @@ class PhotoDetailViewController: UIViewController {
         webURLLabel.text = photo.webURL.absoluteString
         
         task = Task {
-            _ = try? await imageDataLoader.loadImageData(for: photo.url)
+            if let data = try? await imageDataLoader.loadImageData(for: photo.url) {
+                imageView.image = UIImage(data: data)
+            }
         }
     }
     
@@ -79,6 +81,19 @@ final class PhotoDetailIntegrationTests: XCTestCase {
         
         XCTAssertNil(sut.imageData)
     }
+    
+    @MainActor
+    func test_detailView_renderPhotoImageOnLoaderSuccess() async {
+        let photo = makePhoto()
+        let imageData = UIImage.make(withColor: .red).pngData()!
+        let (sut, _) = makeSUT(photo: photo, dataStubs: [.success(imageData)])
+        
+        sut.layoutIfNeeded()
+        await sut.completeTaskNow()
+        
+        XCTAssertEqual(sut.imageData, imageData)
+    }
+    
 
     // MARK: - Helpers
     
