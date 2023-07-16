@@ -18,7 +18,7 @@ extension PhotoDetailViewController {
     }
     
     func completeTaskNow() async {
-        await task?.value
+        await viewModel.task?.value
     }
     
     var authorText: String? {

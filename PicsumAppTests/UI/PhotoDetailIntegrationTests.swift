@@ -12,8 +12,8 @@ final class PhotoDetailIntegrationTests: XCTestCase {
 
     func test_init_hasTitle() {
         let (sut, _) = makeSUT()
-        
-        XCTAssertEqual(sut.title, "Photo")
+
+        XCTAssertEqual(sut.title, PhotoDetailViewModel<Any>.title)
     }
     
     @MainActor
@@ -55,6 +55,7 @@ final class PhotoDetailIntegrationTests: XCTestCase {
         let imageData = UIImage.make(withColor: .red).pngData()!
         let (sut, _) = makeSUT(photo: photo, dataStubs: [.success(imageData)])
         
+        sut.layoutIfNeeded()
         sut.simulatePhotoDetailViewWillAppear()
         await sut.completeTaskNow()
         
@@ -66,6 +67,7 @@ final class PhotoDetailIntegrationTests: XCTestCase {
         let imageData = UIImage.make(withColor: .red).pngData()!
         let (sut, _) = makeSUT(dataStubs: [.success(imageData)])
         
+        sut.layoutIfNeeded()
         sut.simulatePhotoDetailViewWillAppear()
         
         XCTAssertTrue(sut.isShowingLoadingIndicator, "Expect a loading indicator once image request started")
@@ -83,6 +85,7 @@ final class PhotoDetailIntegrationTests: XCTestCase {
     func test_reloadIndicator_showsAfterImageRequestOnLoaderError() async {
         let (sut, _) = makeSUT(dataStubs: [.failure(anyNSError()), .success(anyData())])
         
+        sut.layoutIfNeeded()
         sut.simulatePhotoDetailViewWillAppear()
         
         XCTAssertFalse(sut.isShowingReloadIndicator, "Expect no reload indicator once image request started")
@@ -106,7 +109,7 @@ final class PhotoDetailIntegrationTests: XCTestCase {
                          dataStubs: [PhotosLoaderSpy.DataResult] = [],
                          file: StaticString = #filePath, line: UInt = #line) -> (sut: PhotoDetailViewController, loader: LoaderSpy) {
         let loader = LoaderSpy(dataStubs: dataStubs)
-        let sut = PhotoDetailViewController(photo: photo, imageDataLoader: loader)
+        let sut = PhotoDetailComposer.composeWith(photo: photo, imageDataLoader: loader)
         trackForMemoryLeaks(loader, file: file, line: line)
         trackForMemoryLeaks(sut, file: file, line: line)
         return (sut, loader)

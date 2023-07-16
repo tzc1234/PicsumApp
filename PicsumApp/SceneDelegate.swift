@@ -68,7 +68,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
     
     private func showPhotoDetail(photo: Photo, imageDataLoader: ImageDataLoader) {
-        let vc = PhotoDetailViewController(photo: photo, imageDataLoader: imageDataLoader)
+        let vc = PhotoDetailComposer.composeWith(photo: photo, imageDataLoader: imageDataLoader)
         navigationController?.present(vc, animated: true)
     }
 }

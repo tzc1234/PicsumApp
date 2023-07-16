@@ -55,25 +55,18 @@ final class PhotoDetailViewController: UIViewController {
         return btn
     }()
     
-    private(set) var task: Task<Void, Never>?
     private(set) var isLoading = false {
         didSet {
-            if isLoading {
-                imageContainerView.startShimmering()
-            } else {
-                imageContainerView.stopShimmering()
-            }
+            isLoading ? imageContainerView.startShimmering() : imageContainerView.stopShimmering()
         }
     }
     
-    private let photo: Photo
-    private let imageDataLoader: ImageDataLoader
+    let viewModel: PhotoDetailViewModel<UIImage>
     
-    init(photo: Photo, imageDataLoader: ImageDataLoader) {
-        self.photo = photo
-        self.imageDataLoader = imageDataLoader
+    init(viewModel: PhotoDetailViewModel<UIImage>) {
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
-        self.title = "Photo"
+        self.title = PhotoDetailViewModel<UIImage>.title
     }
     
     required init?(coder: NSCoder) { nil }
@@ -81,6 +74,7 @@ final class PhotoDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupLabels()
+        setupBindings()
         configureUI()
     }
     
@@ -93,9 +87,9 @@ final class PhotoDetailViewController: UIViewController {
     }
     
     private func setupLabels() {
-        authorLabel.text = photo.author
+        authorLabel.text = viewModel.author
         
-        let url = photo.webURL.absoluteString
+        let url = viewModel.webURL.absoluteString
         let attributedStr = NSMutableAttributedString(string: url)
         attributedStr.addAttribute(.link, value: url, range: .init(location: 0, length: url.count))
         webURLLabel.attributedText = attributedStr
@@ -112,7 +106,7 @@ final class PhotoDetailViewController: UIViewController {
         stackView.addArrangedSubview(authorLabel)
         stackView.addArrangedSubview(webURLLabel)
         
-        let imageViewHeight = CGFloat(photo.height) * UIScreen.main.bounds.width / CGFloat(photo.width)
+        let imageViewHeight = CGFloat(viewModel.height) * UIScreen.main.bounds.width / CGFloat(viewModel.width)
         
         NSLayoutConstraint.activate([
             imageContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -136,22 +130,25 @@ final class PhotoDetailViewController: UIViewController {
         view.layoutIfNeeded()
     }
     
+    private func setupBindings() {
+        viewModel.onLoad = { [weak self] isLoading in
+            self?.isLoading = isLoading
+        }
+        
+        viewModel.didLoad = { [weak imageView] image in
+            imageView?.image = image
+        }
+        
+        viewModel.shouldReload = { [weak reloadButton] shouldReload in
+            reloadButton?.isHidden = !shouldReload
+        }
+    }
+    
     @objc private func openWeb() {
-        UIApplication.shared.open(photo.webURL)
+        UIApplication.shared.open(viewModel.webURL)
     }
     
     @objc private func loadImage() {
-        reloadButton.isHidden = true
-        isLoading = true
-        task = Task {
-            do {
-                imageView.image = UIImage(data: try await imageDataLoader.loadImageData(for: photo.url))
-                reloadButton.isHidden = true
-            } catch {
-                reloadButton.isHidden = false
-            }
-
-            isLoading = false
-        }
+        viewModel.loadImageData()
     }
 }

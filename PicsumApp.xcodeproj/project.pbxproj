@@ -72,6 +72,8 @@
 		BEF0B52F2A600CA40024625A /* ImageDataLoaderWithFallbackComposite.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEF0B52E2A600CA40024625A /* ImageDataLoaderWithFallbackComposite.swift */; };
 		BEF6E3892A6428B6004C6511 /* PhotoDetailViewController+TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEF6E3882A6428B6004C6511 /* PhotoDetailViewController+TestHelpers.swift */; };
 		BEF6E38B2A64296F004C6511 /* PhotoDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEF6E38A2A64296F004C6511 /* PhotoDetailViewController.swift */; };
+		BEF6E38D2A645D24004C6511 /* PhotoDetailComposer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEF6E38C2A645D24004C6511 /* PhotoDetailComposer.swift */; };
+		BEF6E38F2A645E46004C6511 /* PhotoDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEF6E38E2A645E46004C6511 /* PhotoDetailViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -154,6 +156,8 @@
 		BEF0B52E2A600CA40024625A /* ImageDataLoaderWithFallbackComposite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDataLoaderWithFallbackComposite.swift; sourceTree = "<group>"; };
 		BEF6E3882A6428B6004C6511 /* PhotoDetailViewController+TestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PhotoDetailViewController+TestHelpers.swift"; sourceTree = "<group>"; };
 		BEF6E38A2A64296F004C6511 /* PhotoDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoDetailViewController.swift; sourceTree = "<group>"; };
+		BEF6E38C2A645D24004C6511 /* PhotoDetailComposer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoDetailComposer.swift; sourceTree = "<group>"; };
+		BEF6E38E2A645E46004C6511 /* PhotoDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoDetailViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -191,6 +195,7 @@
 				BE5DFCFA2A5C14FF007BD8A7 /* PhotoImageDataLoaderAdapter.swift */,
 				BEF0B5262A6002DF0024625A /* ImageDataLoaderCacheDecorator.swift */,
 				BEF0B52E2A600CA40024625A /* ImageDataLoaderWithFallbackComposite.swift */,
+				BEF6E38C2A645D24004C6511 /* PhotoDetailComposer.swift */,
 			);
 			path = Composition;
 			sourceTree = "<group>";
@@ -372,6 +377,7 @@
 			children = (
 				BE6560712A53237B00CCD5D6 /* PhotoListViewModel.swift */,
 				BE5496752A56BA1300D402A3 /* PhotoImageViewModel.swift */,
+				BEF6E38E2A645E46004C6511 /* PhotoDetailViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -559,6 +565,7 @@
 				BE5DFCFB2A5C14FF007BD8A7 /* PhotoImageDataLoaderAdapter.swift in Sources */,
 				BE5DA20C2A5EA070000A90D3 /* DataStore.xcdatamodeld in Sources */,
 				BE5DA2102A5EBB42000A90D3 /* CoreDataImageDataStore.swift in Sources */,
+				BEF6E38F2A645E46004C6511 /* PhotoDetailViewModel.swift in Sources */,
 				BE4876DA2A547B2A00F6AE3F /* PhotoImageDataLoader.swift in Sources */,
 				BE8103132A55C19700CE012A /* PhotoListCellController.swift in Sources */,
 				BEC9C53D2A5C56930043B0C9 /* LocalImageDataLoader.swift in Sources */,
@@ -566,6 +573,7 @@
 				BE54967B2A56CFEC00D402A3 /* PhotosEndpoint.swift in Sources */,
 				BE5496802A5702C900D402A3 /* HTTPClient.swift in Sources */,
 				BE5496842A5705E000D402A3 /* PhotosResponseConverter.swift in Sources */,
+				BEF6E38D2A645D24004C6511 /* PhotoDetailComposer.swift in Sources */,
 				BE6560392A52D4A300CCD5D6 /* SceneDelegate.swift in Sources */,
 				BE4876D82A542E4900F6AE3F /* PhotoListCell.swift in Sources */,
 				BE5DFCFD2A5C1AAD007BD8A7 /* ImageDataLoader.swift in Sources */,
