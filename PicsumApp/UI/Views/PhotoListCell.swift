@@ -15,7 +15,7 @@ final class PhotoListCell: UICollectionViewCell {
         return l
     }()
     
-    private(set) lazy var imageContainerView = {
+    private lazy var imageContainerView = {
         let v = UIView()
         v.backgroundColor = .systemGray5
         v.translatesAutoresizingMaskIntoConstraints = false
