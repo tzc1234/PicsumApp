@@ -25,6 +25,12 @@ extension PhotoListViewController {
         scrollViewDidScroll(scrollView)
     }
     
+    func simulatePhotoViewSelected(at item: Int) {
+        let d = collectionView.delegate
+        let indexPath = IndexPath(item: item, section: photoViewSection)
+        d?.collectionView?(collectionView, didSelectItemAt: indexPath)
+    }
+    
     var isShowingLoadingIndicator: Bool {
         collectionView.refreshControl?.isRefreshing == true
     }

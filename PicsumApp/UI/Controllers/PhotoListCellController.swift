@@ -11,9 +11,11 @@ final class PhotoListCellController {
     private var cell: PhotoListCell?
     
     let viewModel: PhotoImageViewModel<UIImage> // expose for testing
+    let selection: () -> Void
     
-    init(viewModel: PhotoImageViewModel<UIImage>) {
+    init(viewModel: PhotoImageViewModel<UIImage>, selection: @escaping () -> Void) {
         self.viewModel = viewModel
+        self.selection = selection
     }
     
     func cell(in collectionView: UICollectionView, for indexPath: IndexPath) -> PhotoListCell {

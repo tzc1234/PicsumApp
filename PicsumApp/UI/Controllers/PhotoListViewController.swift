@@ -98,6 +98,10 @@ final class PhotoListViewController: UICollectionViewController {
         dataSource.itemIdentifier(for: indexPath)
     }
     
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        cellController(forItemAt: indexPath)?.selection()
+    }
+    
     override func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         cellController(forItemAt: indexPath)?.cancelLoad()
     }

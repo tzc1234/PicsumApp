@@ -28,6 +28,22 @@ final class PhotoListIntegrationTests: XCTestCase {
     }
     
     @MainActor
+    func test_photoViewSelection_triggersSelection() async {
+        let photo = makePhoto()
+        var loggedPhotos = [Photo]()
+        let (sut, _) = makeSUT(photoStubs: [.success([photo])], selection: { loggedPhotos.append($0) })
+        
+        sut.loadViewIfNeeded()
+        await sut.loadPhotosTask?.value
+        
+        XCTAssertEqual(loggedPhotos, [], "Expect no selection triggered before a photo view selected")
+        
+        sut.simulatePhotoViewSelected(at: 0)
+        
+        XCTAssertEqual(loggedPhotos, [photo], "Expect a selction triggered once a photo view selected")
+    }
+    
+    @MainActor
     func test_loadPhotosAction_requestsPhotosFromLoader() async {
         let (sut, loader) = makeSUT(photoStubs: [.success([]), .success([]), .success([])])
 
@@ -388,11 +404,12 @@ final class PhotoListIntegrationTests: XCTestCase {
 
     private func makeSUT(photoStubs: [PhotosLoaderSpy.PhotosResult] = [],
                          dataStubs: [PhotosLoaderSpy.DataResult] = [],
+                         selection: @escaping (Photo) -> Void = { _ in },
                          file: StaticString = #file,
                          line: UInt = #line) -> (sut: PhotoListViewController, loader: PhotosLoaderSpy) {
         let loader = PhotosLoaderSpy(photoStubs: photoStubs, dataStubs: dataStubs)
         let viewModel = PhotoListViewModel(loader: loader)
-        let sut = PhotoListComposer.composeWith(viewModel: viewModel, imageLoader: loader)
+        let sut = PhotoListComposer.composeWith(viewModel: viewModel, imageLoader: loader, selection: selection)
         
         trackForMemoryLeaks(loader, file: file, line: line)
         trackForMemoryLeaks(viewModel, file: file, line: line)
