@@ -12,6 +12,11 @@ class PhotoDetailViewController: UIViewController {
     private(set) lazy var authorLabel = UILabel()
     private(set) lazy var webURLLabel = UILabel()
     private(set) lazy var imageView = UIImageView()
+    private(set) lazy var reloadButton = {
+        let btn = UIButton()
+        btn.addTarget(self, action: #selector(loadImage), for: .touchUpInside)
+        return btn
+    }()
     
     private(set) var task: Task<Void, Never>?
     private(set) var isLoading = false
@@ -32,17 +37,23 @@ class PhotoDetailViewController: UIViewController {
         super.viewDidLoad()
         authorLabel.text = photo.author
         webURLLabel.text = photo.webURL.absoluteString
-        
+        loadImage()
+    }
+    
+    @objc private func loadImage() {
+        reloadButton.isHidden = true
         isLoading = true
         task = Task {
-            if let data = try? await imageDataLoader.loadImageData(for: photo.url) {
-                imageView.image = UIImage(data: data)
+            do {
+                imageView.image = UIImage(data: try await imageDataLoader.loadImageData(for: photo.url))
+                reloadButton.isHidden = true
+            } catch {
+                reloadButton.isHidden = false
             }
-            
+
             isLoading = false
         }
     }
-    
 }
 
 final class PhotoDetailIntegrationTests: XCTestCase {
@@ -110,6 +121,27 @@ final class PhotoDetailIntegrationTests: XCTestCase {
         
         XCTAssertFalse(sut.isShowingLoadingIndicator, "Expect no loading indicator after image request completed")
     }
+    
+    @MainActor
+    func test_reloadIndicator_showsAfterImageRequestOnLoaderError() async {
+        let (sut, _) = makeSUT(dataStubs: [.failure(anyNSError()), .success(anyData())])
+        
+        sut.layoutIfNeeded()
+        
+        XCTAssertFalse(sut.isShowingReloadIndicator, "Expect no reload indicator once image request started")
+        
+        await sut.completeTaskNow()
+        
+        XCTAssertTrue(sut.isShowingReloadIndicator, "Expect a reload indicator after image request completed with error")
+        
+        sut.simulateUserInitiatedReload()
+        
+        XCTAssertFalse(sut.isShowingReloadIndicator, "Expect no reload indicator once image reload request started")
+        
+        await sut.completeTaskNow()
+        
+        XCTAssertFalse(sut.isShowingReloadIndicator, "Expect no reload indicator once image reload request completed successfully")
+    }
 
     // MARK: - Helpers
     
@@ -174,5 +206,13 @@ extension PhotoDetailViewController {
     
     var isShowingLoadingIndicator: Bool {
         isLoading
+    }
+    
+    var isShowingReloadIndicator: Bool {
+        !reloadButton.isHidden
+    }
+    
+    func simulateUserInitiatedReload() {
+        reloadButton.simulate(event: .touchUpInside)
     }
 }
