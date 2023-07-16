@@ -6,6 +6,7 @@
 //
 
 import UIKit
+@testable import PicsumApp
 
 extension PhotoDetailViewController {
     func layoutIfNeeded() {
