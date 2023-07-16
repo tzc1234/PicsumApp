@@ -84,7 +84,10 @@ final class PhotoDetailViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        loadImage()
+        
+        if imageView.image == nil {
+            loadImage()
+        }
     }
     
     private func configureUI() {

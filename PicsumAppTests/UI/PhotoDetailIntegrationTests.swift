@@ -63,7 +63,8 @@ final class PhotoDetailIntegrationTests: XCTestCase {
     
     @MainActor
     func test_detailViewLoadingIndicator_showsBeforeImageRequestCompleted() async {
-        let (sut, _) = makeSUT(dataStubs: [.success(anyData())])
+        let imageData = UIImage.make(withColor: .red).pngData()!
+        let (sut, _) = makeSUT(dataStubs: [.success(imageData)])
         
         sut.simulatePhotoDetailViewWillAppear()
         
@@ -72,6 +73,10 @@ final class PhotoDetailIntegrationTests: XCTestCase {
         await sut.completeTaskNow()
         
         XCTAssertFalse(sut.isShowingLoadingIndicator, "Expect no loading indicator after image request completed")
+        
+        sut.simulatePhotoDetailViewWillAppear()
+        
+        XCTAssertFalse(sut.isShowingLoadingIndicator, "Expect no loading indicator after photo detail will appear again with image")
     }
     
     @MainActor
