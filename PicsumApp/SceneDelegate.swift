@@ -23,6 +23,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }()
     
     var window: UIWindow?
+    private var navigationController: UINavigationController?
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let scene = (scene as? UIWindowScene) else { return }
@@ -33,11 +34,18 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     func configureWindow() {
         let photosLoader = RemotePhotosLoader(client: client)
-        let photoImageLoader = PhotoImageDataLoaderAdapter(imageDataLoader: makeImageLoader())
+        let imageDataLoader = makeImageLoader()
+        let photoImageLoader = PhotoImageDataLoaderAdapter(imageDataLoader: imageDataLoader)
         let viewModel = PhotoListViewModel(loader: photosLoader)
-        let photoListViewController = PhotoListComposer.composeWith(viewModel: viewModel, imageLoader: photoImageLoader)
+        let photoListViewController = PhotoListComposer.composeWith(
+            viewModel: viewModel,
+            imageLoader: photoImageLoader,
+            selection: { [weak self] photo in
+                self?.showPhotoDetail(photo: photo, imageDataLoader: imageDataLoader)
+            })
         
-        window?.rootViewController = UINavigationController(rootViewController: photoListViewController)
+        navigationController = UINavigationController(rootViewController: photoListViewController)
+        window?.rootViewController = navigationController
         window?.makeKeyAndVisible()
     }
     
@@ -57,5 +65,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             fallback: ImageDataLoaderCacheDecorator(
                 loader: remoteImageDataLoader,
                 cache: localImageDataLoader))
+    }
+    
+    private func showPhotoDetail(photo: Photo, imageDataLoader: ImageDataLoader) {
+        let vc = PhotoDetailViewController(photo: photo, imageDataLoader: imageDataLoader)
+        navigationController?.present(vc, animated: true)
     }
 }
