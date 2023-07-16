@@ -182,37 +182,3 @@ final class PhotoDetailIntegrationTests: XCTestCase {
     }
     
 }
-
-extension PhotoDetailViewController {
-    func layoutIfNeeded() {
-        view.layoutIfNeeded()
-    }
-    
-    func completeTaskNow() async {
-        await task?.value
-    }
-    
-    var authorText: String? {
-        authorLabel.text
-    }
-    
-    var webURLText: String? {
-        webURLLabel.text
-    }
-    
-    var imageData: Data? {
-        imageView.image?.pngData()
-    }
-    
-    var isShowingLoadingIndicator: Bool {
-        isLoading
-    }
-    
-    var isShowingReloadIndicator: Bool {
-        !reloadButton.isHidden
-    }
-    
-    func simulateUserInitiatedReload() {
-        reloadButton.simulate(event: .touchUpInside)
-    }
-}

@@ -70,6 +70,7 @@
 		BEF0B5272A6002DF0024625A /* ImageDataLoaderCacheDecorator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEF0B5262A6002DF0024625A /* ImageDataLoaderCacheDecorator.swift */; };
 		BEF0B52D2A6008C30024625A /* ImageDataLoaderWithFallbackCompositeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEF0B52C2A6008C30024625A /* ImageDataLoaderWithFallbackCompositeTests.swift */; };
 		BEF0B52F2A600CA40024625A /* ImageDataLoaderWithFallbackComposite.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEF0B52E2A600CA40024625A /* ImageDataLoaderWithFallbackComposite.swift */; };
+		BEF6E3892A6428B6004C6511 /* PhotoDetailViewController+TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEF6E3882A6428B6004C6511 /* PhotoDetailViewController+TestHelpers.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -150,6 +151,7 @@
 		BEF0B5262A6002DF0024625A /* ImageDataLoaderCacheDecorator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDataLoaderCacheDecorator.swift; sourceTree = "<group>"; };
 		BEF0B52C2A6008C30024625A /* ImageDataLoaderWithFallbackCompositeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDataLoaderWithFallbackCompositeTests.swift; sourceTree = "<group>"; };
 		BEF0B52E2A600CA40024625A /* ImageDataLoaderWithFallbackComposite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDataLoaderWithFallbackComposite.swift; sourceTree = "<group>"; };
+		BEF6E3882A6428B6004C6511 /* PhotoDetailViewController+TestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PhotoDetailViewController+TestHelpers.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -423,6 +425,7 @@
 				BED8ECD52A536DC90077FFF9 /* UIControl+TestHelpers.swift */,
 				BE8103102A559F4C00CE012A /* PhotoListViewController+TestHelpers.swift */,
 				BE81030E2A559EB700CE012A /* PhotoListCell+TestHelpers.swift */,
+				BEF6E3882A6428B6004C6511 /* PhotoDetailViewController+TestHelpers.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -572,6 +575,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BEF6E3892A6428B6004C6511 /* PhotoDetailViewController+TestHelpers.swift in Sources */,
 				BE525AEC2A5D4672000D3071 /* CacheImageDataUseCaseTests.swift in Sources */,
 				BE5496862A570DF600D402A3 /* ClientSpy.swift in Sources */,
 				BE5DFCF92A5C0CAF007BD8A7 /* PhotoImageDataLoaderAdapterTests.swift in Sources */,
