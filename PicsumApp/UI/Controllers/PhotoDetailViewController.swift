@@ -11,7 +11,6 @@ final class PhotoDetailViewController: UIViewController {
     private lazy var stackView = {
         let sv = UIStackView()
         sv.axis = .vertical
-        sv.spacing = 8
         sv.alignment = .leading
         sv.distribution = .fill
         sv.translatesAutoresizingMaskIntoConstraints = false
@@ -22,13 +21,12 @@ final class PhotoDetailViewController: UIViewController {
         l.font = .preferredFont(forTextStyle: .headline)
         return l
     }()
-    private(set) lazy var webURLLabel = {
-        let l = UILabel()
-        let tap = UITapGestureRecognizer(target: self, action: #selector(openWeb))
-        l.addGestureRecognizer(tap)
-        l.isUserInteractionEnabled = true
-        l.font = .preferredFont(forTextStyle: .subheadline)
-        return l
+    private(set) lazy var webURLButton = {
+        let btn = UIButton()
+        btn.addTarget(self, action: #selector(openWeb), for: .touchUpInside)
+        btn.isUserInteractionEnabled = true
+        btn.titleLabel?.font = .preferredFont(forTextStyle: .subheadline)
+        return btn
     }()
     
     private lazy var imageContainerView = {
@@ -62,9 +60,11 @@ final class PhotoDetailViewController: UIViewController {
     }
     
     let viewModel: PhotoDetailViewModel<UIImage>
+    private let urlHandler: (URL) -> Void
     
-    init(viewModel: PhotoDetailViewModel<UIImage>) {
+    init(viewModel: PhotoDetailViewModel<UIImage>, urlHandler: @escaping (URL) -> Void) {
         self.viewModel = viewModel
+        self.urlHandler = urlHandler
         super.init(nibName: nil, bundle: nil)
         self.title = PhotoDetailViewModel<UIImage>.title
     }
@@ -73,7 +73,9 @@ final class PhotoDetailViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupLabels()
+        
+        authorLabel.text = viewModel.author
+        setWebURL()
         setupBindings()
         configureUI()
     }
@@ -86,13 +88,11 @@ final class PhotoDetailViewController: UIViewController {
         }
     }
     
-    private func setupLabels() {
-        authorLabel.text = viewModel.author
-        
+    private func setWebURL() {
         let url = viewModel.webURL.absoluteString
         let attributedStr = NSMutableAttributedString(string: url)
         attributedStr.addAttribute(.link, value: url, range: .init(location: 0, length: url.count))
-        webURLLabel.attributedText = attributedStr
+        webURLButton.setAttributedTitle(attributedStr, for: .normal)
     }
     
     private func configureUI() {
@@ -104,15 +104,16 @@ final class PhotoDetailViewController: UIViewController {
         
         view.addSubview(stackView)
         stackView.addArrangedSubview(authorLabel)
-        stackView.addArrangedSubview(webURLLabel)
+        stackView.addArrangedSubview(webURLButton)
         
         let imageViewHeight = CGFloat(viewModel.height) * UIScreen.main.bounds.width / CGFloat(viewModel.width)
         
         NSLayoutConstraint.activate([
             imageContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             imageContainerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            imageContainerView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            imageContainerView.centerYAnchor.constraint(lessThanOrEqualTo: view.centerYAnchor),
             imageContainerView.heightAnchor.constraint(equalToConstant: imageViewHeight),
+            imageContainerView.bottomAnchor.constraint(lessThanOrEqualTo: stackView.topAnchor, constant: -8),
             
             imageView.leadingAnchor.constraint(equalTo: imageContainerView.leadingAnchor),
             imageView.trailingAnchor.constraint(equalTo: imageContainerView.trailingAnchor),
@@ -145,7 +146,7 @@ final class PhotoDetailViewController: UIViewController {
     }
     
     @objc private func openWeb() {
-        UIApplication.shared.open(viewModel.webURL)
+        urlHandler(viewModel.webURL)
     }
     
     @objc private func loadImage() {

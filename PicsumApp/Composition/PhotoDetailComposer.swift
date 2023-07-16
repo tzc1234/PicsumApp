@@ -8,11 +8,15 @@
 import UIKit
 
 enum PhotoDetailComposer {
-    static func composeWith(photo: Photo, imageDataLoader: ImageDataLoader) -> PhotoDetailViewController {
+    static func composeWith(photo: Photo,
+                            imageDataLoader: ImageDataLoader,
+                            urlHandler: @escaping (URL) -> Void = { url in
+                                UIApplication.shared.open(url)
+                            }) -> PhotoDetailViewController {
         let viewModel = PhotoDetailViewModel(
             photo: photo,
             imageDataLoader: imageDataLoader,
             imageConverter: UIImage.init)
-        return PhotoDetailViewController(viewModel: viewModel)
+        return PhotoDetailViewController(viewModel: viewModel, urlHandler: urlHandler)
     }
 }

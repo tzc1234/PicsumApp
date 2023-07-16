@@ -17,6 +17,14 @@ extension PhotoDetailViewController {
         viewWillAppear(false)
     }
     
+    func simulateUserInitiatedReload() {
+        reloadButton.simulate(event: .touchUpInside)
+    }
+    
+    func simulateUserOpenPhotoDetailWeb() {
+        webURLButton.simulate(event: .touchUpInside)
+    }
+    
     func completeTaskNow() async {
         await viewModel.task?.value
     }
@@ -26,7 +34,7 @@ extension PhotoDetailViewController {
     }
     
     var webURLText: String? {
-        webURLLabel.text
+        webURLButton.titleLabel?.text
     }
     
     var imageData: Data? {
@@ -39,9 +47,5 @@ extension PhotoDetailViewController {
     
     var isShowingReloadIndicator: Bool {
         !reloadButton.isHidden
-    }
-    
-    func simulateUserInitiatedReload() {
-        reloadButton.simulate(event: .touchUpInside)
     }
 }

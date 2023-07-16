@@ -102,14 +102,27 @@ final class PhotoDetailIntegrationTests: XCTestCase {
         
         XCTAssertFalse(sut.isShowingReloadIndicator, "Expect no reload indicator once image reload request completed successfully")
     }
+    
+    @MainActor
+    func test_photoDetailWeb_showsForWebURL() async {
+        var loggedURLs = [URL]()
+        let photo = makePhoto(webURL: URL(string: "https://web0-url.com")!)
+        let (sut, _) = makeSUT(photo: photo, urlHandler: { loggedURLs.append($0) })
+        
+        sut.layoutIfNeeded()
+        sut.simulateUserOpenPhotoDetailWeb()
+        
+        XCTAssertEqual(loggedURLs, [photo.webURL])
+    }
 
     // MARK: - Helpers
     
     private func makeSUT(photo: Photo = makePhoto(),
                          dataStubs: [PhotosLoaderSpy.DataResult] = [],
+                         urlHandler: @escaping (URL) -> Void = { _ in },
                          file: StaticString = #filePath, line: UInt = #line) -> (sut: PhotoDetailViewController, loader: LoaderSpy) {
         let loader = LoaderSpy(dataStubs: dataStubs)
-        let sut = PhotoDetailComposer.composeWith(photo: photo, imageDataLoader: loader)
+        let sut = PhotoDetailComposer.composeWith(photo: photo, imageDataLoader: loader, urlHandler: urlHandler)
         trackForMemoryLeaks(loader, file: file, line: line)
         trackForMemoryLeaks(sut, file: file, line: line)
         return (sut, loader)
