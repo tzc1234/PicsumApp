@@ -31,6 +31,21 @@ final class LocalImageDataCacheIntegrationTests: XCTestCase {
         
         XCTAssertEqual(receivedData, data)
     }
+    
+    func test_save_overridesSavedDataOnASeparateInstance() async throws {
+        let imageLoaderForFirstSave = try makeSUT()
+        let imageLoaderForLastSave = try makeSUT()
+        let imageLoaderForLoad = try makeSUT()
+        let firstData = Data("first data".utf8)
+        let lastData = Data("last data".utf8)
+        let url = anyURL()
+        
+        try await imageLoaderForFirstSave.save(data: firstData, for: url)
+        try await imageLoaderForLastSave.save(data: lastData, for: url)
+        let receivedData = try await imageLoaderForLoad.loadImageData(for: url)
+        
+        XCTAssertEqual(receivedData, lastData)
+    }
 
     // MARK: - Helpers
     
