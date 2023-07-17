@@ -2,7 +2,7 @@
 ## Aims to practice the learnings from iOS Lead Essentials.
 
 ## Screenshot
-<img src="https://github.com/tzc1234/PicsumApp/blob/main/Screenshots/preview.gif" alt="preview" width="256" height="455"/>
+<img src="https://github.com/tzc1234/PicsumApp/blob/main/Screenshots/preview.png" alt="preview" width="256" height="554"/>
 
 ## Frameworks
 1. Async/await
