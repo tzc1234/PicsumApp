@@ -25,7 +25,7 @@ extension PhotoDetailViewController {
         webURLButton.simulate(event: .touchUpInside)
     }
     
-    func completeTaskNow() async {
+    func completeImageDataLoading() async {
         await viewModel.task?.value
     }
     

@@ -67,16 +67,16 @@ extension PhotoListViewController {
         0
     }
     
-    var loadPhotosTask: Task<Void, Never>? {
-        viewModel?.loadPhotosTask
+    func completePhotosLoading() async {
+        await viewModel?.loadPhotosTask?.value
     }
     
-    var loadMorePhotosTask: Task<Void, Never>? {
-        viewModel?.loadMorePhotosTask
+    func completeMorePhotosLoading() async {
+        await viewModel?.loadMorePhotosTask?.value
     }
     
-    func imageDataTask(at item: Int) -> Task<Void, Never>? {
-        cellController(at: item)?.viewModel.imageDataTask
+    func completeImageDataLoading(at item: Int) async {
+        await cellController(at: item)?.viewModel.imageDataTask?.value
     }
     
     private func cellController(at item: Int) -> PhotoListCellController? {

@@ -22,7 +22,7 @@ final class PhotoDetailIntegrationTests: XCTestCase {
         let (sut, _) = makeSUT(photo: photo, dataStubs: [.success(anyData())])
         
         sut.layoutIfNeeded()
-        await sut.completeTaskNow()
+        await sut.completeImageDataLoading()
         
         assertThat(sut, hasConfiguredWith: photo)
     }
@@ -33,7 +33,7 @@ final class PhotoDetailIntegrationTests: XCTestCase {
         let (sut, loader) = makeSUT(photo: photo, dataStubs: [.success(anyData())])
         
         sut.simulatePhotoDetailViewWillAppear()
-        await sut.completeTaskNow()
+        await sut.completeImageDataLoading()
         
         XCTAssertEqual(loader.loggedURLs, [photo.url])
     }
@@ -44,7 +44,7 @@ final class PhotoDetailIntegrationTests: XCTestCase {
         let (sut, _) = makeSUT(photo: photo, dataStubs: [.failure(anyNSError())])
         
         sut.layoutIfNeeded()
-        await sut.completeTaskNow()
+        await sut.completeImageDataLoading()
         
         XCTAssertNil(sut.imageData)
     }
@@ -57,7 +57,7 @@ final class PhotoDetailIntegrationTests: XCTestCase {
         
         sut.layoutIfNeeded()
         sut.simulatePhotoDetailViewWillAppear()
-        await sut.completeTaskNow()
+        await sut.completeImageDataLoading()
         
         XCTAssertEqual(sut.imageData, imageData)
     }
@@ -72,7 +72,7 @@ final class PhotoDetailIntegrationTests: XCTestCase {
         
         XCTAssertTrue(sut.isShowingLoadingIndicator, "Expect a loading indicator once image request started")
         
-        await sut.completeTaskNow()
+        await sut.completeImageDataLoading()
         
         XCTAssertFalse(sut.isShowingLoadingIndicator, "Expect no loading indicator after image request completed")
         
@@ -90,7 +90,7 @@ final class PhotoDetailIntegrationTests: XCTestCase {
         
         XCTAssertFalse(sut.isShowingReloadIndicator, "Expect no reload indicator once image request started")
         
-        await sut.completeTaskNow()
+        await sut.completeImageDataLoading()
         
         XCTAssertTrue(sut.isShowingReloadIndicator, "Expect a reload indicator after image request completed with error")
         
@@ -98,7 +98,7 @@ final class PhotoDetailIntegrationTests: XCTestCase {
         
         XCTAssertFalse(sut.isShowingReloadIndicator, "Expect no reload indicator once image reload request started")
         
-        await sut.completeTaskNow()
+        await sut.completeImageDataLoading()
         
         XCTAssertFalse(sut.isShowingReloadIndicator, "Expect no reload indicator once image reload request completed successfully")
     }
