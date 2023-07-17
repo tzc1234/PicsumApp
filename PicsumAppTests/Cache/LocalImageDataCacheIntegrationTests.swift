@@ -10,14 +10,14 @@ import XCTest
 
 final class LocalImageDataCacheIntegrationTests: XCTestCase {
 
-    override func setUp() {
-        super.setUp()
-        deleteStoreArtifacts()
+    override func setUp() async throws {
+        try await super.setUp()
+        await deleteStoreArtifacts()
     }
     
-    override func tearDown() {
-        super.tearDown()
-        deleteStoreArtifacts()
+    override func tearDown() async throws {
+        try await super.tearDown()
+        await deleteStoreArtifacts()
     }
     
     func test_loadImageData_deliversSavedDataOnASeparateInstance() async throws {
@@ -46,21 +46,38 @@ final class LocalImageDataCacheIntegrationTests: XCTestCase {
         
         XCTAssertEqual(receivedData, lastData)
     }
+    
+    func test_invalidateImageData_removeAllSavedDataInADistancePast() async throws {
+        let imageLoaderForSave = try makeSUT(currentDate: { .distantPast })
+        let imageLoaderForInvalidate = try makeSUT(currentDate: { .now })
+        let imageLoaderForLoad = try makeSUT()
+        let data = anyData()
+        let url = anyURL()
+        
+        try await imageLoaderForSave.save(data: data, for: url)
+        try await imageLoaderForInvalidate.invalidateImageData()
+        
+        do {
+            _ = try await imageLoaderForLoad.loadImageData(for: url)
+            XCTFail("Should be a no data found error")
+        } catch {}
+    }
 
     // MARK: - Helpers
     
-    private func makeSUT(currentDate: Date = .init(),
+    private func makeSUT(currentDate: @escaping () -> Date = Date.init,
                          file: StaticString = #filePath,
                          line: UInt = #line) throws -> LocalImageDataLoader {
         let store = try CoreDataImageDataStore(storeURL: storeURLForTest())
-        let sut = LocalImageDataLoader(store: store)
+        let sut = LocalImageDataLoader(store: store, currentDate: currentDate)
         trackForMemoryLeaks(store, file: file, line: line)
         trackForMemoryLeaks(sut, file: file, line: line)
         return sut
     }
     
-    private func deleteStoreArtifacts() {
+    private func deleteStoreArtifacts() async {
         try? FileManager.default.removeItem(at: storeURLForTest())
+        try? await Task.sleep(for: .seconds(0.01)) // Give a little bit time buffer for delete store artifacts
     }
     
     private func storeURLForTest() -> URL {
