@@ -11,7 +11,8 @@ class ContextDidSaveNotificationSpy {
     private(set) var saveCount = 0
     
     init() {
-        NotificationCenter.default.addObserver(self, selector: #selector(contextDisSave),
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(contextDisSave),
                                                name: .NSManagedObjectContextDidSave,
                                                object: nil)
     }

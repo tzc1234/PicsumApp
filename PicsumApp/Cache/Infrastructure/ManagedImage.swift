@@ -15,8 +15,13 @@ final class ManagedImage: NSManagedObject {
 }
 
 extension ManagedImage {
-    static var entityName: String {
+    private static var entityName: String {
         String(describing: Self.self)
+    }
+    
+    static func findOrCreateInstance(in context: NSManagedObjectContext, for url: URL) throws -> ManagedImage {
+        let foundImage = try ManagedImage.find(in: context, for: url)
+        return foundImage ?? ManagedImage(context: context)
     }
     
     static func find(in context: NSManagedObjectContext, for url: URL) throws -> ManagedImage? {
@@ -25,11 +30,6 @@ extension ManagedImage {
         request.returnsObjectsAsFaults = false
         request.fetchLimit = 1
         return try context.fetch(request).first
-    }
-    
-    static func findOrCreateInstance(in context: NSManagedObjectContext, for url: URL) throws -> ManagedImage {
-        let foundImage = try ManagedImage.find(in: context, for: url)
-        return foundImage ?? ManagedImage(context: context)
     }
     
     static func batchDelete(in context: NSManagedObjectContext, reach date: Date) throws {

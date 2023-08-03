@@ -39,6 +39,10 @@ final class PhotoListViewModel {
         })
     }
     
+    private func resetCurrentPage() {
+        currentPage = 1
+    }
+    
     func loadMorePhotos() {
         guard hasMorePage && !isLoadingMore else { return }
         
@@ -68,10 +72,6 @@ final class PhotoListViewModel {
             
             completion()
         }
-    }
-    
-    private func resetCurrentPage() {
-        currentPage = 1
     }
     
     private func updatePaging(by photos: [Photo]) {

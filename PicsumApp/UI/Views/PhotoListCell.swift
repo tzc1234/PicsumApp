@@ -9,10 +9,10 @@ import UIKit
 
 final class PhotoListCell: UICollectionViewCell {
     private(set) lazy var authorLabel = {
-        let l = UILabel()
-        l.font = .preferredFont(forTextStyle: .caption1)
-        l.translatesAutoresizingMaskIntoConstraints = false
-        return l
+        let lbl = UILabel()
+        lbl.font = .preferredFont(forTextStyle: .caption1)
+        lbl.translatesAutoresizingMaskIntoConstraints = false
+        return lbl
     }()
     
     private lazy var imageContainerView = {
@@ -44,9 +44,9 @@ final class PhotoListCell: UICollectionViewCell {
         return bv
     }()
     
-    var isShimmering = false {
+    var isLoading = false {
         didSet {
-            if isShimmering {
+            if isLoading {
                 imageContainerView.startShimmering()
             } else {
                 imageContainerView.stopShimmering()

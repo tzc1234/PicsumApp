@@ -17,9 +17,9 @@ final class PhotoDetailViewController: UIViewController {
         return sv
     }()
     private(set) lazy var authorLabel = {
-        let l = UILabel()
-        l.font = .preferredFont(forTextStyle: .headline)
-        return l
+        let lbl = UILabel()
+        lbl.font = .preferredFont(forTextStyle: .headline)
+        return lbl
     }()
     private(set) lazy var webURLButton = {
         let btn = UIButton()
@@ -73,19 +73,14 @@ final class PhotoDetailViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        authorLabel.text = viewModel.author
+        setAuthorText()
         setWebURL()
         setupBindings()
         configureUI()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        if imageView.image == nil {
-            loadImage()
-        }
+    private func setAuthorText() {
+        authorLabel.text = viewModel.author
     }
     
     private func setWebURL() {
@@ -93,6 +88,20 @@ final class PhotoDetailViewController: UIViewController {
         let attributedStr = NSMutableAttributedString(string: url)
         attributedStr.addAttribute(.link, value: url, range: .init(location: 0, length: url.count))
         webURLButton.setAttributedTitle(attributedStr, for: .normal)
+    }
+    
+    private func setupBindings() {
+        viewModel.onLoad = { [weak self] isLoading in
+            self?.isLoading = isLoading
+        }
+        
+        viewModel.didLoad = { [weak imageView] image in
+            imageView?.image = image
+        }
+        
+        viewModel.shouldReload = { [weak reloadButton] shouldReload in
+            reloadButton?.isHidden = !shouldReload
+        }
     }
     
     private func configureUI() {
@@ -131,17 +140,14 @@ final class PhotoDetailViewController: UIViewController {
         view.layoutIfNeeded()
     }
     
-    private func setupBindings() {
-        viewModel.onLoad = { [weak self] isLoading in
-            self?.isLoading = isLoading
-        }
-        
-        viewModel.didLoad = { [weak imageView] image in
-            imageView?.image = image
-        }
-        
-        viewModel.shouldReload = { [weak reloadButton] shouldReload in
-            reloadButton?.isHidden = !shouldReload
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        loadImageIfNeeded()
+    }
+    
+    private func loadImageIfNeeded() {
+        if imageView.image == nil {
+            loadImage()
         }
     }
     

@@ -94,10 +94,6 @@ final class PhotoListViewController: UICollectionViewController {
         dataSource.apply(snapshot, animatingDifferences: true)
     }
     
-    private func cellController(forItemAt indexPath: IndexPath) -> PhotoListCellController? {
-        dataSource.itemIdentifier(for: indexPath)
-    }
-    
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         cellController(forItemAt: indexPath)?.selection()
     }
@@ -110,14 +106,22 @@ final class PhotoListViewController: UICollectionViewController {
         cellController(forItemAt: indexPath)?.load(for: cell)
     }
     
+    private func cellController(forItemAt indexPath: IndexPath) -> PhotoListCellController? {
+        dataSource.itemIdentifier(for: indexPath)
+    }
+    
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
         guard scrollView.isDragging else { return }
         
+        if shouldLoadMorePhotos(to: scrollView) {
+            viewModel?.loadMorePhotos()
+        }
+    }
+    
+    private func shouldLoadMorePhotos(to scrollView: UIScrollView) -> Bool {
         let offsetY = scrollView.contentOffset.y
         let contentHeight = scrollView.contentSize.height
         let frameHeight = scrollView.frame.height
-        if offsetY > contentHeight - frameHeight {
-            viewModel?.loadMorePhotos()
-        }
+        return offsetY > contentHeight - frameHeight
     }
 }

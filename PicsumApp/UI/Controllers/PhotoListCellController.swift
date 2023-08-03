@@ -28,6 +28,16 @@ final class PhotoListCellController {
         return cell!
     }
     
+    private func setupBindings() {
+        viewModel.onLoadImage = { [weak self] isLoading in
+            self?.cell?.isLoading = isLoading
+        }
+        
+        viewModel.didLoadImage = { [weak self] image in
+            self?.cell?.imageView.image = image
+        }
+    }
+    
     func load(for cell: UICollectionViewCell) {
         guard let newCell = cell as? PhotoListCell else { return }
 
@@ -43,16 +53,6 @@ final class PhotoListCellController {
     func cancelLoad() {
         releaseForReuse()
         viewModel.cancelLoad()
-    }
-    
-    private func setupBindings() {
-        viewModel.onLoadImage = { [weak self] isLoading in
-            self?.cell?.isShimmering = isLoading
-        }
-        
-        viewModel.didLoadImage = { [weak self] image in
-            self?.cell?.imageView.image = image
-        }
     }
     
     private func releaseForReuse() {

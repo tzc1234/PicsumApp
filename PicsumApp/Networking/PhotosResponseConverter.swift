@@ -13,21 +13,19 @@ enum PhotosResponseConverter {
     }
     
     static func convert(from data: Data, response: HTTPURLResponse) throws -> [Photo] {
-        guard isOK(response) else { throw Error.invalidData }
+        guard response.isOK else {
+            throw Error.invalidData
+        }
         
         do {
-            let photosResponse = try JSONDecoder().decode([PhotoResponse].self, from: data)
-            return photosResponse.map(\.photo)
+            let remotePhotos = try JSONDecoder().decode([RemotePhoto].self, from: data)
+            return remotePhotos.map(\.photo)
         } catch {
             throw Error.invalidData
         }
     }
     
-    private static func isOK(_ response: HTTPURLResponse) -> Bool {
-        response.statusCode == 200
-    }
-    
-    private struct PhotoResponse: Decodable {
+    private struct RemotePhoto: Decodable {
         let id, author: String
         let width, height: Int
         let url, download_url: URL

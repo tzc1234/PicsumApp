@@ -30,8 +30,10 @@ extension LocalImageDataLoader: ImageDataLoader {
             }
             
             return data
+        } catch(let loadError as LoadError) {
+            throw loadError
         } catch {
-            throw (error as? LoadError) == .notFound ? LoadError.notFound : LoadError.failed
+            throw LoadError.failed
         }
     }
 }
