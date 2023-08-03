@@ -51,6 +51,15 @@ final class CoreDataImageDataStore: ImageDataStore {
             try action(context)
         }
     }
+    
+    private func cleanUpReferencesToPersistentStore() {
+        let coordinator = container.persistentStoreCoordinator
+        try? coordinator.persistentStores.forEach(coordinator.remove)
+    }
+    
+    deinit {
+        cleanUpReferencesToPersistentStore()
+    }
 }
 
 extension CoreDataImageDataStore {
@@ -82,6 +91,7 @@ extension CoreDataImageDataStore {
             .flatMap({ NSManagedObjectModel(contentsOf: $0) }) else {
                 throw StoreError.modelNotFound
             }
+        
         return model
     }
 }
