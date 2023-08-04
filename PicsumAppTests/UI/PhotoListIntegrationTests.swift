@@ -40,7 +40,7 @@ final class PhotoListIntegrationTests: XCTestCase {
         
         sut.simulatePhotoViewSelected(at: 0)
         
-        XCTAssertEqual(loggedPhotos, [photo], "Expect a selction triggered once a photo view selected")
+        XCTAssertEqual(loggedPhotos, [photo], "Expect a selection triggered once a photo view selected")
     }
     
     @MainActor
