@@ -32,14 +32,6 @@ final class CoreDataImageDataStore: ImageDataStore {
         }
     }
     
-    func deleteData(for url: URL) async throws {
-        try await perform { context in
-            try ManagedImage.find(in: context, for: url)
-                .map(context.delete)
-                .map(context.save)
-        }
-    }
-    
     func deleteAllData(reach date: Date) async throws {
         try await perform { context in
             try ManagedImage.batchDelete(in: context, reach: date)
