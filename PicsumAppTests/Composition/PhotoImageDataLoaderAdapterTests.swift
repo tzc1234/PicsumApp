@@ -31,10 +31,7 @@ final class PhotoImageDataLoaderAdapterTests: XCTestCase {
     func test_loadImageData_deliversErrorOnError() async {
         let (sut, _) = makeSUT(stubs: [.failure(anyNSError())])
         
-        do {
-            _ = try await sut.loadImageData(by: "1", width: 1, height: 1)
-            XCTFail("Should not success")
-        } catch {}
+        await asyncAssertThrowsError(_ = try await sut.loadImageData(by: "1", width: 1, height: 1))
     }
     
     func test_loadImageData_deliversDataOnSuccess() async throws {

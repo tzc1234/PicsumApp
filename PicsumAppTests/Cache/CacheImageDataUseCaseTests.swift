@@ -20,10 +20,7 @@ final class CacheImageDataUseCaseTests: XCTestCase {
         let (sut, store) = makeSUT(insertStubs: [.failure(anyNSError())])
         let url = anyURL()
         
-        do {
-            try await sut.save(data: anyData(), for: url)
-            XCTFail("Should not success")
-        } catch {
+        await asyncAssertThrowsError(try await sut.save(data: anyData(), for: url)) { error in
             XCTAssertEqual(error as? LocalImageDataLoader.SaveError, .failed)
         }
         XCTAssertEqual(store.messages, [.insert(url)])

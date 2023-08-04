@@ -28,10 +28,7 @@ final class RemoteImageDataLoaderTests: XCTestCase {
     func test_loadImageData_deliversErrorOnClientError() async {
         let (sut, _) = makeSUT(stubs: [.failure(anyNSError())])
         
-        do {
-            _ = try await sut.loadImageData(for: anyURL())
-            XCTFail("Should not success")
-        } catch {
+        await asyncAssertThrowsError(_ = try await sut.loadImageData(for: anyURL())) { error in
             assertInvalidDataError(error)
         }
     }
@@ -42,12 +39,11 @@ final class RemoteImageDataLoaderTests: XCTestCase {
         let (sut, _) = makeSUT(stubs: stubs)
         
         for statusCode in simples {
-            do {
-                _ = try await sut.loadImageData(for: anyURL())
-                XCTFail("Should not success in statusCode: \(statusCode)")
-            } catch {
-                assertInvalidDataError(error)
-            }
+            await asyncAssertThrowsError(
+                _ = try await sut.loadImageData(for: anyURL()),
+                "Should not success in statusCode: \(statusCode)") { error in
+                    assertInvalidDataError(error)
+                }
         }
     }
     

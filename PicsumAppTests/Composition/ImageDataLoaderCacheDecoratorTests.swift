@@ -27,11 +27,8 @@ final class ImageDataLoaderCacheDecoratorTests: XCTestCase {
     
     func test_loadImageData_deliversErrorOnLoaderError() async {
         let (sut, _) = makeSUT(stubs: [.failure(anyNSError())])
-        
-        do {
-            _ = try await sut.loadImageData(for: anyURL())
-            XCTFail("Should not success")
-        } catch {}
+
+        await asyncAssertThrowsError(_ = try await sut.loadImageData(for: anyURL()))
     }
     
     func test_loadImageData_deliversDataOnLoaderSuccess() async throws {
@@ -67,11 +64,7 @@ final class ImageDataLoaderCacheDecoratorTests: XCTestCase {
         let cache = CacheSpy()
         let (sut, _) = makeSUT(stubs: [.success(anyData())], cache: cache)
         
-        do {
-            _ = try await sut.loadImageData(for: anyURL())
-        } catch {
-            XCTFail("Should not fail")
-        }
+        await asyncAssertNoThrow(_ = try await sut.loadImageData(for: anyURL()))
     }
 
     // MARK: - Helpers

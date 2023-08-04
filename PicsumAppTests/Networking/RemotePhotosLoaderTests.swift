@@ -28,12 +28,7 @@ final class RemotePhotosLoaderTests: XCTestCase {
     func test_load_deliversErrorOnClientError() async {
         let (sut, _) = makeSUT(stubs: [.failure(anyNSError())])
         
-        do {
-            try await _ = sut.load(page: 1)
-            XCTFail("Should not success")
-        } catch {
-            assertInvalidDataError(error)
-        }
+        await asyncAssertThrowsError(_ = try await sut.load(page: 1))
     }
     
     func test_load_deliversErrorWhenNon200Response() async {
@@ -42,12 +37,11 @@ final class RemotePhotosLoaderTests: XCTestCase {
         let (sut, _) = makeSUT(stubs: stubs)
         
         for statusCode in simples {
-            do {
-                try await _ = sut.load(page: 1)
-                XCTFail("Should not success in statusCode: \(statusCode)")
-            } catch {
-                assertInvalidDataError(error)
-            }
+            await asyncAssertThrowsError(
+                _ = try await sut.load(page: 1),
+                "Should not success in statusCode: \(statusCode)") { error in
+                    assertInvalidDataError(error)
+                }
         }
     }
     
@@ -55,10 +49,7 @@ final class RemotePhotosLoaderTests: XCTestCase {
         let invalidData = Data("invalid data".utf8)
         let (sut, _) = makeSUT(stubs: [.success((invalidData, HTTPURLResponse(statusCode: 200)))])
         
-        do {
-            try await _ = sut.load(page: 1)
-            XCTFail("Should not success")
-        } catch {
+        await asyncAssertThrowsError(_ = try await sut.load(page: 1)) { error in
             assertInvalidDataError(error)
         }
     }
@@ -67,10 +58,7 @@ final class RemotePhotosLoaderTests: XCTestCase {
         let emptyData = Data()
         let (sut, _) = makeSUT(stubs: [.success((emptyData, HTTPURLResponse(statusCode: 200)))])
         
-        do {
-            _ = try await sut.load(page: 1)
-            XCTFail("Should not success")
-        } catch {
+        await asyncAssertThrowsError(_ = try await sut.load(page: 1)) { error in
             assertInvalidDataError(error)
         }
     }

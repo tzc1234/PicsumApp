@@ -19,10 +19,7 @@ final class InvalidateCachedImageDataUseCaseTests: XCTestCase {
     func test_invalidateImageData_deliversErrorOnStoreError() async {
         let (sut, store) = makeSUT(deleteAllDataStubs: [.failure(anyNSError())])
         
-        do {
-            try await sut.invalidateImageData()
-            XCTFail("Should not success")
-        } catch {
+        await asyncAssertThrowsError(try await sut.invalidateImageData()) { error in
             XCTAssertEqual(error as? LocalImageDataLoader.InvalidateError, .failed)
         }
         XCTAssertEqual(store.messages, [.deleteAllData])

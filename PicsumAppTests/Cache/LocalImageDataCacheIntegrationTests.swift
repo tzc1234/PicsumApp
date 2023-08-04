@@ -57,10 +57,7 @@ final class LocalImageDataCacheIntegrationTests: XCTestCase {
         try await imageLoaderForSave.save(data: data, for: url)
         try await imageLoaderForInvalidate.invalidateImageData()
         
-        do {
-            _ = try await imageLoaderForLoad.loadImageData(for: url)
-            XCTFail("Should be a no data found error")
-        } catch {}
+        await asyncAssertThrowsError(_ = try await imageLoaderForLoad.loadImageData(for: url))
     }
 
     // MARK: - Helpers

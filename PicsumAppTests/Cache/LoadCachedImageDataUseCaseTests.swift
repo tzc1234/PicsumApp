@@ -59,10 +59,7 @@ final class LoadCachedImageDataUseCaseTests: XCTestCase {
                         file: StaticString = #filePath, line: UInt = #line) async {
         let url = anyURL()
         
-        do {
-            _ = try await sut.loadImageData(for: url)
-            XCTFail("Should not success", file: file, line: line)
-        } catch {
+        await asyncAssertThrowsError(_ = try await sut.loadImageData(for: url), file: file, line: line) { error in
             XCTAssertEqual(error as? LocalImageDataLoader.LoadError, expectedError, file: file, line: line)
         }
         XCTAssertEqual(store.messages, [.retrieveData(url)], file: file, line: line)

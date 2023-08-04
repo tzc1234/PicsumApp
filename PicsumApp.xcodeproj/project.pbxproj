@@ -50,6 +50,7 @@
 		BE73DE832A584B5A00B5F438 /* PhotoImageEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE73DE822A584B5A00B5F438 /* PhotoImageEndpoint.swift */; };
 		BE756CE12A628EE4000636F0 /* SceneDelegateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE756CE02A628EE4000636F0 /* SceneDelegateTests.swift */; };
 		BE76D4582A7CE436000EA213 /* HTTPURLResponse+StatusCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE76D4572A7CE436000EA213 /* HTTPURLResponse+StatusCode.swift */; };
+		BE76D45A2A7D5752000EA213 /* XCTestCase+AssertThrows.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE76D4592A7D5752000EA213 /* XCTestCase+AssertThrows.swift */; };
 		BE78E2892A653F4F00FBBF1A /* LocalImageDataCacheIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE78E2882A653F4F00FBBF1A /* LocalImageDataCacheIntegrationTests.swift */; };
 		BE81030F2A559EB700CE012A /* PhotoListCell+TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE81030E2A559EB700CE012A /* PhotoListCell+TestHelpers.swift */; };
 		BE8103112A559F4C00CE012A /* PhotoListViewController+TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8103102A559F4C00CE012A /* PhotoListViewController+TestHelpers.swift */; };
@@ -136,6 +137,7 @@
 		BE73DE822A584B5A00B5F438 /* PhotoImageEndpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoImageEndpoint.swift; sourceTree = "<group>"; };
 		BE756CE02A628EE4000636F0 /* SceneDelegateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegateTests.swift; sourceTree = "<group>"; };
 		BE76D4572A7CE436000EA213 /* HTTPURLResponse+StatusCode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HTTPURLResponse+StatusCode.swift"; sourceTree = "<group>"; };
+		BE76D4592A7D5752000EA213 /* XCTestCase+AssertThrows.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+AssertThrows.swift"; sourceTree = "<group>"; };
 		BE78E2882A653F4F00FBBF1A /* LocalImageDataCacheIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalImageDataCacheIntegrationTests.swift; sourceTree = "<group>"; };
 		BE81030E2A559EB700CE012A /* PhotoListCell+TestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PhotoListCell+TestHelpers.swift"; sourceTree = "<group>"; };
 		BE8103102A559F4C00CE012A /* PhotoListViewController+TestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PhotoListViewController+TestHelpers.swift"; sourceTree = "<group>"; };
@@ -361,6 +363,7 @@
 			children = (
 				BE1FD4E92A5421CE0021777F /* SharedHelpers.swift */,
 				BE6560682A52DF8900CCD5D6 /* XCTestCase+MemoryLeakTracking.swift */,
+				BE76D4592A7D5752000EA213 /* XCTestCase+AssertThrows.swift */,
 				BE3691082A5566EE00DF0560 /* UIImage+TestHelpers.swift */,
 			);
 			path = Helpers;
@@ -607,6 +610,7 @@
 				BE5496862A570DF600D402A3 /* ClientSpy.swift in Sources */,
 				BE5DFCF92A5C0CAF007BD8A7 /* PhotoImageDataLoaderAdapterTests.swift in Sources */,
 				BE5DFD002A5C43F0007BD8A7 /* LoadCachedImageDataUseCaseTests.swift in Sources */,
+				BE76D45A2A7D5752000EA213 /* XCTestCase+AssertThrows.swift in Sources */,
 				BE5496882A570ED400D402A3 /* RemoteImageDataLoaderTests.swift in Sources */,
 				BE81030F2A559EB700CE012A /* PhotoListCell+TestHelpers.swift in Sources */,
 				BEB90FB72A5F0A6500A22904 /* ContextDidSaveNotificationSpy.swift in Sources */,

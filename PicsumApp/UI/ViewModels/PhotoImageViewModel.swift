@@ -11,6 +11,7 @@ final class PhotoImageViewModel<Image> {
     var onLoadImage: Observer<Bool>?
     var didLoadImage: Observer<Image?>?
     var author: String { photo.author }
+    
     private(set) var imageDataTask: Task<Void, Never>?
     
     private let photo: Photo

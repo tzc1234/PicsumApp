@@ -37,10 +37,7 @@ final class ImageDataLoaderWithFallbackCompositeTests: XCTestCase {
         let fallback = ImageDataLoaderSpy(stubs: [.failure(anyNSError())])
         let sut = ImageDataLoaderWithFallbackComposite(primary: primary, fallback: fallback)
         
-        do {
-            _ = try await sut.loadImageData(for: anyURL())
-            XCTFail("should not success")
-        } catch {}
+        await asyncAssertThrowsError(_ = try await sut.loadImageData(for: anyURL()))
     }
     
     func test_loadImageData_loadsDataOnLoadersForURL() async throws {

@@ -92,16 +92,7 @@ final class URLSessionHTTPClientTests: XCTestCase {
         let sut = makeSUT(file: file, line: line)
         URLProtocolStub.stub(data: data, response: response, error: error)
         
-        do {
-            _ = try await sut.get(from: anyURL())
-            XCTFail("Should not success", file: file, line: line)
-        } catch {
-            XCTAssertNotNil(error, file: file, line: line)
-        }
-    }
-    
-    private func anyData() -> Data {
-        Data("any data".utf8)
+        await asyncAssertThrowsError(_ = try await sut.get(from: anyURL()), file: file, line: line)
     }
     
     private func anyHTTPURLResponse() -> HTTPURLResponse {
