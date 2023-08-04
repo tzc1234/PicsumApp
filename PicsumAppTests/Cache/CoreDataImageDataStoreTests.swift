@@ -60,7 +60,7 @@ final class CoreDataImageDataStoreTests: XCTestCase {
         let newDataInput = DataInput(data: Data("new data".utf8), url: overrideDataURL)
         let otherDataInput = DataInput(data: Data("other data".utf8), url: URL(string: "https://other-data-url.com")!)
         
-        try await insert(inputs: [otherDataInput, oldDataInput, newDataInput], to: sut)
+        try await insert(inputs: [otherDataInput, oldDataInput, newDataInput], into: sut)
         let retrievedData = try await sut.retrieveData(for: overrideDataURL)
         let retrievedOtherData = try await sut.retrieveData(for: otherDataInput.url)
         
@@ -73,7 +73,7 @@ final class CoreDataImageDataStoreTests: XCTestCase {
         let url = anyURL()
         
         let beforeDeleteAllData = try await sut.retrieveData(for: url)
-        try await sut.deleteAllData(reach: anyDate())
+        try await sut.deleteAllData(until: .now)
         let afterDeleteAllData = try await sut.retrieveData(for: url)
         
         XCTAssertNil(beforeDeleteAllData)
@@ -96,8 +96,8 @@ final class CoreDataImageDataStoreTests: XCTestCase {
             date: date.adding(seconds: 1),
             url: URL(string: "https://more-than-date-data-url.com")!)
         
-        try await insert(inputs: [lessThanDateInput, equalToDateInput, moreThanDateInput], to: sut)
-        try await sut.deleteAllData(reach: date)
+        try await insert(inputs: [lessThanDateInput, equalToDateInput, moreThanDateInput], into: sut)
+        try await sut.deleteAllData(until: date)
         let lessThanDateData = try await sut.retrieveData(for: lessThanDateInput.url)
         let equalToDateData = try await sut.retrieveData(for: equalToDateInput.url)
         let moreThanDateData = try await sut.retrieveData(for: moreThanDateInput.url)
@@ -115,7 +115,7 @@ final class CoreDataImageDataStoreTests: XCTestCase {
         return sut
     }
     
-    private func insert(inputs: [DataInput], to sut: ImageDataStore,
+    private func insert(inputs: [DataInput], into sut: ImageDataStore,
                         file: StaticString = #filePath, line: UInt = #line) async throws {
         for input in inputs {
             try await insert(data: input.data, timestamp: input.date, url: input.url, to: sut, file: file, line: line)
@@ -129,10 +129,6 @@ final class CoreDataImageDataStoreTests: XCTestCase {
         try await sut.insert(data: data, timestamp: timestamp, for: url)
         
         XCTAssertTrue(notificationSpy.saveCount > 0, "Expect at least save once", file: file, line: line)
-    }
-    
-    private func anyDate() -> Date {
-        Date()
     }
     
     private struct DataInput {

@@ -54,7 +54,7 @@ class ImageDataStoreSpy: ImageDataStore {
         }
     }
     
-    func deleteAllData(reach date: Date) async throws {
+    func deleteAllData(until date: Date) async throws {
         messages.append(.deleteAllData)
         datesForDeleteAllData.append(date)
         try deleteAllDataStubs.removeFirst().get()

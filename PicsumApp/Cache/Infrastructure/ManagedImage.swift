@@ -32,7 +32,7 @@ extension ManagedImage {
         return try context.fetch(request).first
     }
     
-    static func batchDelete(in context: NSManagedObjectContext, reach date: Date) throws {
+    static func batchDelete(in context: NSManagedObjectContext, until date: Date) throws {
         let fetch = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
         fetch.predicate = NSPredicate(format: "timestamp <= %@", date as CVarArg)
         let request = NSBatchDeleteRequest(fetchRequest: fetch)

@@ -32,9 +32,9 @@ final class CoreDataImageDataStore: ImageDataStore {
         }
     }
     
-    func deleteAllData(reach date: Date) async throws {
+    func deleteAllData(until date: Date) async throws {
         try await perform { context in
-            try ManagedImage.batchDelete(in: context, reach: date)
+            try ManagedImage.batchDelete(in: context, until: date)
         }
     }
     
