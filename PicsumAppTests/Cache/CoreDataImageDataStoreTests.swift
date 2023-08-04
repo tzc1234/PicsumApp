@@ -68,36 +68,6 @@ final class CoreDataImageDataStoreTests: XCTestCase {
         XCTAssertEqual(retrievedOtherData, otherDataInput.data)
     }
     
-    func test_deleteData_ignoresWhenNoCache() async throws {
-        let sut = try makeSUT()
-        let url = anyURL()
-        
-        let beforeDeleteData = try await sut.retrieveData(for: url)
-        try await delete(for: url, to: sut, withExpectedSaveCount: 0)
-        let afterDeleteData = try await sut.retrieveData(for: url)
-        
-        XCTAssertNil(beforeDeleteData)
-        XCTAssertNil(afterDeleteData)
-    }
-    
-    func test_deleteData_removeCachedDataForURL() async throws {
-        let sut = try makeSUT()
-        let deletedDataInput = DataInput(
-            data: Data("deleted data".utf8),
-            url: URL(string: "https://deleted-data-url.com")!)
-        let remainedDataInput = DataInput(
-            data: Data("remained data".utf8),
-            url: URL(string: "https://remained-data-url.com")!)
-        
-        try await insert(inputs: [deletedDataInput, remainedDataInput], to: sut)
-        try await delete(for: deletedDataInput.url, to: sut, withExpectedSaveCount: 1)
-        let deletedData = try await sut.retrieveData(for: deletedDataInput.url)
-        let remainedData = try await sut.retrieveData(for: remainedDataInput.url)
-        
-        XCTAssertNil(deletedData)
-        XCTAssertEqual(remainedData, remainedDataInput.data)
-    }
-    
     func test_deleteAll_ignoresWhenNoCache() async throws {
         let sut = try makeSUT()
         let url = anyURL()
@@ -143,15 +113,6 @@ final class CoreDataImageDataStoreTests: XCTestCase {
         let sut = try CoreDataImageDataStore(storeURL: URL(filePath: "/dev/null"))
         trackForMemoryLeaks(sut, file: file, line: line)
         return sut
-    }
-    
-    private func delete(for url: URL, to sut: ImageDataStore, withExpectedSaveCount saveCount: Int,
-                        file: StaticString = #filePath, line: UInt = #line) async throws {
-        let notificationSpy = ContextDidSaveNotificationSpy()
-        
-        try await sut.deleteData(for: url)
-        
-        XCTAssertEqual(notificationSpy.saveCount, saveCount, "Expect save \(saveCount) time(s), got \(notificationSpy.saveCount) instead", file: file, line: line)
     }
     
     private func insert(inputs: [DataInput], to sut: ImageDataStore,

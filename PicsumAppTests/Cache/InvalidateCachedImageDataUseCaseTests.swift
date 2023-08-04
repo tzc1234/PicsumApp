@@ -45,11 +45,7 @@ final class InvalidateCachedImageDataUseCaseTests: XCTestCase {
                          currentDate: @escaping () -> Date = Date.init,
                          file: StaticString = #filePath,
                          line: UInt = #line) -> (sut: LocalImageDataLoader, store: ImageDataStoreSpy) {
-        let store = ImageDataStoreSpy(
-            retrieveDataStubs: [],
-            deleteDataStubs: [],
-            insertStubs: [],
-            deleteAllDataStubs: deleteAllDataStubs)
+        let store = ImageDataStoreSpy(retrieveDataStubs: [], insertStubs: [], deleteAllDataStubs: deleteAllDataStubs)
         let sut = LocalImageDataLoader(store: store, currentDate: currentDate)
         
         trackForMemoryLeaks(store, file: file, line: line)

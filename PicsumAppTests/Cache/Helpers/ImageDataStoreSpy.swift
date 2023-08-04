@@ -10,13 +10,11 @@ import Foundation
 
 class ImageDataStoreSpy: ImageDataStore {
     typealias RetrieveDataStub = Result<Data?, Error>
-    typealias DeleteDataStub = Result<Void, Error>
     typealias InsertStub = Result<Void, Error>
     typealias DeleteAllDataStub = Result<Void, Error>
     
     enum Message: Equatable {
         case retrieveData(URL)
-        case deleteData(URL)
         case insert(URL)
         case deleteAllData
     }
@@ -31,14 +29,11 @@ class ImageDataStoreSpy: ImageDataStore {
     private(set) var datesForDeleteAllData = [Date]()
     
     private var retrieveStubs: [RetrieveDataStub]
-    private var deleteDataStubs: [DeleteDataStub]
     private var insertStubs: [InsertStub]
     private var deleteAllDataStubs: [DeleteAllDataStub]
     
-    init(retrieveDataStubs: [RetrieveDataStub], deleteDataStubs: [DeleteDataStub],
-         insertStubs: [InsertStub], deleteAllDataStubs: [DeleteAllDataStub]) {
+    init(retrieveDataStubs: [RetrieveDataStub], insertStubs: [InsertStub], deleteAllDataStubs: [DeleteAllDataStub]) {
         self.retrieveStubs = retrieveDataStubs
-        self.deleteDataStubs = deleteDataStubs
         self.insertStubs = insertStubs
         self.deleteAllDataStubs = deleteAllDataStubs
     }
@@ -46,11 +41,6 @@ class ImageDataStoreSpy: ImageDataStore {
     func retrieveData(for url: URL) async throws -> Data? {
         messages.append(.retrieveData(url))
         return try retrieveStubs.removeFirst().get()
-    }
-    
-    func deleteData(for url: URL) async throws {
-        messages.append(.deleteData(url))
-        try deleteDataStubs.removeFirst().get()
     }
     
     func insert(data: Data, timestamp: Date, for url: URL) async throws {

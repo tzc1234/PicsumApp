@@ -17,7 +17,7 @@ final class CacheImageDataUseCaseTests: XCTestCase {
     }
     
     func test_save_deliversErrorWhenReceivedInsertError() async {
-        let (sut, store) = makeSUT(deleteDataStubs: [.success(())], insertStubs: [.failure(anyNSError())])
+        let (sut, store) = makeSUT(insertStubs: [.failure(anyNSError())])
         let url = anyURL()
         
         do {
@@ -31,7 +31,7 @@ final class CacheImageDataUseCaseTests: XCTestCase {
     
     func test_save_insertDataAndTimestampForURLSuccessfully() async throws {
         let now = Date.distantFuture
-        let (sut, store) = makeSUT(deleteDataStubs: [.success(())], insertStubs: [.success(())], currentDate: { now })
+        let (sut, store) = makeSUT(insertStubs: [.success(())], currentDate: { now })
         let data = Data("data for save".utf8)
         let url = URL(string: "https://save-image-url.com")!
         
@@ -43,16 +43,11 @@ final class CacheImageDataUseCaseTests: XCTestCase {
     
     // MARK: - Helpers
     
-    private func makeSUT(deleteDataStubs: [ImageDataStoreSpy.DeleteDataStub] = [],
-                         insertStubs: [ImageDataStoreSpy.InsertStub] = [],
+    private func makeSUT(insertStubs: [ImageDataStoreSpy.InsertStub] = [],
                          currentDate: @escaping () -> Date = Date.init,
                          file: StaticString = #filePath,
                          line: UInt = #line) -> (sut: LocalImageDataLoader, store: ImageDataStoreSpy) {
-        let store = ImageDataStoreSpy(
-            retrieveDataStubs: [],
-            deleteDataStubs: deleteDataStubs,
-            insertStubs: insertStubs,
-            deleteAllDataStubs: [])
+        let store = ImageDataStoreSpy(retrieveDataStubs: [], insertStubs: insertStubs, deleteAllDataStubs: [])
         let sut = LocalImageDataLoader(store: store, currentDate: currentDate)
         
         trackForMemoryLeaks(store, file: file, line: line)

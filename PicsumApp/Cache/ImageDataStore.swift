@@ -10,6 +10,5 @@ import Foundation
 protocol ImageDataStore {
     func retrieveData(for url: URL) async throws -> Data?
     func insert(data: Data, timestamp: Date, for url: URL) async throws
-    func deleteData(for url: URL) async throws
     func deleteAllData(reach date: Date) async throws
 }
