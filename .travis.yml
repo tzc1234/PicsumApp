@@ -1,0 +1,4 @@
+os: osx
+osx_image: xcode14.2
+language: swift
+script: xcodebuild clean build test -project PicsumApp.xcodeproj -scheme "PicsumApp" CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO -sdk iphonesimulator -destination "platform=iOS Simulator,name=iPhone 14,OS=16.2" ONLY_ACTIVE_ARCH=YES
