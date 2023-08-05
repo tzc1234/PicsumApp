@@ -1,6 +1,8 @@
 # PicsumApp
 ## Aims to practice the learnings from iOS Lead Essentials.
 
+[![](https://circleci.com/gh/tzc1234/PicsumApp.svg?style=shield)](https://circleci.com/gh/tzc1234/PicsumApp)
+
 ## Screenshot
 <img src="https://github.com/tzc1234/PicsumApp/blob/main/Screenshots/preview.png" alt="preview" width="256" height="554"/>
 
