@@ -29,6 +29,7 @@ final class PhotoListViewController: UICollectionViewController {
     }
     
     override func viewDidLoad() {
+        super.viewDidLoad()
         configureConllectionView()
         setupBindings()
         reloadPhotos()
