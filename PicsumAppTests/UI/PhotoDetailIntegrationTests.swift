@@ -50,7 +50,7 @@ final class PhotoDetailIntegrationTests: XCTestCase {
     }
     
     @MainActor
-    func test_detailView_renderPhotoImageOnLoaderSuccess() async {
+    func test_detailView_rendersPhotoImageOnLoaderSuccess() async {
         let photo = makePhoto()
         let imageData = UIImage.make(withColor: .red).pngData()!
         let (sut, _) = makeSUT(photo: photo, dataStubs: [.success(imageData)])

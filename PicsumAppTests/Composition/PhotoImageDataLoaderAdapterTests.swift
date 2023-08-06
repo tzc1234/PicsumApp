@@ -10,7 +10,7 @@ import XCTest
 
 final class PhotoImageDataLoaderAdapterTests: XCTestCase {
 
-    func test_init_noTriggerLoader() {
+    func test_init_doesNotTriggerLoader() {
         let (_, loader) = makeSUT()
         
         XCTAssertEqual(loader.loggedURLs.count, 0)

@@ -10,13 +10,13 @@ import XCTest
 
 final class ImageDataLoaderCacheDecoratorTests: XCTestCase {
 
-    func test_init_noTriggerOnLoader() {
+    func test_init_doesNotTriggerOnLoader() {
         let (_, loader) = makeSUT()
         
         XCTAssertEqual(loader.loggedURLs.count, 0)
     }
     
-    func test_loadImageData_loadFromLoader() async throws {
+    func test_loadImageData_loadsFromLoader() async throws {
         let (sut, loader) = makeSUT(stubs: [.success(anyData())])
         let url = anyURL()
         

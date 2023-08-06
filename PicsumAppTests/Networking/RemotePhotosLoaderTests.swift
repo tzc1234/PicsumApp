@@ -10,7 +10,7 @@ import XCTest
 
 final class RemotePhotosLoaderTests: XCTestCase {
 
-    func test_init_noTriggerClient() {
+    func test_init_doesNotTriggerClient() {
         let (_, client) = makeSUT()
         
         XCTAssertEqual(client.loggedURLs.count, 0)
@@ -73,9 +73,7 @@ final class RemotePhotosLoaderTests: XCTestCase {
     }
     
     func test_load_deliversOnePhotoWhen200ResponseWithOnePhotoData() async throws {
-        let expectedPhotos = [
-            Photo(id: "0", author: "author", width: 0, height: 0, webURL: URL(string: "https://web-url.com")!, url: anyURL())
-        ]
+        let expectedPhotos = [makePhoto(byIndex: 0)]
         let (sut, _) = makeSUT(stubs: [.success((expectedPhotos.toData(), HTTPURLResponse(statusCode: 200)))])
         
         let photos = try await sut.load(page: 1)
@@ -84,11 +82,7 @@ final class RemotePhotosLoaderTests: XCTestCase {
     }
     
     func test_load_deliversMultiplePhotosWhen200ResponseWithMultiplePhotosData() async throws {
-        let expectedPhotos = [
-            Photo(id: "0", author: "author0", width: 0, height: 0, webURL: URL(string: "https://web-url-0.com")!, url: URL(string: "https://url-0.com")!),
-            Photo(id: "1", author: "author1", width: 1, height: 1, webURL: URL(string: "https://web-url-1.com")!, url: URL(string: "https://url-1.com")!),
-            Photo(id: "2", author: "author2", width: 2, height: 2, webURL: URL(string: "https://web-url-2.com")!, url: URL(string: "https://url-2.com")!)
-        ]
+        let expectedPhotos = [makePhoto(byIndex: 0), makePhoto(byIndex: 1), makePhoto(byIndex: 2)]
         let (sut, _) = makeSUT(stubs: [.success((expectedPhotos.toData(), HTTPURLResponse(statusCode: 200)))])
         
         let photos = try await sut.load(page: 1)
@@ -114,6 +108,15 @@ final class RemotePhotosLoaderTests: XCTestCase {
         XCTAssertEqual(error as? PhotosResponseConverter.Error, .invalidData, file: file, line: line)
     }
     
+    private func makePhoto(byIndex index: Int) -> Photo {
+        Photo(
+            id: "\(index)",
+            author: "author\(index)",
+            width: index,
+            height: index,
+            webURL: URL(string: "https://web-url-\(index).com")!,
+            url: URL(string: "https://url-\(index).com")!)
+    }
 }
 
 private extension [Photo] {

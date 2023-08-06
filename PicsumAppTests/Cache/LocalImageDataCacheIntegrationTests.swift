@@ -47,7 +47,7 @@ final class LocalImageDataCacheIntegrationTests: XCTestCase {
         XCTAssertEqual(receivedData, lastData)
     }
     
-    func test_invalidateImageData_removeAllSavedDataInADistancePast() async throws {
+    func test_invalidateImageData_removesAllSavedDataInADistancePast() async throws {
         let imageLoaderForSave = try makeSUT(currentDate: { .distantPast })
         let imageLoaderForInvalidate = try makeSUT(currentDate: { .now })
         let imageLoaderForLoad = try makeSUT()

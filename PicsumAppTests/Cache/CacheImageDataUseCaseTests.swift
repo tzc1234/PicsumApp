@@ -10,7 +10,7 @@ import XCTest
 
 final class CacheImageDataUseCaseTests: XCTestCase {
 
-    func test_init_noTriggerStore() {
+    func test_init_doesNotTriggerStore() {
         let (_, store) = makeSUT()
         
         XCTAssertEqual(store.messages.count, 0)
@@ -26,7 +26,7 @@ final class CacheImageDataUseCaseTests: XCTestCase {
         XCTAssertEqual(store.messages, [.insert(url)])
     }
     
-    func test_save_insertDataAndTimestampForURLSuccessfully() async throws {
+    func test_save_insertsDataAndTimestampForURLSuccessfully() async throws {
         let now = Date.distantFuture
         let (sut, store) = makeSUT(insertStubs: [.success(())], currentDate: { now })
         let data = Data("data for save".utf8)

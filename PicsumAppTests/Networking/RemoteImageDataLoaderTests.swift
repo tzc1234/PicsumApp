@@ -10,7 +10,7 @@ import XCTest
 
 final class RemoteImageDataLoaderTests: XCTestCase {
 
-    func test_init_noTriggerClient() {
+    func test_init_doesNotTriggerClient() {
         let (_, client) = makeSUT()
         
         XCTAssertEqual(client.loggedURLs.count, 0)

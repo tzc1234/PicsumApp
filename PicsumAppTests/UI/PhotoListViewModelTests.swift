@@ -10,7 +10,7 @@ import XCTest
 
 final class PhotoListViewModelTests: XCTestCase {
     
-    func test_init_withoutTriggerLoader() {
+    func test_init_doesNotTriggerLoader() {
         let (_, loader) = makeSUT()
         
         XCTAssertEqual(loader.loggedPages.count, 0)
@@ -93,7 +93,7 @@ final class PhotoListViewModelTests: XCTestCase {
         XCTAssertEqual(loader.loggedPages, [1, 2, 1, 2])
     }
     
-    func test_loadMore_stopLoadMoreWhenReceivedEmptyPhotosFromLoadMore() async {
+    func test_loadMore_stopsLoadMoreWhenReceivedEmptyPhotosFromLoadMore() async {
         let photoSet = [makePhoto(id: "id0"), makePhoto(id: "id1")]
         let (sut, loader) = makeSUT(stubs: [.success(photoSet), .success([])])
         
@@ -109,7 +109,7 @@ final class PhotoListViewModelTests: XCTestCase {
         XCTAssertEqual(loader.loggedPages, [1, 2])
     }
     
-    func test_loadMore_stopLoadMoreWhenReceivedEmptyPhotosFromLoad() async {
+    func test_loadMore_stopsLoadMoreWhenReceivedEmptyPhotosFromLoad() async {
         let (sut, loader) = makeSUT(stubs: [.success([])])
         
         sut.loadPhotos()
@@ -121,7 +121,7 @@ final class PhotoListViewModelTests: XCTestCase {
         XCTAssertEqual(loader.loggedPages, [1])
     }
     
-    func test_loadMore_ignoreWhenPreviousLoadMoreActionNotCompleted() async {
+    func test_loadMore_ignoresWhenPreviousLoadMoreActionNotCompleted() async {
         let photoSet0 = [makePhoto(id: "id0")]
         let photoSet1 = [makePhoto(id: "id1")]
         let photoSet2 = [makePhoto(id: "id2")]

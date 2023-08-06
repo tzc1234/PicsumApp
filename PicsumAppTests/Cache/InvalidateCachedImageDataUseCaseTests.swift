@@ -10,13 +10,13 @@ import XCTest
 
 final class InvalidateCachedImageDataUseCaseTests: XCTestCase {
 
-    func test_init_noTriggerStore() {
+    func test_init_doesNotTriggerStore() {
         let (_, store) = makeSUT()
         
         XCTAssertEqual(store.messages.count, 0)
     }
     
-    func test_invalidateImageData_deliversErrorOnStoreError() async {
+    func test_invalidatesImageData_deliversErrorOnStoreError() async {
         let (sut, store) = makeSUT(deleteAllDataStubs: [.failure(anyNSError())])
         
         await asyncAssertThrowsError(try await sut.invalidateImageData()) { error in
@@ -25,7 +25,7 @@ final class InvalidateCachedImageDataUseCaseTests: XCTestCase {
         XCTAssertEqual(store.messages, [.deleteAllData])
     }
     
-    func test_invalidateImageData_succeedsOnStore() async throws {
+    func test_invalidatesImageData_succeedsOnStore() async throws {
         let now = Date()
         let (sut, store) = makeSUT(deleteAllDataStubs: [.success(())], currentDate: { now })
         

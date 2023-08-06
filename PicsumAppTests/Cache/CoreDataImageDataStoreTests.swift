@@ -10,7 +10,7 @@ import XCTest
 
 final class CoreDataImageDataStoreTests: XCTestCase {
 
-    func test_retrieveData_deliversNilWhenNoCache() async throws {
+    func test_retrievesData_deliversNilWhenNoCache() async throws {
         let sut = try makeSUT()
         
         let retrievedData = try await sut.retrieveData(for: anyURL())
@@ -18,7 +18,7 @@ final class CoreDataImageDataStoreTests: XCTestCase {
         XCTAssertNil(retrievedData)
     }
 
-    func test_retrieveDataTwice_deliversNilWhenNoCacheWithNoSideEffects() async throws {
+    func test_retrievesDataTwice_deliversNilWhenNoCacheWithNoSideEffects() async throws {
         let sut = try makeSUT()
         let url = anyURL()
         
@@ -29,7 +29,7 @@ final class CoreDataImageDataStoreTests: XCTestCase {
         XCTAssertNil(lastRetrievedData)
     }
     
-    func test_retrieveData_deliversDataWhenCached() async throws {
+    func test_retrievesData_deliversDataWhenCached() async throws {
         let sut = try makeSUT()
         let url = anyURL()
         let data = anyData()
@@ -40,7 +40,7 @@ final class CoreDataImageDataStoreTests: XCTestCase {
         XCTAssertEqual(retrievedData, data)
     }
     
-    func test_retrieveDataTwice_deliversSameDataWhenCached() async throws {
+    func test_retrievesDataTwice_deliversSameDataWhenCached() async throws {
         let sut = try makeSUT()
         let url = anyURL()
         let data = anyData()

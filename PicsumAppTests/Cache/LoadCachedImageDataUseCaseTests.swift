@@ -10,7 +10,7 @@ import XCTest
 
 final class LoadCachedImageDataUseCaseTests: XCTestCase {
 
-    func test_init_noTriggerStore() {
+    func test_init_doesNotTriggerStore() {
         let (_, store) = makeSUT()
         
         XCTAssertEqual(store.messages.count, 0)

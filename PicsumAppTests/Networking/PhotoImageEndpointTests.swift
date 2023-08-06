@@ -10,7 +10,7 @@ import XCTest
 
 final class PhotoImageEndpointTests: XCTestCase {
 
-    func test_get_deliverCorrectURL() {
+    func test_get_deliversCorrectURL() {
         let url = PhotoImageEndpoint.get(id: "99", width: 500, height: 500).url.absoluteString
         
         XCTAssertEqual(url, "https://picsum.photos/id/99/500/500")

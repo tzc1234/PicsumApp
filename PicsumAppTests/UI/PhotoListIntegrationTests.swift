@@ -21,7 +21,7 @@ final class PhotoListIntegrationTests: XCTestCase {
         XCTAssertEqual(sut.title, PhotoListViewModel.title)
     }
     
-    func test_init_noTriggerLoader() {
+    func test_init_doesNotTriggerLoader() {
         let (_, loader) = makeSUT()
         
         XCTAssertEqual(loader.loggedPages.count, 0)
@@ -379,7 +379,7 @@ final class PhotoListIntegrationTests: XCTestCase {
     }
     
     @MainActor
-    func test_errorView_showErrorWhenPhotoRequestOnError() async throws {
+    func test_errorView_showsErrorWhenPhotoRequestOnError() async throws {
         let (sut, _) = makeSUT(photoStubs: [.success([]), .failure(anyNSError())])
         let window = UIWindow()
         window.addSubview(sut.view)

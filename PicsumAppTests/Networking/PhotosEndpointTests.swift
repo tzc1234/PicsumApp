@@ -10,7 +10,7 @@ import XCTest
 
 final class PhotosEndpointTests: XCTestCase {
 
-    func test_get_deliverCorrectURL() {
+    func test_get_deliversCorrectURL() {
         let url = PhotosEndpoint.get(page: 1).url.absoluteString
         
         XCTAssertTrue(url.contains("https://picsum.photos/v2/list?"))
