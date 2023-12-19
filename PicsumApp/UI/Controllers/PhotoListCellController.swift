@@ -8,7 +8,7 @@
 import UIKit
 
 final class PhotoListCellController {
-    private var cell: PhotoListCell?
+    private(set) var cell: PhotoListCell?
     
     let viewModel: PhotoImageViewModel<UIImage> // expose for testing
     let selection: () -> Void

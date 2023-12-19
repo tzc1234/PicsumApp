@@ -9,10 +9,24 @@ import UIKit
 @testable import PicsumApp
 
 extension PhotoListViewController {
-    public override func loadViewIfNeeded() {
-        super.loadViewIfNeeded()
+    func simulateAppearance() {
+        replaceRefreshControlToSpyForiOS17()
         
-        collectionView.frame = CGRect(x: 0, y: 0, width: 1, height: 1)
+        beginAppearanceTransition(true, animated: false)
+        endAppearanceTransition()
+    }
+    
+    private func replaceRefreshControlToSpyForiOS17() {
+        let spy = RefreshControlSpy()
+        
+        let refreshControl = collectionView.refreshControl
+        refreshControl?.allTargets.forEach { target in
+            refreshControl?.actions(forTarget: target, forControlEvent: .valueChanged)?.forEach { action in
+                spy.addTarget(target, action: Selector(action), for: .valueChanged)
+            }
+        }
+        
+        collectionView.refreshControl = spy
     }
     
     func simulateUserInitiatedReload() {

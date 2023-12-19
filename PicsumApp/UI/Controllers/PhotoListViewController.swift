@@ -20,6 +20,8 @@ final class PhotoListViewController: UICollectionViewController {
         }
     }()
     
+    private var onViewIsAppear: ((PhotoListViewController) -> Void)?
+    
     private(set) var viewModel: PhotoListViewModel?
     
     convenience init(viewModel: PhotoListViewModel) {
@@ -33,7 +35,16 @@ final class PhotoListViewController: UICollectionViewController {
         
         configureCollectionView()
         setupBindings()
-        reloadPhotos()
+        onViewIsAppear = { vc in
+            vc.reloadPhotos()
+            vc.onViewIsAppear = nil
+        }
+    }
+    
+    override func viewIsAppearing(_ animated: Bool) {
+        super.viewIsAppearing(animated)
+        
+        onViewIsAppear?(self)
     }
     
     private func configureCollectionView() {
@@ -60,11 +71,11 @@ final class PhotoListViewController: UICollectionViewController {
     }
     
     private func setupBindings() {
-        viewModel?.onLoad = { [weak refreshControl] isLoading in
+        viewModel?.onLoad = { [weak self] isLoading in
             if isLoading {
-                refreshControl?.beginRefreshing()
+                self?.collectionView.refreshControl?.beginRefreshing()
             } else {
-                refreshControl?.endRefreshing()
+                self?.collectionView.refreshControl?.endRefreshing()
             }
         }
         

@@ -33,7 +33,7 @@ final class PhotoListIntegrationTests: XCTestCase {
         var loggedPhotos = [Photo]()
         let (sut, _) = makeSUT(photoStubs: [.success([photo])], selection: { loggedPhotos.append($0) })
         
-        sut.loadViewIfNeeded()
+        sut.simulateAppearance()
         await sut.completePhotosLoading()
         
         XCTAssertEqual(loggedPhotos, [], "Expect no selection triggered before a photo view selected")
@@ -49,7 +49,7 @@ final class PhotoListIntegrationTests: XCTestCase {
 
         XCTAssertEqual(loader.loggedPages.count, 0)
 
-        sut.loadViewIfNeeded()
+        sut.simulateAppearance()
         await sut.completePhotosLoading()
         XCTAssertEqual(loader.loggedPages.count, 1, "Expect one request once the view is loaded")
 
@@ -68,7 +68,7 @@ final class PhotoListIntegrationTests: XCTestCase {
         let photo1 = makePhoto(id: "1")
         let (sut, _) = makeSUT(photoStubs: [.success([photo0]), .success([photo0, photo1])])
 
-        sut.loadViewIfNeeded()
+        sut.simulateAppearance()
 
         XCTAssertEqual(sut.numberOfRenderedPhotoView(), 0, "Expect no rendered view while inital photo loading is not completed")
 
@@ -82,7 +82,7 @@ final class PhotoListIntegrationTests: XCTestCase {
     func test_loadingPhotosIndicator_isVisibleWhileLoadingPhotos() async {
         let (sut, _) = makeSUT(photoStubs: [.success([]), .failure(anyNSError())])
 
-        sut.loadViewIfNeeded()
+        sut.simulateAppearance()
 
         XCTAssertTrue(sut.isShowingLoadingIndicator, "Expect an loading indicator once the view is loaded")
         
@@ -107,7 +107,7 @@ final class PhotoListIntegrationTests: XCTestCase {
         let (sut, _) = makeSUT(photoStubs: [.success([photo0]), .success([photo0, photo1, photo2])],
                                dataStubs: [.failure(anyNSError())])
 
-        sut.loadViewIfNeeded()
+        sut.simulateAppearance()
 
         assertThat(sut, isRendering: [])
 
@@ -126,7 +126,7 @@ final class PhotoListIntegrationTests: XCTestCase {
         let photo0 = makePhoto(id: "0", author: "author0")
         let (sut, _) = makeSUT(photoStubs: [.success([photo0]), .failure(anyNSError())], dataStubs: [anySuccessData()])
 
-        sut.loadViewIfNeeded()
+        sut.simulateAppearance()
 
         assertThat(sut, isRendering: [])
 
@@ -148,7 +148,7 @@ final class PhotoListIntegrationTests: XCTestCase {
             photoStubs: [.success([photo0, photo1])],
             dataStubs: [anySuccessData(), anySuccessData()])
         
-        sut.loadViewIfNeeded()
+        sut.simulateAppearance()
         await sut.completePhotosLoading()
         
         XCTAssertEqual(loader.loggedPhotoIDs, [], "Expect no image requests until views become visible")
@@ -169,7 +169,7 @@ final class PhotoListIntegrationTests: XCTestCase {
         let imageData1 = UIImage.make(withColor: .blue).pngData()!
         let (sut, _) = makeSUT(photoStubs: [.success([photo0, photo1])], dataStubs: [.success(anyData()), .success(imageData1)])
         
-        sut.loadViewIfNeeded()
+        sut.simulateAppearance()
         await sut.completePhotosLoading()
         
         let view0 = try XCTUnwrap(sut.simulatePhotoViewVisible(at: 0))
@@ -193,7 +193,7 @@ final class PhotoListIntegrationTests: XCTestCase {
         let (sut, _) = makeSUT(photoStubs: [.success([photo])],
                                dataStubs: [.success(imageData0), .success(imageData1)])
         
-        sut.loadViewIfNeeded()
+        sut.simulateAppearance()
         await sut.completePhotosLoading()
         
         let view = try XCTUnwrap(sut.simulatePhotoViewVisible(at: 0))
@@ -219,7 +219,7 @@ final class PhotoListIntegrationTests: XCTestCase {
         let photo0 = makePhoto(id: "0")
         let (sut, loader) = makeSUT(photoStubs: [.success([photo0])], dataStubs: [anySuccessData(), anySuccessData()])
         
-        sut.loadViewIfNeeded()
+        sut.simulateAppearance()
         await sut.completePhotosLoading()
         
         let view = try XCTUnwrap(sut.simulatePhotoViewVisible(at: 0))
@@ -241,7 +241,7 @@ final class PhotoListIntegrationTests: XCTestCase {
         let photo1 = makePhoto(id: "1")
         let (sut, _) = makeSUT(photoStubs: [.success([photo0, photo1])], dataStubs: [anySuccessData(), anySuccessData()])
         
-        sut.loadViewIfNeeded()
+        sut.simulateAppearance()
         await sut.completePhotosLoading()
         
         let view0 = try XCTUnwrap(sut.simulatePhotoViewVisible(at: 0))
@@ -264,7 +264,7 @@ final class PhotoListIntegrationTests: XCTestCase {
         let imageData1 = UIImage.make(withColor: .blue).pngData()!
         let (sut, _) = makeSUT(photoStubs: [.success([photo0, photo1])], dataStubs: [.success(imageData0), .success(imageData1)])
         
-        sut.loadViewIfNeeded()
+        sut.simulateAppearance()
         await sut.completePhotosLoading()
         
         let view0 = try XCTUnwrap(sut.simulatePhotoViewVisible(at: 0))
@@ -286,7 +286,7 @@ final class PhotoListIntegrationTests: XCTestCase {
         let (sut, _) = makeSUT(photoStubs: [.success([photo0])],
                                dataStubs: [.failure(anyNSError()), .success(imageData0)])
         
-        sut.loadViewIfNeeded()
+        sut.simulateAppearance()
         await sut.completePhotosLoading()
         
         let view0 = try XCTUnwrap(sut.simulatePhotoViewVisible(at: 0))
@@ -310,7 +310,7 @@ final class PhotoListIntegrationTests: XCTestCase {
         let invalidData = Data("invalid data".utf8)
         let (sut, _) = makeSUT(photoStubs: [.success([photo0])], dataStubs: [.success(invalidData)])
         
-        sut.loadViewIfNeeded()
+        sut.simulateAppearance()
         await sut.completePhotosLoading()
         
         let view0 = try XCTUnwrap(sut.simulatePhotoViewVisible(at: 0))
@@ -328,7 +328,7 @@ final class PhotoListIntegrationTests: XCTestCase {
         let imageData0 = UIImage.make(withColor: .red).pngData()!
         let (sut, _) = makeSUT(photoStubs: [.success([photo0])], dataStubs: [.failure(anyNSError()), .success(imageData0)])
         
-        sut.loadViewIfNeeded()
+        sut.simulateAppearance()
         await sut.completePhotosLoading()
         
         let view0 = try XCTUnwrap(sut.simulatePhotoViewVisible(at: 0))
@@ -354,10 +354,10 @@ final class PhotoListIntegrationTests: XCTestCase {
         let imageData2 = UIImage.make(withColor: .green).pngData()!
         let (sut, _) = makeSUT(
             photoStubs: [.success([photo0]), .success([photo1, photo2])],
-            dataStubs: [.success(imageData0), anySuccessData(), .success(imageData1), anySuccessData(), .success(imageData2)]
+            dataStubs: [.success(imageData0), .success(imageData1), .success(imageData2)]
         )
         
-        sut.loadViewIfNeeded()
+        sut.simulateAppearance()
         await sut.completePhotosLoading()
         
         let view0 = try XCTUnwrap(sut.simulatePhotoViewVisible(at: 0))
@@ -371,8 +371,10 @@ final class PhotoListIntegrationTests: XCTestCase {
         
         XCTAssertEqual(sut.numberOfRenderedPhotoView(), 3, "Expect three views rendered after second page loaded")
         
-        let view1 = try XCTUnwrap(sut.photoView(at: 1))
-        let view2 = try XCTUnwrap(sut.photoView(at: 2))
+        let view1 = try XCTUnwrap(sut.simulatePhotoViewVisible(at: 1))
+        let view2 = try XCTUnwrap(sut.simulatePhotoViewVisible(at: 2))
+        await sut.completeImageDataLoading(at: 1)
+        
         XCTAssertEqual(view0.renderedImage, imageData0, "Expected rendered image for first view keep unchanged")
         XCTAssertEqual(view1.renderedImage, imageData1, "Expected rendered image for second view when second view become visible")
         XCTAssertEqual(view2.renderedImage, imageData2, "Expected rendered image for third view when third view become visible")
@@ -384,7 +386,7 @@ final class PhotoListIntegrationTests: XCTestCase {
         let window = UIWindow()
         window.addSubview(sut.view)
         
-        sut.loadViewIfNeeded()
+        sut.simulateAppearance()
         await sut.completePhotosLoading()
         
         XCTAssertNil(sut.presentedViewController, "Expect no error view after loading photo successfully")

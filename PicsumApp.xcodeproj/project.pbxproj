@@ -56,6 +56,7 @@
 		BE8103112A559F4C00CE012A /* PhotoListViewController+TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8103102A559F4C00CE012A /* PhotoListViewController+TestHelpers.swift */; };
 		BE8103132A55C19700CE012A /* PhotoListCellController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8103122A55C19700CE012A /* PhotoListCellController.swift */; };
 		BE8103152A55C2C400CE012A /* PhotoListComposer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8103142A55C2C400CE012A /* PhotoListComposer.swift */; };
+		BEA70FB42B319F22001D667B /* RefreshControlSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEA70FB32B319F22001D667B /* RefreshControlSpy.swift */; };
 		BEB90FB72A5F0A6500A22904 /* ContextDidSaveNotificationSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEB90FB62A5F0A6500A22904 /* ContextDidSaveNotificationSpy.swift */; };
 		BEC9C53B2A5C56730043B0C9 /* ImageDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC9C53A2A5C56730043B0C9 /* ImageDataStore.swift */; };
 		BEC9C53D2A5C56930043B0C9 /* LocalImageDataLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC9C53C2A5C56930043B0C9 /* LocalImageDataLoader.swift */; };
@@ -143,6 +144,7 @@
 		BE8103102A559F4C00CE012A /* PhotoListViewController+TestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PhotoListViewController+TestHelpers.swift"; sourceTree = "<group>"; };
 		BE8103122A55C19700CE012A /* PhotoListCellController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoListCellController.swift; sourceTree = "<group>"; };
 		BE8103142A55C2C400CE012A /* PhotoListComposer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoListComposer.swift; sourceTree = "<group>"; };
+		BEA70FB32B319F22001D667B /* RefreshControlSpy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshControlSpy.swift; sourceTree = "<group>"; };
 		BEB90FB62A5F0A6500A22904 /* ContextDidSaveNotificationSpy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextDidSaveNotificationSpy.swift; sourceTree = "<group>"; };
 		BEC9C53A2A5C56730043B0C9 /* ImageDataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDataStore.swift; sourceTree = "<group>"; };
 		BEC9C53C2A5C56930043B0C9 /* LocalImageDataLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalImageDataLoader.swift; sourceTree = "<group>"; };
@@ -452,6 +454,7 @@
 				BE8103102A559F4C00CE012A /* PhotoListViewController+TestHelpers.swift */,
 				BE81030E2A559EB700CE012A /* PhotoListCell+TestHelpers.swift */,
 				BEF6E3882A6428B6004C6511 /* PhotoDetailViewController+TestHelpers.swift */,
+				BEA70FB32B319F22001D667B /* RefreshControlSpy.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -634,6 +637,7 @@
 				BEE811C42A5D624900A2F7D7 /* InvalidateCachedImageDataUseCaseTests.swift in Sources */,
 				BE6560692A52DF8900CCD5D6 /* XCTestCase+MemoryLeakTracking.swift in Sources */,
 				BE54967D2A56D24500D402A3 /* RemotePhotosLoaderTests.swift in Sources */,
+				BEA70FB42B319F22001D667B /* RefreshControlSpy.swift in Sources */,
 				BE62278F2A63FFFC0082ED1B /* PhotoDetailIntegrationTests.swift in Sources */,
 				BE5496782A56CAFA00D402A3 /* PhotosEndpointTests.swift in Sources */,
 				BE1FD4EA2A5421CE0021777F /* SharedHelpers.swift in Sources */,
