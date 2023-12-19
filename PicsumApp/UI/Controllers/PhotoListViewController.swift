@@ -30,12 +30,13 @@ final class PhotoListViewController: UICollectionViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        configureConllectionView()
+        
+        configureCollectionView()
         setupBindings()
         reloadPhotos()
     }
     
-    private func configureConllectionView() {
+    private func configureCollectionView() {
         collectionView.refreshControl = refreshControl
         collectionView.dataSource = dataSource
         collectionView.register(PhotoListCell.self, forCellWithReuseIdentifier: PhotoListCell.identifier)
@@ -110,7 +111,9 @@ final class PhotoListViewController: UICollectionViewController {
     private func cellController(forItemAt indexPath: IndexPath) -> PhotoListCellController? {
         dataSource.itemIdentifier(for: indexPath)
     }
-    
+}
+
+extension PhotoListViewController {
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
         guard scrollView.isDragging else { return }
         
