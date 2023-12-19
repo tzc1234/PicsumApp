@@ -326,7 +326,7 @@ final class PhotoListIntegrationTests: XCTestCase {
     func test_photoView_configuresViewCorrectlyWhenBecomingVisibleAgain() async throws {
         let photo0 = makePhoto(id: "0")
         let imageData0 = UIImage.make(withColor: .red).pngData()!
-        let (sut, _) = makeSUT(photoStubs: [.success([photo0])], dataStubs: [.failure(anyNSError()), .success(imageData0)])
+        let (sut, _) = makeSUT(photoStubs: [.success([photo0])], dataStubs: [.success(imageData0), .success(imageData0)])
         
         sut.simulateAppearance()
         await sut.completePhotosLoading()
@@ -335,7 +335,7 @@ final class PhotoListIntegrationTests: XCTestCase {
         sut.simulatePhotoViewInvisible(view0, at: 0)
         sut.simulatePhotoViewBecomeVisibleAgain(view0, at: 0)
         
-        XCTAssertEqual(view0.renderedImage, .none, "Expect no image when view become visible again")
+        XCTAssertNil(view0.renderedImage, "Expect no image when view become visible again but image loading not yet completed")
         XCTAssertTrue(view0.isShowingImageLoadingIndicator, "Expected loading indicator when view was visible and becomes visible again")
         
         await sut.completeImageDataLoading(at: 0)
