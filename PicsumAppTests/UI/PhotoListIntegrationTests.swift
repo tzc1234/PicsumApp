@@ -70,7 +70,7 @@ final class PhotoListIntegrationTests: XCTestCase {
 
         sut.simulateAppearance()
 
-        XCTAssertEqual(sut.numberOfRenderedPhotoView(), 0, "Expect no rendered view while inital photo loading is not completed")
+        XCTAssertEqual(sut.numberOfRenderedPhotoView(), 0, "Expect no rendered view while initial photo loading is not completed")
 
         sut.simulateUserInitiatedReload()
         await sut.completePhotosLoading()
@@ -166,7 +166,7 @@ final class PhotoListIntegrationTests: XCTestCase {
     func test_photoView_cancelsImageDataTaskWhenNotVisibleAnymore() async throws {
         let photo0 = makePhoto(id: "0")
         let photo1 = makePhoto(id: "1")
-        let imageData1 = UIImage.make(withColor: .blue).pngData()!
+        let imageData1 = UIImage.makeData(withColor: .blue)
         let (sut, _) = makeSUT(photoStubs: [.success([photo0, photo1])], dataStubs: [.success(anyData()), .success(imageData1)])
         
         sut.simulateAppearance()
@@ -188,8 +188,8 @@ final class PhotoListIntegrationTests: XCTestCase {
     @MainActor
     func test_photoView_noStateChangeWhenViewFromBecomevisibleAgainToInvisibleInAShortPeriodOfTime() async throws {
         let photo = makePhoto(id: "0")
-        let imageData0 = UIImage.make(withColor: .red).pngData()!
-        let imageData1 = UIImage.make(withColor: .blue).pngData()!
+        let imageData0 = UIImage.makeData(withColor: .red)
+        let imageData1 = UIImage.makeData(withColor: .blue)
         let (sut, _) = makeSUT(photoStubs: [.success([photo])],
                                dataStubs: [.success(imageData0), .success(imageData1)])
         
@@ -260,8 +260,8 @@ final class PhotoListIntegrationTests: XCTestCase {
     func test_photoView_rendersImageLoadedFromPhoto() async throws {
         let photo0 = makePhoto(id: "0")
         let photo1 = makePhoto(id: "1")
-        let imageData0 = UIImage.make(withColor: .red).pngData()!
-        let imageData1 = UIImage.make(withColor: .blue).pngData()!
+        let imageData0 = UIImage.makeData(withColor: .red)
+        let imageData1 = UIImage.makeData(withColor: .blue)
         let (sut, _) = makeSUT(photoStubs: [.success([photo0, photo1])], dataStubs: [.success(imageData0), .success(imageData1)])
         
         sut.simulateAppearance()
@@ -282,7 +282,7 @@ final class PhotoListIntegrationTests: XCTestCase {
     @MainActor
     func test_photoView_rendersNoImageOnError() async throws {
         let photo0 = makePhoto(id: "0")
-        let imageData0 = UIImage.make(withColor: .red).pngData()!
+        let imageData0 = UIImage.makeData(withColor: .red)
         let (sut, _) = makeSUT(photoStubs: [.success([photo0])],
                                dataStubs: [.failure(anyNSError()), .success(imageData0)])
         
@@ -325,7 +325,7 @@ final class PhotoListIntegrationTests: XCTestCase {
     @MainActor
     func test_photoView_configuresViewCorrectlyWhenBecomingVisibleAgain() async throws {
         let photo0 = makePhoto(id: "0")
-        let imageData0 = UIImage.make(withColor: .red).pngData()!
+        let imageData0 = UIImage.makeData(withColor: .red)
         let (sut, _) = makeSUT(photoStubs: [.success([photo0])], dataStubs: [.success(imageData0), .success(imageData0)])
         
         sut.simulateAppearance()
@@ -349,9 +349,9 @@ final class PhotoListIntegrationTests: XCTestCase {
         let photo0 = makePhoto(id: "0")
         let photo1 = makePhoto(id: "1")
         let photo2 = makePhoto(id: "2")
-        let imageData0 = UIImage.make(withColor: .red).pngData()!
-        let imageData1 = UIImage.make(withColor: .blue).pngData()!
-        let imageData2 = UIImage.make(withColor: .green).pngData()!
+        let imageData0 = UIImage.makeData(withColor: .red)
+        let imageData1 = UIImage.makeData(withColor: .blue)
+        let imageData2 = UIImage.makeData(withColor: .green)
         let (sut, _) = makeSUT(
             photoStubs: [.success([photo0]), .success([photo1, photo2])],
             dataStubs: [.success(imageData0), .success(imageData1), .success(imageData2)]
