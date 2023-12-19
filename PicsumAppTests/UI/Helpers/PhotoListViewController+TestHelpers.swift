@@ -14,6 +14,8 @@ extension PhotoListViewController {
         
         beginAppearanceTransition(true, animated: false)
         endAppearanceTransition()
+        
+        collectionView.frame = .init(x: 0, y: 0, width: 390, height: 9999)
     }
     
     private func replaceRefreshControlToSpyForiOS17() {
@@ -79,6 +81,10 @@ extension PhotoListViewController {
     
     private var photoViewSection: Int {
         0
+    }
+    
+    var loadPhotosTask: Task<Void, Never>? {
+        viewModel?.loadPhotosTask
     }
     
     func completePhotosLoading() async {

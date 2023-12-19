@@ -29,22 +29,22 @@ final class PhotoListIntegrationTests: XCTestCase {
     @MainActor
     func test_photoViewSelection_triggersSelection() async {
         let photo = makePhoto()
-        var loggedPhotos = [Photo]()
-        let (sut, _) = makeSUT(photoStubs: [.success([photo])], selection: { loggedPhotos.append($0) })
+        var selectedPhotos = [Photo]()
+        let (sut, _) = makeSUT(photoStubs: [.success([photo])], selection: { selectedPhotos.append($0) })
         
         sut.simulateAppearance()
         await sut.completePhotosLoading()
         
-        XCTAssertEqual(loggedPhotos, [], "Expect no selection triggered before a photo view selected")
+        XCTAssertEqual(selectedPhotos, [], "Expect no selection triggered before a photo view selected")
         
         sut.simulatePhotoViewSelected(at: 0)
         
-        XCTAssertEqual(loggedPhotos, [photo], "Expect a selection triggered once a photo view selected")
+        XCTAssertEqual(selectedPhotos, [photo], "Expect a selection triggered once a photo view selected")
     }
     
     @MainActor
     func test_loadPhotosAction_requestsPhotosFromLoader() async {
-        let (sut, loader) = makeSUT(photoStubs: [.success([]), .success([]), .success([])])
+        let (sut, loader) = makeSUT(photoStubs: [emptySuccessPhotos(), emptySuccessPhotos(), emptySuccessPhotos()])
 
         XCTAssertEqual(loader.loggedPages.count, 0)
 
@@ -58,7 +58,7 @@ final class PhotoListIntegrationTests: XCTestCase {
 
         sut.simulateUserInitiatedReload()
         await sut.completePhotosLoading()
-        XCTAssertEqual(loader.loggedPages.count, 3, "Expect yet another request after user initiated another reload")
+        XCTAssertEqual(loader.loggedPages.count, 3, "Expect one more request after user initiated one more reload")
     }
 
     @MainActor
@@ -68,18 +68,23 @@ final class PhotoListIntegrationTests: XCTestCase {
         let (sut, _) = makeSUT(photoStubs: [.success([photo0]), .success([photo0, photo1])])
 
         sut.simulateAppearance()
+        let previousLoadPhotosTask = try XCTUnwrap(sut.loadPhotosTask)
 
         XCTAssertEqual(sut.numberOfRenderedPhotoView(), 0, "Expect no rendered view while initial photo loading is not completed")
+        XCTAssertFalse(previousLoadPhotosTask.isCancelled, "Expect the load photos task is not cancelled")
 
         sut.simulateUserInitiatedReload()
+        let currentLoadPhotosTask = try XCTUnwrap(sut.loadPhotosTask)
         await sut.completePhotosLoading()
 
         XCTAssertEqual(sut.numberOfRenderedPhotoView(), 2, "Expect two rendered view after user initiated photo loading is completed")
+        XCTAssertTrue(previousLoadPhotosTask.isCancelled, "Expect the unfinished previous load photos task is cancelled after user reloaded")
+        XCTAssertFalse(currentLoadPhotosTask.isCancelled, "Expect the current load photos task is not cancelled")
     }
 
     @MainActor
     func test_loadingPhotosIndicator_isVisibleWhileLoadingPhotos() async {
-        let (sut, _) = makeSUT(photoStubs: [.success([]), anyFailure()])
+        let (sut, _) = makeSUT(photoStubs: [emptySuccessPhotos(), anyFailure()])
 
         sut.simulateAppearance()
 
@@ -381,7 +386,7 @@ final class PhotoListIntegrationTests: XCTestCase {
     
     @MainActor
     func test_errorView_showsErrorWhenPhotoRequestOnError() async throws {
-        let (sut, _) = makeSUT(photoStubs: [.success([]), anyFailure()])
+        let (sut, _) = makeSUT(photoStubs: [emptySuccessPhotos(), anyFailure()])
         let window = UIWindow()
         window.addSubview(sut.view)
         
@@ -421,8 +426,9 @@ final class PhotoListIntegrationTests: XCTestCase {
     
     private func assertThat(_ sut: PhotoListViewController, isRendering photos: [Photo],
                             file: StaticString = #file, line: UInt = #line) {
-        guard photos.count == sut.numberOfRenderedPhotoView() else {
-            XCTFail("Expect \(photos.count) photo views, got \(sut.numberOfRenderedPhotoView()) instead", file: file, line: line)
+        let viewCount = sut.numberOfRenderedPhotoView()
+        guard photos.count == viewCount else {
+            XCTFail("Expect \(photos.count) photo views, got \(viewCount) instead", file: file, line: line)
             return
         }
         
@@ -443,6 +449,10 @@ final class PhotoListIntegrationTests: XCTestCase {
     
     private func anyFailure() -> PhotosLoaderSpy.PhotosResult {
         .failure(anyNSError())
+    }
+    
+    private func emptySuccessPhotos() -> PhotosLoaderSpy.PhotosResult {
+        .success([])
     }
     
     private func anyFailure() -> PhotosLoaderSpy.DataResult {
