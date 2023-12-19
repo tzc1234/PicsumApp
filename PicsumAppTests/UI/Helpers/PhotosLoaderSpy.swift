@@ -22,10 +22,17 @@ class PhotosLoaderSpy: PhotosLoader, PhotoImageDataLoader {
         self.dataStubs = dataStubs
     }
     
+    struct CannotFindFirstPhotoStub: Error {}
+    
     @MainActor
     func load(page: Int) async throws -> [Photo] {
         beforeLoad?()
         loggedPages.append(page)
+        
+        guard !photoStubs.isEmpty else {
+            throw CannotFindFirstPhotoStub()
+        }
+        
         return try photoStubs.removeFirst().get()
     }
     
@@ -35,9 +42,16 @@ class PhotosLoaderSpy: PhotosLoader, PhotoImageDataLoader {
     private(set) var dataStubs: [DataResult]
     private(set) var loggedPhotoIDs = [String]()
     
+    struct CannotFindFirstImageDataStub: Error {}
+    
     @MainActor
     func loadImageData(by id: String, width: Int, height: Int) async throws -> Data {
         loggedPhotoIDs.append(id)
+        
+        guard !dataStubs.isEmpty else {
+            throw CannotFindFirstImageDataStub()
+        }
+        
         return try dataStubs.removeFirst().get()
     }
 }

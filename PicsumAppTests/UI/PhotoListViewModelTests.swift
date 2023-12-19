@@ -9,7 +9,6 @@ import XCTest
 @testable import PicsumApp
 
 final class PhotoListViewModelTests: XCTestCase {
-    
     func test_init_doesNotTriggerLoader() {
         let (_, loader) = makeSUT()
         
@@ -197,5 +196,4 @@ final class PhotoListViewModelTests: XCTestCase {
         XCTAssertEqual(errorMessage, expectedError, file: file, line: line)
         XCTAssertEqual(photos, expectedPhotos, file: file, line: line)
     }
-    
 }

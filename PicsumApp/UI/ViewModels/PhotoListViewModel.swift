@@ -15,11 +15,10 @@ final class PhotoListViewModel {
     var didLoad: Observer<[Photo]>?
     var didLoadMore: Observer<[Photo]>?
     
-    private var currentPage = 1
-    private var hasMorePage = true
     private var isLoadingMore = false
     private(set) var loadPhotosTask: Task<Void, Never>?
     private(set) var loadMorePhotosTask: Task<Void, Never>?
+    private var loadMore: Paginated<Photo>.LoadMore?
     
     private let loader: PhotosLoader
     
@@ -28,55 +27,65 @@ final class PhotoListViewModel {
     }
     
     func loadPhotos() {
-        resetCurrentPage()
         onLoad?(true)
         
         loadPhotosTask?.cancel()
-        loadPhotosTask = loadPhotosFromLoader(photosLoaded: { [weak self] photos in
-            self?.didLoad?(photos)
+        loadPhotosTask = loadPhotosTask(action: { [weak self] in
+            guard let self else { return }
+            
+            let firstLoad = makeFirstPaginatedPhotos()
+            let paginated = try await firstLoad()
+            loadMore = paginated.loadMore
+            
+            didLoad?(paginated.items)
         }, completion: { [weak self] in
             self?.onLoad?(false)
         })
     }
     
-    private func resetCurrentPage() {
-        currentPage = 1
+    private func makeFirstPaginatedPhotos(page: Int = 1) -> () async throws -> Paginated<Photo> {
+        { [weak self] in
+            guard let self else { return .empty }
+            
+            let morePhotos = try await loader.load(page: page)
+            let canLoadMore = !morePhotos.isEmpty
+            return Paginated(
+                items: morePhotos,
+                loadMore: canLoadMore ? makeFirstPaginatedPhotos(page: page+1) : nil
+            )
+        }
     }
     
     func loadMorePhotos() {
-        guard hasMorePage && !isLoadingMore else { return }
+        guard !isLoadingMore, let loadMore else { return }
         
         isLoadingMore = true
-        loadMorePhotosTask = loadPhotosFromLoader(photosLoaded: { [weak self] photos in
-            self?.didLoadMore?(photos)
+        loadMorePhotosTask = loadPhotosTask(action: { [weak self] in
+            guard let self else { return }
+            
+            let paginated = try await loadMore()
+            self.loadMore = paginated.loadMore
+            
+            didLoadMore?(paginated.items)
         }, completion: { [weak self] in
             self?.isLoadingMore = false
         })
     }
     
-    private func loadPhotosFromLoader(photosLoaded: @escaping ([Photo]) -> Void,
-                                      completion: @escaping () -> Void) -> Task<Void, Never> {
+    private func loadPhotosTask(action: @escaping () async throws -> Void,
+                                completion: @escaping () -> Void) -> Task<Void, Never> {
         Task { @MainActor in
+            guard !Task.isCancelled else { return }
+            
             do {
-                guard !Task.isCancelled else { return }
-                
-                let photos = try await loader.load(page: currentPage)
-                updatePaging(by: photos)
-                photosLoaded(photos)
+                try await action()
                 onError?(nil)
             } catch {
-                guard !Task.isCancelled else { return }
-                
                 onError?(Self.errorMessage)
             }
             
             completion()
         }
-    }
-    
-    private func updatePaging(by photos: [Photo]) {
-        hasMorePage = !photos.isEmpty
-        currentPage += 1
     }
     
     static var errorMessage: String {
