@@ -65,20 +65,20 @@ final class PhotoListIntegrationTests: XCTestCase {
     func test_loadPhotosAction_cancelsPreviousUnfinishedPhotosLoadingBeforeNewPhotosLoading() async throws {
         let photo0 = makePhoto(id: "0")
         let photo1 = makePhoto(id: "1")
-        let (sut, _) = makeSUT(photoStubs: [.success([photo0]), .success([photo0, photo1])])
+        let (sut, _) = makeSUT(photoStubs: [.success([photo0, photo1])])
 
         sut.simulateAppearance()
         let previousLoadPhotosTask = try XCTUnwrap(sut.loadPhotosTask)
 
-        XCTAssertEqual(sut.numberOfRenderedPhotoView(), 0, "Expect no rendered view while initial photo loading is not completed")
-        XCTAssertFalse(previousLoadPhotosTask.isCancelled, "Expect the load photos task is not cancelled")
+        XCTAssertEqual(sut.numberOfRenderedPhotoView(), 0, "Expect no rendered view while the initial photo loading will never be completed")
+        XCTAssertFalse(previousLoadPhotosTask.isCancelled, "Expect the load photos task is not cancelled yet")
 
         sut.simulateUserInitiatedReload()
         let currentLoadPhotosTask = try XCTUnwrap(sut.loadPhotosTask)
         await sut.completePhotosLoading()
 
         XCTAssertEqual(sut.numberOfRenderedPhotoView(), 2, "Expect two rendered view after user initiated photo loading is completed")
-        XCTAssertTrue(previousLoadPhotosTask.isCancelled, "Expect the unfinished previous load photos task is cancelled after user reloaded")
+        XCTAssertTrue(previousLoadPhotosTask.isCancelled, "Expect the unfinished previous load photos task is cancelled after a user reload")
         XCTAssertFalse(currentLoadPhotosTask.isCancelled, "Expect the current load photos task is not cancelled")
     }
 

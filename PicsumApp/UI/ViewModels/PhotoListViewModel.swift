@@ -58,9 +58,9 @@ final class PhotoListViewModel {
                                       completion: @escaping () -> Void) -> Task<Void, Never> {
         Task { @MainActor in
             do {
-                let photos = try await loader.load(page: currentPage)
                 guard !Task.isCancelled else { return }
                 
+                let photos = try await loader.load(page: currentPage)
                 updatePaging(by: photos)
                 photosLoaded(photos)
                 onError?(nil)
