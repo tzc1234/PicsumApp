@@ -13,6 +13,7 @@ final class PhotoImageViewModel<Image> {
     var author: String { photo.author }
     
     private(set) var imageDataTask: Task<Void, Never>?
+    private let photoDimension = 600
     
     private let photo: Photo
     private let imageLoader: PhotoImageDataLoader
@@ -29,14 +30,13 @@ final class PhotoImageViewModel<Image> {
         
         imageDataTask?.cancel()
         imageDataTask = Task { @MainActor [weak self] in
-            guard let self else { return }
+            guard let self, !Task.isCancelled else { return }
             
-            let image = (try? await self.imageLoader.loadImageData(
+            let data = try? await self.imageLoader.loadImageData(
                 by: self.photo.id,
-                width: Self.photoDimension,
-                height: Self.photoDimension)).flatMap(self.imageConverter)
-            
-            guard !Task.isCancelled else { return }
+                width: photoDimension,
+                height: photoDimension)
+            let image = data.flatMap(self.imageConverter)
             
             self.didLoadImage?(image)
             self.onLoadImage?(false)
@@ -47,6 +47,4 @@ final class PhotoImageViewModel<Image> {
         imageDataTask?.cancel()
         imageDataTask = nil
     }
-    
-    private static var photoDimension: Int { 600 }
 }

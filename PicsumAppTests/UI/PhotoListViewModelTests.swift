@@ -33,7 +33,7 @@ final class PhotoListViewModelTests: XCTestCase {
         XCTAssertEqual(loader.loggedPages, [1, 1])
     }
     
-    func test_load_deliversOnePhotoWhenRecivedOne() async {
+    func test_load_deliversOnePhotoWhenReceivedOne() async {
         let photos = [makePhoto()]
         let (sut, loader) = makeSUT(stubs: [.success(photos)])
         
@@ -121,7 +121,7 @@ final class PhotoListViewModelTests: XCTestCase {
         XCTAssertEqual(loader.loggedPages, [1])
     }
     
-    func test_loadMore_ignoresWhenPreviousLoadMoreActionNotCompleted() async {
+    func test_loadMore_ignoresWhenPreviousLoadMoreActionNotCompletedYet() async {
         let photoSet0 = [makePhoto(id: "id0")]
         let photoSet1 = [makePhoto(id: "id1")]
         let photoSet2 = [makePhoto(id: "id2")]

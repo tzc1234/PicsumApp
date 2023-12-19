@@ -108,8 +108,10 @@ final class PhotoListIntegrationTests: XCTestCase {
         let photo0 = makePhoto(id: "0", author: "author0")
         let photo1 = makePhoto(id: "1", author: "author1")
         let photo2 = makePhoto(id: "2", author: "author2")
-        let (sut, _) = makeSUT(photoStubs: [.success([photo0]), .success([photo0, photo1, photo2])],
-                               dataStubs: [anyFailure()])
+        let (sut, _) = makeSUT(
+            photoStubs: [.success([photo0]), .success([photo0, photo1, photo2])],
+            dataStubs: [anyFailure()]
+        )
 
         sut.simulateAppearance()
 
@@ -144,13 +146,16 @@ final class PhotoListIntegrationTests: XCTestCase {
         assertThat(sut, isRendering: [photo0])
     }
     
+    // MARK: - photo view tests
+    
     @MainActor
     func test_photoView_loadsImageWhenVisible() async {
         let photo0 = makePhoto(id: "0")
         let photo1 = makePhoto(id: "1")
         let (sut, loader) = makeSUT(
             photoStubs: [.success([photo0, photo1])],
-            dataStubs: [anySuccessData(), anySuccessData()])
+            dataStubs: [anySuccessData(), anySuccessData()]
+        )
         
         sut.simulateAppearance()
         await sut.completePhotosLoading()
@@ -171,7 +176,10 @@ final class PhotoListIntegrationTests: XCTestCase {
         let photo0 = makePhoto(id: "0")
         let photo1 = makePhoto(id: "1")
         let imageData1 = UIImage.makeData(withColor: .blue)
-        let (sut, _) = makeSUT(photoStubs: [.success([photo0, photo1])], dataStubs: [anySuccessData(), .success(imageData1)])
+        let (sut, _) = makeSUT(
+            photoStubs: [.success([photo0, photo1])],
+            dataStubs: [.success(imageData1)]
+        )
         
         sut.simulateAppearance()
         await sut.completePhotosLoading()
@@ -194,8 +202,10 @@ final class PhotoListIntegrationTests: XCTestCase {
         let photo = makePhoto(id: "0")
         let imageData0 = UIImage.makeData(withColor: .red)
         let imageData1 = UIImage.makeData(withColor: .blue)
-        let (sut, _) = makeSUT(photoStubs: [.success([photo])],
-                               dataStubs: [.success(imageData0), .success(imageData1)])
+        let (sut, _) = makeSUT(
+            photoStubs: [.success([photo])],
+            dataStubs: [.success(imageData0), .success(imageData1)]
+        )
         
         sut.simulateAppearance()
         await sut.completePhotosLoading()
@@ -266,7 +276,10 @@ final class PhotoListIntegrationTests: XCTestCase {
         let photo1 = makePhoto(id: "1")
         let imageData0 = UIImage.makeData(withColor: .red)
         let imageData1 = UIImage.makeData(withColor: .blue)
-        let (sut, _) = makeSUT(photoStubs: [.success([photo0, photo1])], dataStubs: [.success(imageData0), .success(imageData1)])
+        let (sut, _) = makeSUT(
+            photoStubs: [.success([photo0, photo1])],
+            dataStubs: [.success(imageData0), .success(imageData1)]
+        )
         
         sut.simulateAppearance()
         await sut.completePhotosLoading()
@@ -287,8 +300,10 @@ final class PhotoListIntegrationTests: XCTestCase {
     func test_photoView_rendersNoImageOnError() async throws {
         let photo0 = makePhoto(id: "0")
         let imageData0 = UIImage.makeData(withColor: .red)
-        let (sut, _) = makeSUT(photoStubs: [.success([photo0])],
-                               dataStubs: [anyFailure(), .success(imageData0)])
+        let (sut, _) = makeSUT(
+            photoStubs: [.success([photo0])],
+            dataStubs: [anyFailure(), .success(imageData0)]
+        )
         
         sut.simulateAppearance()
         await sut.completePhotosLoading()
@@ -383,6 +398,8 @@ final class PhotoListIntegrationTests: XCTestCase {
         XCTAssertEqual(view1.renderedImage, imageData1, "Expected rendered image for second view when second view become visible")
         XCTAssertEqual(view2.renderedImage, imageData2, "Expected rendered image for third view when third view become visible")
     }
+    
+    // MARK: - error view tests
     
     @MainActor
     func test_errorView_showsErrorWhenPhotoRequestOnError() async throws {
