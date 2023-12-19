@@ -14,7 +14,6 @@ import UIKit
 // This is annoying! Cannot find a better way to trigger tasks one by one, limit the testability.
 
 final class PhotoListIntegrationTests: XCTestCase {
-    
     func test_photosList_hasTitle() {
         let (sut, _) = makeSUT()
         
@@ -80,7 +79,7 @@ final class PhotoListIntegrationTests: XCTestCase {
 
     @MainActor
     func test_loadingPhotosIndicator_isVisibleWhileLoadingPhotos() async {
-        let (sut, _) = makeSUT(photoStubs: [.success([]), .failure(anyNSError())])
+        let (sut, _) = makeSUT(photoStubs: [.success([]), anyFailure()])
 
         sut.simulateAppearance()
 
@@ -105,7 +104,7 @@ final class PhotoListIntegrationTests: XCTestCase {
         let photo1 = makePhoto(id: "1", author: "author1")
         let photo2 = makePhoto(id: "2", author: "author2")
         let (sut, _) = makeSUT(photoStubs: [.success([photo0]), .success([photo0, photo1, photo2])],
-                               dataStubs: [.failure(anyNSError())])
+                               dataStubs: [anyFailure()])
 
         sut.simulateAppearance()
 
@@ -124,7 +123,7 @@ final class PhotoListIntegrationTests: XCTestCase {
     @MainActor
     func test_loadPhotosCompletion_doesNotAlterCurrentRenderedPhotoViewsOnError() async {
         let photo0 = makePhoto(id: "0", author: "author0")
-        let (sut, _) = makeSUT(photoStubs: [.success([photo0]), .failure(anyNSError())], dataStubs: [anySuccessData()])
+        let (sut, _) = makeSUT(photoStubs: [.success([photo0]), anyFailure()], dataStubs: [anySuccessData()])
 
         sut.simulateAppearance()
 
@@ -167,7 +166,7 @@ final class PhotoListIntegrationTests: XCTestCase {
         let photo0 = makePhoto(id: "0")
         let photo1 = makePhoto(id: "1")
         let imageData1 = UIImage.makeData(withColor: .blue)
-        let (sut, _) = makeSUT(photoStubs: [.success([photo0, photo1])], dataStubs: [.success(anyData()), .success(imageData1)])
+        let (sut, _) = makeSUT(photoStubs: [.success([photo0, photo1])], dataStubs: [anySuccessData(), .success(imageData1)])
         
         sut.simulateAppearance()
         await sut.completePhotosLoading()
@@ -284,7 +283,7 @@ final class PhotoListIntegrationTests: XCTestCase {
         let photo0 = makePhoto(id: "0")
         let imageData0 = UIImage.makeData(withColor: .red)
         let (sut, _) = makeSUT(photoStubs: [.success([photo0])],
-                               dataStubs: [.failure(anyNSError()), .success(imageData0)])
+                               dataStubs: [anyFailure(), .success(imageData0)])
         
         sut.simulateAppearance()
         await sut.completePhotosLoading()
@@ -382,7 +381,7 @@ final class PhotoListIntegrationTests: XCTestCase {
     
     @MainActor
     func test_errorView_showsErrorWhenPhotoRequestOnError() async throws {
-        let (sut, _) = makeSUT(photoStubs: [.success([]), .failure(anyNSError())])
+        let (sut, _) = makeSUT(photoStubs: [.success([]), anyFailure()])
         let window = UIWindow()
         window.addSubview(sut.view)
         
@@ -442,8 +441,15 @@ final class PhotoListIntegrationTests: XCTestCase {
         XCTAssertEqual(view.authorText, photo.author, "Expect author: \(photo.author) for index \(index)", file: file, line: line)
     }
     
+    private func anyFailure() -> PhotosLoaderSpy.PhotosResult {
+        .failure(anyNSError())
+    }
+    
+    private func anyFailure() -> PhotosLoaderSpy.DataResult {
+        .failure(anyNSError())
+    }
+    
     private func anySuccessData() -> PhotosLoaderSpy.DataResult {
         .success(Data())
     }
-    
 }

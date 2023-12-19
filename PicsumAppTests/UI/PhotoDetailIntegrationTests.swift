@@ -39,7 +39,7 @@ final class PhotoDetailIntegrationTests: XCTestCase {
     
     @MainActor
     func test_detailView_doesNotRenderPhotoImageOnLoaderError() async {
-        let (sut, _) = makeSUT(photo: makePhoto(), dataStubs: [failure()])
+        let (sut, _) = makeSUT(photo: makePhoto(), dataStubs: [anyFailure()])
         
         sut.simulateAppearance()
         await sut.completeImageDataLoading()
@@ -96,7 +96,7 @@ final class PhotoDetailIntegrationTests: XCTestCase {
     
     @MainActor
     func test_reloadIndicator_showsAfterImageRequestOnLoaderError() async {
-        let (sut, _) = makeSUT(dataStubs: [failure(), anySuccessData()])
+        let (sut, _) = makeSUT(dataStubs: [anyFailure(), anySuccessData()])
         
         sut.simulateAppearance()
         
@@ -121,7 +121,7 @@ final class PhotoDetailIntegrationTests: XCTestCase {
         let photo = makePhoto(webURL: URL(string: "https://web0-url.com")!)
         let (sut, _) = makeSUT(
             photo: photo,
-            dataStubs: [failure()],
+            dataStubs: [anyFailure()],
             urlHandler: { loggedURLs.append($0) }
         )
         sut.simulateAppearance()
@@ -162,7 +162,7 @@ final class PhotoDetailIntegrationTests: XCTestCase {
             line: line)
     }
     
-    private func failure() -> Result<Data, Error> {
+    private func anyFailure() -> Result<Data, Error> {
         .failure(anyNSError())
     }
     
