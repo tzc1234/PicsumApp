@@ -18,7 +18,7 @@ final class PhotoDetailIntegrationTests: XCTestCase {
     @MainActor
     func test_detailView_rendersPhotoCorrectly() async {
         let photo = makePhoto(author: "author0", webURL: URL(string: "https://web0-url.com")!)
-        let (sut, _) = makeSUT(photo: photo, dataStubs: [.success(anyData())])
+        let (sut, _) = makeSUT(photo: photo, dataStubs: [anySuccessData()])
         
         sut.simulateAppearance()
         await sut.completeImageDataLoading()
@@ -29,7 +29,7 @@ final class PhotoDetailIntegrationTests: XCTestCase {
     @MainActor
     func test_detailView_requestsPhotoImageForURL() async {
         let photo = makePhoto(url: URL(string: "https://image-url.com")!)
-        let (sut, loader) = makeSUT(photo: photo, dataStubs: [.success(anyData())])
+        let (sut, loader) = makeSUT(photo: photo, dataStubs: [anySuccessData()])
         
         sut.simulateAppearance()
         await sut.completeImageDataLoading()
@@ -39,8 +39,7 @@ final class PhotoDetailIntegrationTests: XCTestCase {
     
     @MainActor
     func test_detailView_doesNotRenderPhotoImageOnLoaderError() async {
-        let photo = makePhoto()
-        let (sut, _) = makeSUT(photo: photo, dataStubs: [.failure(anyNSError())])
+        let (sut, _) = makeSUT(photo: makePhoto(), dataStubs: [failure()])
         
         sut.simulateAppearance()
         await sut.completeImageDataLoading()
@@ -50,11 +49,32 @@ final class PhotoDetailIntegrationTests: XCTestCase {
     
     @MainActor
     func test_detailView_rendersPhotoImageOnLoaderSuccess() async {
-        let photo = makePhoto()
         let imageData = UIImage.makeData(withColor: .red)
-        let (sut, _) = makeSUT(photo: photo, dataStubs: [.success(imageData)])
+        let (sut, _) = makeSUT(photo: makePhoto(), dataStubs: [.success(imageData)])
         
         sut.simulateAppearance()
+        await sut.completeImageDataLoading()
+        
+        XCTAssertEqual(sut.imageData, imageData)
+    }
+    
+    @MainActor
+    func test_detailView_rendersPhotoImageAfterUserReloaded() async {
+        let imageData = UIImage.makeData(withColor: .red)
+        let (sut, _) = makeSUT(
+            photo: makePhoto(),
+            dataStubs: [
+                .failure(anyNSError()),
+                .success(imageData)
+            ]
+        )
+        
+        sut.simulateAppearance()
+        await sut.completeImageDataLoading()
+        
+        XCTAssertNil(sut.imageData)
+        
+        sut.simulateUserInitiatedReload()
         await sut.completeImageDataLoading()
         
         XCTAssertEqual(sut.imageData, imageData)
@@ -76,7 +96,7 @@ final class PhotoDetailIntegrationTests: XCTestCase {
     
     @MainActor
     func test_reloadIndicator_showsAfterImageRequestOnLoaderError() async {
-        let (sut, _) = makeSUT(dataStubs: [.failure(anyNSError()), .success(anyData())])
+        let (sut, _) = makeSUT(dataStubs: [failure(), anySuccessData()])
         
         sut.simulateAppearance()
         
@@ -101,7 +121,7 @@ final class PhotoDetailIntegrationTests: XCTestCase {
         let photo = makePhoto(webURL: URL(string: "https://web0-url.com")!)
         let (sut, _) = makeSUT(
             photo: photo,
-            dataStubs: [.failure(anyNSError())],
+            dataStubs: [failure()],
             urlHandler: { loggedURLs.append($0) }
         )
         sut.simulateAppearance()
@@ -117,7 +137,8 @@ final class PhotoDetailIntegrationTests: XCTestCase {
     private func makeSUT(photo: Photo = makePhoto(),
                          dataStubs: [PhotosLoaderSpy.DataResult] = [],
                          urlHandler: @escaping (URL) -> Void = { _ in },
-                         file: StaticString = #filePath, line: UInt = #line) -> (sut: PhotoDetailViewController, loader: LoaderSpy) {
+                         file: StaticString = #filePath, line: UInt = #line) 
+    -> (sut: PhotoDetailViewController, loader: LoaderSpy) {
         let loader = LoaderSpy(dataStubs: dataStubs)
         let sut = PhotoDetailComposer.composeWith(photo: photo, imageDataLoader: loader, urlHandler: urlHandler)
         trackForMemoryLeaks(loader, file: file, line: line)
@@ -139,6 +160,14 @@ final class PhotoDetailIntegrationTests: XCTestCase {
             "Expect webURL is \(photo.webURL.absoluteString), got \(String(describing: sut.webURLText)) instead",
             file: file,
             line: line)
+    }
+    
+    private func failure() -> Result<Data, Error> {
+        .failure(anyNSError())
+    }
+    
+    private func anySuccessData() -> Result<Data, Error> {
+        .success(anyData())
     }
     
     private class LoaderSpy: ImageDataLoader {
