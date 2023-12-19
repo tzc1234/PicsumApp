@@ -1,8 +1,6 @@
 # PicsumApp
 ## Aims to practice the learnings from iOS Lead Essentials.
 
-[![](https://circleci.com/gh/tzc1234/PicsumApp.svg?style=shield)](https://circleci.com/gh/tzc1234/PicsumApp)
-
 ## Screenshot
 <img src="https://github.com/tzc1234/PicsumApp/blob/main/Screenshots/preview.png" alt="preview" width="256" height="554"/>
 
@@ -15,7 +13,7 @@
 
 ## Techniques
 1. Follow SOLID principles
-2. Fully adopt TDD, >95% code coverage
+2. Fully adopt TDD
 3. Use of dependency injection
 4. Refactor from MVC to MVVM, safeguard by tests
 5. Compose all the components in the composition root (SceneDelegate)
