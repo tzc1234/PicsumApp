@@ -14,7 +14,7 @@ extension PhotoListCell {
     }
     
     var isShowingImageLoadingIndicator: Bool {
-        isLoading
+        imageContainerView.isShimmering
     }
     
     var renderedImage: Data? {

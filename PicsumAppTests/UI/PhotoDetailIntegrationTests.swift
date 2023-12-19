@@ -9,7 +9,6 @@ import XCTest
 @testable import PicsumApp
 
 final class PhotoDetailIntegrationTests: XCTestCase {
-
     func test_init_hasTitle() {
         let (sut, _) = makeSUT()
 
@@ -21,7 +20,7 @@ final class PhotoDetailIntegrationTests: XCTestCase {
         let photo = makePhoto(author: "author0", webURL: URL(string: "https://web0-url.com")!)
         let (sut, _) = makeSUT(photo: photo, dataStubs: [.success(anyData())])
         
-        sut.layoutIfNeeded()
+        sut.simulateAppearance()
         await sut.completeImageDataLoading()
         
         assertThat(sut, hasConfiguredWith: photo)
@@ -32,7 +31,7 @@ final class PhotoDetailIntegrationTests: XCTestCase {
         let photo = makePhoto(url: URL(string: "https://image-url.com")!)
         let (sut, loader) = makeSUT(photo: photo, dataStubs: [.success(anyData())])
         
-        sut.simulatePhotoDetailViewWillAppear()
+        sut.simulateAppearance()
         await sut.completeImageDataLoading()
         
         XCTAssertEqual(loader.loggedURLs, [photo.url])
@@ -43,7 +42,7 @@ final class PhotoDetailIntegrationTests: XCTestCase {
         let photo = makePhoto()
         let (sut, _) = makeSUT(photo: photo, dataStubs: [.failure(anyNSError())])
         
-        sut.layoutIfNeeded()
+        sut.simulateAppearance()
         await sut.completeImageDataLoading()
         
         XCTAssertNil(sut.imageData)
@@ -55,8 +54,7 @@ final class PhotoDetailIntegrationTests: XCTestCase {
         let imageData = UIImage.make(withColor: .red).pngData()!
         let (sut, _) = makeSUT(photo: photo, dataStubs: [.success(imageData)])
         
-        sut.layoutIfNeeded()
-        sut.simulatePhotoDetailViewWillAppear()
+        sut.simulateAppearance()
         await sut.completeImageDataLoading()
         
         XCTAssertEqual(sut.imageData, imageData)
@@ -67,26 +65,20 @@ final class PhotoDetailIntegrationTests: XCTestCase {
         let imageData = UIImage.make(withColor: .red).pngData()!
         let (sut, _) = makeSUT(dataStubs: [.success(imageData)])
         
-        sut.layoutIfNeeded()
-        sut.simulatePhotoDetailViewWillAppear()
+        sut.simulateAppearance()
         
         XCTAssertTrue(sut.isShowingLoadingIndicator, "Expect a loading indicator once image request started")
         
         await sut.completeImageDataLoading()
         
         XCTAssertFalse(sut.isShowingLoadingIndicator, "Expect no loading indicator after image request completed")
-        
-        sut.simulatePhotoDetailViewWillAppear()
-        
-        XCTAssertFalse(sut.isShowingLoadingIndicator, "Expect no loading indicator after photo detail will appear again with image")
     }
     
     @MainActor
     func test_reloadIndicator_showsAfterImageRequestOnLoaderError() async {
         let (sut, _) = makeSUT(dataStubs: [.failure(anyNSError()), .success(anyData())])
         
-        sut.layoutIfNeeded()
-        sut.simulatePhotoDetailViewWillAppear()
+        sut.simulateAppearance()
         
         XCTAssertFalse(sut.isShowingReloadIndicator, "Expect no reload indicator once image request started")
         
@@ -107,9 +99,14 @@ final class PhotoDetailIntegrationTests: XCTestCase {
     func test_photoDetailWeb_showsForWebURL() async {
         var loggedURLs = [URL]()
         let photo = makePhoto(webURL: URL(string: "https://web0-url.com")!)
-        let (sut, _) = makeSUT(photo: photo, urlHandler: { loggedURLs.append($0) })
+        let (sut, _) = makeSUT(
+            photo: photo,
+            dataStubs: [.failure(anyNSError())],
+            urlHandler: { loggedURLs.append($0) }
+        )
+        sut.simulateAppearance()
+        await sut.completeImageDataLoading()
         
-        sut.layoutIfNeeded()
         sut.simulateUserOpenPhotoDetailWeb()
         
         XCTAssertEqual(loggedURLs, [photo.webURL])
@@ -130,12 +127,18 @@ final class PhotoDetailIntegrationTests: XCTestCase {
     
     private func assertThat(_ sut: PhotoDetailViewController, hasConfiguredWith photo: Photo,
                             file: StaticString = #filePath, line: UInt = #line) {
-        XCTAssertEqual(sut.authorText, photo.author,
-                       "Expect author is \(photo.author), got \(String(describing: sut.authorText)) instead",
-                       file: file, line: line)
-        XCTAssertEqual(sut.webURLText, photo.webURL.absoluteString,
-                       "Expect webURL is \(photo.webURL.absoluteString), got \(String(describing: sut.webURLText)) instead",
-                       file: file, line: line)
+        XCTAssertEqual(
+            sut.authorText,
+            photo.author,
+            "Expect author is \(photo.author), got \(String(describing: sut.authorText)) instead",
+            file: file,
+            line: line)
+        XCTAssertEqual(
+            sut.webURLText,
+            photo.webURL.absoluteString,
+            "Expect webURL is \(photo.webURL.absoluteString), got \(String(describing: sut.webURLText)) instead",
+            file: file,
+            line: line)
     }
     
     private class LoaderSpy: ImageDataLoader {
@@ -153,5 +156,4 @@ final class PhotoDetailIntegrationTests: XCTestCase {
             return try dataStubs.removeFirst().get()
         }
     }
-    
 }

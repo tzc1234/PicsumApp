@@ -9,12 +9,9 @@ import UIKit
 @testable import PicsumApp
 
 extension PhotoDetailViewController {
-    func layoutIfNeeded() {
-        view.layoutIfNeeded()
-    }
-    
-    func simulatePhotoDetailViewWillAppear() {
-        viewWillAppear(false)
+    func simulateAppearance() {
+        beginAppearanceTransition(true, animated: false)
+        endAppearanceTransition()
     }
     
     func simulateUserInitiatedReload() {
@@ -42,7 +39,7 @@ extension PhotoDetailViewController {
     }
     
     var isShowingLoadingIndicator: Bool {
-        isLoading
+        imageContainerView.isShimmering
     }
     
     var isShowingReloadIndicator: Bool {

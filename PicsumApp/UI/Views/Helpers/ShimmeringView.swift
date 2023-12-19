@@ -1,5 +1,5 @@
 //
-//  UIView+Shimming.swift
+//  ShimmeringView.swift
 //  PicsumApp
 //
 //  Created by Tsz-Lung on 04/07/2023.
@@ -7,8 +7,22 @@
 
 import UIKit
 
-extension UIView {
-    private var shimmerAnimationKey: String { "shimmer" }
+final class ShimmeringView: UIView {
+    var isShimmering: Bool {
+        get { layer.mask?.animation(forKey: shimmerAnimationKey) != nil }
+        set { newValue ? startShimmering() : stopShimmering() }
+    }
+    
+    private let shimmerAnimationKey = "shimmer"
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        if isShimmering {
+            stopShimmering()
+            startShimmering()
+        }
+    }
 
     func startShimmering() {
         let white = UIColor.white.cgColor

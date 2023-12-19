@@ -29,8 +29,8 @@ final class PhotoDetailViewController: UIViewController {
         return btn
     }()
     
-    private lazy var imageContainerView = {
-        let v = UIView()
+    private(set) lazy var imageContainerView = {
+        let v = ShimmeringView()
         v.backgroundColor = .systemGray5
         v.translatesAutoresizingMaskIntoConstraints = false
         return v
@@ -53,11 +53,7 @@ final class PhotoDetailViewController: UIViewController {
         return btn
     }()
     
-    private(set) var isLoading = false {
-        didSet {
-            isLoading ? imageContainerView.startShimmering() : imageContainerView.stopShimmering()
-        }
-    }
+    private var onViewIsAppearing: ((PhotoDetailViewController) -> Void)?
     
     let viewModel: PhotoDetailViewModel<UIImage>
     private let urlHandler: (URL) -> Void
@@ -73,10 +69,21 @@ final class PhotoDetailViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         setAuthorText()
         setWebURL()
         setupBindings()
         configureUI()
+        onViewIsAppearing = { vc in
+            vc.loadImage()
+            vc.onViewIsAppearing = nil
+        }
+    }
+    
+    override func viewIsAppearing(_ animated: Bool) {
+        super.viewIsAppearing(animated)
+        
+        onViewIsAppearing?(self)
     }
     
     private func setAuthorText() {
@@ -92,7 +99,7 @@ final class PhotoDetailViewController: UIViewController {
     
     private func setupBindings() {
         viewModel.onLoad = { [weak self] isLoading in
-            self?.isLoading = isLoading
+            self?.imageContainerView.isShimmering = isLoading
         }
         
         viewModel.didLoad = { [weak imageView] image in
@@ -136,20 +143,6 @@ final class PhotoDetailViewController: UIViewController {
             stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8),
             stackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -8)
         ])
-        
-        view.layoutIfNeeded()
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        loadImageIfNeeded()
-    }
-    
-    private func loadImageIfNeeded() {
-        if imageView.image == nil {
-            loadImage()
-        }
     }
     
     @objc private func openWeb() {

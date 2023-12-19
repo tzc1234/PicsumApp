@@ -8,6 +8,8 @@
 import UIKit
 
 final class PhotoListCell: UICollectionViewCell {
+    static var identifier: String { String(describing: self) }
+    
     private(set) lazy var authorLabel = {
         let lbl = UILabel()
         lbl.font = .preferredFont(forTextStyle: .caption1)
@@ -15,8 +17,8 @@ final class PhotoListCell: UICollectionViewCell {
         return lbl
     }()
     
-    private lazy var imageContainerView = {
-        let v = UIView()
+    private(set) lazy var imageContainerView = {
+        let v = ShimmeringView()
         v.backgroundColor = .systemGray5
         v.translatesAutoresizingMaskIntoConstraints = false
         return v
@@ -44,18 +46,9 @@ final class PhotoListCell: UICollectionViewCell {
         return bv
     }()
     
-    var isLoading = false {
-        didSet {
-            if isLoading {
-                imageContainerView.startShimmering()
-            } else {
-                imageContainerView.stopShimmering()
-            }
-        }
-    }
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
+        
         configureUI()
     }
     
@@ -97,6 +90,4 @@ final class PhotoListCell: UICollectionViewCell {
             authorLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8)
         ])
     }
-    
-    static var identifier: String { String(describing: self) }
 }
