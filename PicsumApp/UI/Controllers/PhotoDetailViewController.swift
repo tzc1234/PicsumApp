@@ -55,7 +55,11 @@ final class PhotoDetailViewController: UIViewController {
     
     private var onViewIsAppearing: ((PhotoDetailViewController) -> Void)?
     
-    let viewModel: PhotoDetailViewModel<UIImage>
+    var loadImageDataTask: Task<Void, Never>? {
+        viewModel.task
+    }
+    
+    private let viewModel: PhotoDetailViewModel<UIImage>
     private let urlHandler: (URL) -> Void
     
     init(viewModel: PhotoDetailViewModel<UIImage>, urlHandler: @escaping (URL) -> Void) {

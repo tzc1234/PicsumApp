@@ -8,9 +8,13 @@
 import UIKit
 
 final class PhotoListCellController {
-    private(set) var cell: PhotoListCell?
+    private var cell: PhotoListCell?
     
-    let viewModel: PhotoImageViewModel<UIImage> // expose for testing
+    var loadImageTask: Task<Void, Never>? {
+        viewModel.imageDataTask
+    }
+    
+    private let viewModel: PhotoImageViewModel<UIImage>
     let selection: () -> Void
     
     init(viewModel: PhotoImageViewModel<UIImage>, selection: @escaping () -> Void) {

@@ -22,7 +22,15 @@ final class PhotoListViewController: UICollectionViewController {
     
     private var onViewIsAppear: ((PhotoListViewController) -> Void)?
     
-    private(set) var viewModel: PhotoListViewModel?
+    var loadPhotosTask: Task<Void, Never>? {
+        viewModel?.loadPhotosTask
+    }
+    
+    var loadMorePhotosTask: Task<Void, Never>? {
+        viewModel?.loadMorePhotosTask
+    }
+    
+    private var viewModel: PhotoListViewModel?
     
     convenience init(viewModel: PhotoListViewModel) {
         self.init(collectionViewLayout: UICollectionViewFlowLayout())

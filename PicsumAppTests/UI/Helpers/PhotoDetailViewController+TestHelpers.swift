@@ -23,7 +23,7 @@ extension PhotoDetailViewController {
     }
     
     func completeImageDataLoading() async {
-        await viewModel.task?.value
+        await loadImageDataTask?.value
     }
     
     var authorText: String? {
