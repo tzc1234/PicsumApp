@@ -17,7 +17,7 @@ class PhotosLoaderSpy: PhotosLoader, PhotoImageDataLoader {
     private(set) var loggedPages = [Int]()
     private(set) var photoStubs: [PhotosResult]
     
-    init(photoStubs: [PhotosResult], dataStubs: [DataResult]) {
+    init(photoStubs: [PhotosResult], dataStubs: [DataResult] = []) {
         self.photoStubs = photoStubs
         self.dataStubs = dataStubs
     }
@@ -37,6 +37,7 @@ class PhotosLoaderSpy: PhotosLoader, PhotoImageDataLoader {
     }
     
     // MARK: - PhotoImageDataLoader
+    
     typealias DataResult = Swift.Result<Data, Error>
     
     private(set) var dataStubs: [DataResult]
