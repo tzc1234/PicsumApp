@@ -15,9 +15,11 @@ final class PaginatedPhotosLoaderAdapter {
         self.loader = loader
     }
     
-    func makePaginatedPhotos(page: Int = 1) -> () async throws -> Void {
+    func makePaginatedPhotos(page: Int = 1) -> () async throws -> Paginated<Photo> {
         return {
             _ = try await self.loader.load(page: page)
+            
+            return Paginated(items: [], loadMore: nil)
         }
     }
 }
@@ -36,7 +38,7 @@ final class PaginatedPhotosLoaderAdapterTests: XCTestCase {
         let getPaginatedPhotos = sut.makePaginatedPhotos()
         
         do {
-            try await getPaginatedPhotos()
+            _ = try await getPaginatedPhotos()
             
             XCTFail("Expect an error")
         } catch {
@@ -50,9 +52,20 @@ final class PaginatedPhotosLoaderAdapterTests: XCTestCase {
         let page = 999
         
         let getPaginatedPhotos = sut.makePaginatedPhotos(page: page)
-        try await getPaginatedPhotos()
+        _ = try await getPaginatedPhotos()
         
         XCTAssertEqual(loader.loggedPages, [page])
+    }
+    
+    func test_makePaginatedPhotos_convertsPaginatedPhotosWithEmptyLoadMoreFromEmptyPhotos() async throws {
+        let emptyPhotos = [Photo]()
+        let (sut, loader) = makeSUT(photoStubs: [.success(emptyPhotos)])
+        
+        let getPaginatedPhotos = sut.makePaginatedPhotos()
+        let paginated = try await getPaginatedPhotos()
+        
+        XCTAssertEqual(paginated.items, emptyPhotos)
+        XCTAssertNil(paginated.loadMore)
     }
     
     // MARK: - Helpers
