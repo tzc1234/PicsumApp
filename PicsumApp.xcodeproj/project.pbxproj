@@ -218,6 +218,7 @@
 		BE3635602A5FEACF0039EECD /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				BEC368692B333F79001888E0 /* Collaborators */,
 				BE6560702A53236900CCD5D6 /* ViewModels */,
 				BE1FD4EB2A5423740021777F /* Controllers */,
 				BE4876D62A542E2D00F6AE3F /* Views */,
@@ -385,7 +386,6 @@
 			children = (
 				BE65606B2A52EE1100CCD5D6 /* Photo.swift */,
 				BE65606E2A52EE8200CCD5D6 /* PhotosLoader.swift */,
-				BE4876D92A547B2A00F6AE3F /* PhotoImageDataLoader.swift */,
 				BE5DFCFC2A5C1AAD007BD8A7 /* ImageDataLoader.swift */,
 				BED008B82A5FE763002D94F5 /* ImageDataCache.swift */,
 			);
@@ -408,6 +408,14 @@
 				BE76D4572A7CE436000EA213 /* HTTPURLResponse+StatusCode.swift */,
 			);
 			path = Helpers;
+			sourceTree = "<group>";
+		};
+		BEC368692B333F79001888E0 /* Collaborators */ = {
+			isa = PBXGroup;
+			children = (
+				BE4876D92A547B2A00F6AE3F /* PhotoImageDataLoader.swift */,
+			);
+			path = Collaborators;
 			sourceTree = "<group>";
 		};
 		BEC9C5392A5C564B0043B0C9 /* Cache */ = {
