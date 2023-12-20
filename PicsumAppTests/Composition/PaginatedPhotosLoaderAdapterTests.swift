@@ -19,10 +19,8 @@ final class PaginatedPhotosLoaderAdapterTests: XCTestCase {
         let loaderError = NSError(domain: "loader error", code: 0)
         let (sut, _) = makeSUT(photoStubs: [.failure(loaderError)])
         
-        let getPaginatedPhotos = sut.makePaginatedPhotos()
-        
         do {
-            _ = try await getPaginatedPhotos()
+            _ = try await sut.makePaginatedPhotos()
             
             XCTFail("Expect an error")
         } catch {
@@ -35,8 +33,7 @@ final class PaginatedPhotosLoaderAdapterTests: XCTestCase {
         let (sut, loader) = makeSUT(photoStubs: [anySuccessPhotos])
         let page = 999
         
-        let getPaginatedPhotos = sut.makePaginatedPhotos(page: page)
-        _ = try await getPaginatedPhotos()
+        _ = try await sut.makePaginatedPhotos(page: page)
         
         XCTAssertEqual(loader.loggedPages, [page])
     }
@@ -45,8 +42,7 @@ final class PaginatedPhotosLoaderAdapterTests: XCTestCase {
         let emptyPhotos = [Photo]()
         let (sut, _) = makeSUT(photoStubs: [.success(emptyPhotos)])
         
-        let getPaginatedPhotos = sut.makePaginatedPhotos()
-        let paginated = try await getPaginatedPhotos()
+        let paginated = try await sut.makePaginatedPhotos()
         
         XCTAssertEqual(paginated.items, emptyPhotos)
         XCTAssertNil(paginated.loadMore)
@@ -56,8 +52,7 @@ final class PaginatedPhotosLoaderAdapterTests: XCTestCase {
         let photos = [makePhoto()]
         let (sut, _) = makeSUT(photoStubs: [.success(photos)])
         
-        let getPaginatedPhotos = sut.makePaginatedPhotos()
-        let paginated = try await getPaginatedPhotos()
+        let paginated = try await sut.makePaginatedPhotos()
         
         XCTAssertEqual(paginated.items, photos)
         XCTAssertNotNil(paginated.loadMore)
@@ -70,8 +65,7 @@ final class PaginatedPhotosLoaderAdapterTests: XCTestCase {
         let morePagePhotos = [makePhoto(id: "1")]
         let (sut, loader) = makeSUT(photoStubs: [.success(firstPagePhotos), .success(morePagePhotos)])
         
-        let firstPaginatedPhotos = sut.makePaginatedPhotos(page: firstPage)
-        let firstPaginated = try await firstPaginatedPhotos()
+        let firstPaginated = try await sut.makePaginatedPhotos(page: firstPage)
         
         XCTAssertEqual(firstPaginated.items, firstPagePhotos)
         XCTAssertEqual(loader.loggedPages, [firstPage], "Expect 1 page logged after the 1st request")

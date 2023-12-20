@@ -141,9 +141,9 @@ final class PhotoListViewModelTests: XCTestCase {
     private func makeSUT(stubs: [PhotosLoaderSpy.PhotosResult] = [],
                          file: StaticString = #file,
                          line: UInt = #line) -> (sut: PhotoListViewModel, loader: PhotosLoaderSpy) {
-        let loader = PhotosLoaderSpy(photoStubs: stubs, dataStubs: [])
+        let loader = PhotosLoaderSpy(photoStubs: stubs)
         let adapter = PaginatedPhotosLoaderAdapter(loader: loader)
-        let sut = PhotoListViewModel(paginatedPhotos: adapter.makePaginatedPhotos())
+        let sut = PhotoListViewModel(paginatedPhotos: { try await adapter.makePaginatedPhotos() })
         
         trackForMemoryLeaks(loader, file: file, line: line)
         trackForMemoryLeaks(adapter, file: file, line: line)

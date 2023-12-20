@@ -14,11 +14,12 @@ final class PaginatedPhotosLoaderAdapter {
         self.loader = loader
     }
     
-    func makePaginatedPhotos(page: Int = 1) -> () async throws -> Paginated<Photo> {
-        return {
-            let photos = try await self.loader.load(page: page)
-            let hasLoadMore = !photos.isEmpty
-            return Paginated(items: photos, loadMore: hasLoadMore ? self.makePaginatedPhotos(page: page+1) : nil)
-        }
+    func makePaginatedPhotos(page: Int = 1) async throws -> Paginated<Photo> {
+        let photos = try await self.loader.load(page: page)
+        let hasLoadMore = !photos.isEmpty
+        return Paginated(
+            items: photos,
+            loadMore: hasLoadMore ? { try await self.makePaginatedPhotos(page: page+1) } : nil
+        )
     }
 }
