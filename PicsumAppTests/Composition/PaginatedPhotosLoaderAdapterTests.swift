@@ -15,9 +15,9 @@ final class PaginatedPhotosLoaderAdapter {
         self.loader = loader
     }
     
-    func makePaginatedPhotos() -> () async throws -> Void {
+    func makePaginatedPhotos(page: Int = 1) -> () async throws -> Void {
         return {
-            _ = try await self.loader.load(page: 1)
+            _ = try await self.loader.load(page: page)
         }
     }
 }
@@ -42,6 +42,17 @@ final class PaginatedPhotosLoaderAdapterTests: XCTestCase {
         } catch {
             XCTAssertEqual(error as NSError, loaderError)
         }
+    }
+    
+    func test_makePaginatedPhotos_passesCorrectPageToLoader() async throws {
+        let anySuccessPhotos = PhotosLoaderSpy.PhotosResult.success([])
+        let (sut, loader) = makeSUT(photoStubs: [anySuccessPhotos])
+        let page = 999
+        
+        let getPaginatedPhotos = sut.makePaginatedPhotos(page: page)
+        try await getPaginatedPhotos()
+        
+        XCTAssertEqual(loader.loggedPages, [page])
     }
     
     // MARK: - Helpers
