@@ -10,8 +10,4 @@ import Foundation
 struct Paginated<Item> {
     let items: [Item]
     let loadMore: (() async throws -> Paginated<Item>)?
-    
-    static var empty: Self {
-        .init(items: [], loadMore: nil)
-    }
 }
