@@ -17,9 +17,10 @@ final class PaginatedPhotosLoaderAdapter {
     
     func makePaginatedPhotos(page: Int = 1) -> () async throws -> Paginated<Photo> {
         return {
-            _ = try await self.loader.load(page: page)
+            let photos = try await self.loader.load(page: page)
+            let hasLoadMore = !photos.isEmpty
             
-            return Paginated(items: [], loadMore: nil)
+            return Paginated(items: photos, loadMore: hasLoadMore ? self.makePaginatedPhotos() : nil)
         }
     }
 }
@@ -57,7 +58,7 @@ final class PaginatedPhotosLoaderAdapterTests: XCTestCase {
         XCTAssertEqual(loader.loggedPages, [page])
     }
     
-    func test_makePaginatedPhotos_convertsPaginatedPhotosWithEmptyLoadMoreFromEmptyPhotos() async throws {
+    func test_makePaginatedPhotos_convertsToPaginatedPhotosWithEmptyLoadMoreFromEmptyPhotos() async throws {
         let emptyPhotos = [Photo]()
         let (sut, loader) = makeSUT(photoStubs: [.success(emptyPhotos)])
         
@@ -66,6 +67,17 @@ final class PaginatedPhotosLoaderAdapterTests: XCTestCase {
         
         XCTAssertEqual(paginated.items, emptyPhotos)
         XCTAssertNil(paginated.loadMore)
+    }
+    
+    func test_makePaginatedPhotos_convertsToPaginatedPhotosWithLoadMoreFromNonEmptyPhotos() async throws {
+        let photos = [makePhoto()]
+        let (sut, loader) = makeSUT(photoStubs: [.success(photos)])
+        
+        let getPaginatedPhotos = sut.makePaginatedPhotos()
+        let paginated = try await getPaginatedPhotos()
+        
+        XCTAssertEqual(paginated.items, photos)
+        XCTAssertNotNil(paginated.loadMore)
     }
     
     // MARK: - Helpers
