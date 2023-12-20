@@ -15,7 +15,8 @@ final class PaginatedPhotosLoaderAdapter {
     }
     
     func makePaginatedPhotos(page: Int = 1) async throws -> Paginated<Photo> {
-        let photos = try await self.loader.load(page: page)
+        let url = PhotosEndpoint.get(page: page).url
+        let photos = try await self.loader.load(for: url)
         let hasLoadMore = !photos.isEmpty
         return Paginated(
             items: photos,

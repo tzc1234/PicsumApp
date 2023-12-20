@@ -23,7 +23,7 @@ final class PhotoListIntegrationTests: XCTestCase {
     func test_init_doesNotTriggerLoader() {
         let (_, loader) = makeSUT()
         
-        XCTAssertEqual(loader.loggedPages.count, 0)
+        XCTAssertEqual(loader.loggedURLs.count, 0)
     }
     
     @MainActor
@@ -46,19 +46,19 @@ final class PhotoListIntegrationTests: XCTestCase {
     func test_loadPhotosAction_requestsPhotosFromLoader() async {
         let (sut, loader) = makeSUT(photoStubs: [emptySuccessPhotos(), emptySuccessPhotos(), emptySuccessPhotos()])
 
-        XCTAssertEqual(loader.loggedPages.count, 0)
+        XCTAssertEqual(loader.loggedURLs.count, 0)
 
         sut.simulateAppearance()
         await sut.completePhotosLoading()
-        XCTAssertEqual(loader.loggedPages.count, 1, "Expect one request once the view is loaded")
+        XCTAssertEqual(loader.loggedURLs.count, 1, "Expect one request once the view is loaded")
 
         sut.simulateUserInitiatedReload()
         await sut.completePhotosLoading()
-        XCTAssertEqual(loader.loggedPages.count, 2, "Expect another request after user initiated a reload")
+        XCTAssertEqual(loader.loggedURLs.count, 2, "Expect another request after user initiated a reload")
 
         sut.simulateUserInitiatedReload()
         await sut.completePhotosLoading()
-        XCTAssertEqual(loader.loggedPages.count, 3, "Expect one more request after user initiated one more reload")
+        XCTAssertEqual(loader.loggedURLs.count, 3, "Expect one more request after user initiated one more reload")
     }
 
     @MainActor

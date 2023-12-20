@@ -8,5 +8,5 @@
 import Foundation
 
 protocol PhotosLoader {
-    func load(page: Int) async throws -> [Photo]
+    func load(for url: URL) async throws -> [Photo]
 }

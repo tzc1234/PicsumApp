@@ -14,7 +14,7 @@ class PhotosLoaderSpy: PhotosLoader, PhotoImageDataLoader {
     typealias PhotosResult = Swift.Result<[Photo], Error>
     
     var beforeLoad: (() -> Void)?
-    private(set) var loggedPages = [Int]()
+    private(set) var loggedURLs = [URL]()
     private(set) var photoStubs: [PhotosResult]
     
     init(photoStubs: [PhotosResult], dataStubs: [DataResult] = []) {
@@ -25,9 +25,9 @@ class PhotosLoaderSpy: PhotosLoader, PhotoImageDataLoader {
     struct CannotFindFirstPhotoStub: Error {}
     
     @MainActor
-    func load(page: Int) async throws -> [Photo] {
+    func load(for url: URL) async throws -> [Photo] {
         beforeLoad?()
-        loggedPages.append(page)
+        loggedURLs.append(url)
         
         guard !photoStubs.isEmpty else {
             throw CannotFindFirstPhotoStub()

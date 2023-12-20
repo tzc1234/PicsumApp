@@ -12,7 +12,7 @@ final class PaginatedPhotosLoaderAdapterTests: XCTestCase {
     func test_init_doesNotNotifyLoader() {
         let (_, loader) = makeSUT()
         
-        XCTAssertTrue(loader.loggedPages.isEmpty)
+        XCTAssertTrue(loader.loggedURLs.isEmpty)
     }
     
     func test_makePaginatedPhotos_forwardsErrorFromLoaderError() async {
@@ -35,7 +35,7 @@ final class PaginatedPhotosLoaderAdapterTests: XCTestCase {
         
         _ = try await sut.makePaginatedPhotos(page: page)
         
-        XCTAssertEqual(loader.loggedPages, [page])
+        XCTAssertEqual(loader.loggedURLs, [makeURL(fromPage: page)])
     }
     
     func test_makePaginatedPhotos_convertsToPaginatedPhotosWithEmptyLoadMoreFromEmptyPhotos() async throws {
@@ -68,13 +68,17 @@ final class PaginatedPhotosLoaderAdapterTests: XCTestCase {
         let firstPaginated = try await sut.makePaginatedPhotos(page: firstPage)
         
         XCTAssertEqual(firstPaginated.items, firstPagePhotos)
-        XCTAssertEqual(loader.loggedPages, [firstPage], "Expect 1 page logged after the 1st request")
+        XCTAssertEqual(loader.loggedURLs, [makeURL(fromPage: firstPage)], "Expect 1 page logged after the 1st request")
         
         let morePaginatedPhotos = try XCTUnwrap(firstPaginated.loadMore)
         let morePaginated = try await morePaginatedPhotos()
         
         XCTAssertEqual(morePaginated.items, morePagePhotos)
-        XCTAssertEqual(loader.loggedPages, [firstPage, nextPage], "Expect 2 pages logged after the load more request")
+        XCTAssertEqual(
+            loader.loggedURLs,
+            [makeURL(fromPage: firstPage), makeURL(fromPage: nextPage)],
+            "Expect 2 pages logged after the load more request"
+        )
     }
     
     // MARK: - Helpers
@@ -89,5 +93,9 @@ final class PaginatedPhotosLoaderAdapterTests: XCTestCase {
         trackForMemoryLeaks(sut, file: file, line: line)
         
         return (sut, loader)
+    }
+    
+    private func makeURL(fromPage page: Int) -> URL {
+        PhotosEndpoint.get(page: page).url
     }
 }

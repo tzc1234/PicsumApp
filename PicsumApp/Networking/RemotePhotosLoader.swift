@@ -14,10 +14,9 @@ final class RemotePhotosLoader: PhotosLoader {
         self.client = client
     }
     
-    func load(page: Int) async throws -> [Photo] {
+    func load(for url: URL) async throws -> [Photo] {
         do {
-            let photosURL = PhotosEndpoint.get(page: page).url
-            let (data, response) = try await client.get(from: photosURL)
+            let (data, response) = try await client.get(from: url)
             return try PhotosResponseConverter.convert(from: data, response: response)
         } catch {
             throw PhotosResponseConverter.Error.invalidData

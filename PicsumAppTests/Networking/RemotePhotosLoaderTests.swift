@@ -18,17 +18,17 @@ final class RemotePhotosLoaderTests: XCTestCase {
     
     func test_load_passesCorrectURLToClient() async {
         let (sut, client) = makeSUT(stubs: [.failure(anyNSError())])
-        let page = 99
+        let url = URL(string: "https://a-url.com")!
         
-        try? await _ = sut.load(page: page)
+        try? await _ = sut.load(for: url)
         
-        XCTAssertEqual(client.loggedURLs, [PhotosEndpoint.get(page: page).url])
+        XCTAssertEqual(client.loggedURLs, [url])
     }
     
     func test_load_deliversErrorOnClientError() async {
         let (sut, _) = makeSUT(stubs: [.failure(anyNSError())])
         
-        await asyncAssertThrowsError(_ = try await sut.load(page: 1))
+        await asyncAssertThrowsError(_ = try await sut.load(for: anyURL()))
     }
     
     func test_load_deliversErrorWhenNon200Response() async {
@@ -38,7 +38,7 @@ final class RemotePhotosLoaderTests: XCTestCase {
         
         for statusCode in simples {
             await asyncAssertThrowsError(
-                _ = try await sut.load(page: 1),
+                _ = try await sut.load(for: anyURL()),
                 "Should not success in statusCode: \(statusCode)") { error in
                     assertInvalidDataError(error)
                 }
@@ -49,7 +49,7 @@ final class RemotePhotosLoaderTests: XCTestCase {
         let invalidData = Data("invalid data".utf8)
         let (sut, _) = makeSUT(stubs: [.success((invalidData, HTTPURLResponse(statusCode: 200)))])
         
-        await asyncAssertThrowsError(_ = try await sut.load(page: 1)) { error in
+        await asyncAssertThrowsError(_ = try await sut.load(for: anyURL())) { error in
             assertInvalidDataError(error)
         }
     }
@@ -58,7 +58,7 @@ final class RemotePhotosLoaderTests: XCTestCase {
         let emptyData = Data()
         let (sut, _) = makeSUT(stubs: [.success((emptyData, HTTPURLResponse(statusCode: 200)))])
         
-        await asyncAssertThrowsError(_ = try await sut.load(page: 1)) { error in
+        await asyncAssertThrowsError(_ = try await sut.load(for: anyURL())) { error in
             assertInvalidDataError(error)
         }
     }
@@ -67,7 +67,7 @@ final class RemotePhotosLoaderTests: XCTestCase {
         let emptyPhotos = [Photo]()
         let (sut, _) = makeSUT(stubs: [.success((emptyPhotos.toData(), HTTPURLResponse(statusCode: 200)))])
         
-        let photos = try await sut.load(page: 1)
+        let photos = try await sut.load(for: anyURL())
 
         XCTAssertEqual(photos, [])
     }
@@ -76,7 +76,7 @@ final class RemotePhotosLoaderTests: XCTestCase {
         let expectedPhotos = [makePhoto(byIndex: 0)]
         let (sut, _) = makeSUT(stubs: [.success((expectedPhotos.toData(), HTTPURLResponse(statusCode: 200)))])
         
-        let photos = try await sut.load(page: 1)
+        let photos = try await sut.load(for: anyURL())
 
         XCTAssertEqual(photos, expectedPhotos)
     }
@@ -85,7 +85,7 @@ final class RemotePhotosLoaderTests: XCTestCase {
         let expectedPhotos = [makePhoto(byIndex: 0), makePhoto(byIndex: 1), makePhoto(byIndex: 2)]
         let (sut, _) = makeSUT(stubs: [.success((expectedPhotos.toData(), HTTPURLResponse(statusCode: 200)))])
         
-        let photos = try await sut.load(page: 1)
+        let photos = try await sut.load(for: anyURL())
 
         XCTAssertEqual(photos, expectedPhotos)
     }
