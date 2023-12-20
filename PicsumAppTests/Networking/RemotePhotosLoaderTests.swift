@@ -9,7 +9,6 @@ import XCTest
 @testable import PicsumApp
 
 final class RemotePhotosLoaderTests: XCTestCase {
-
     func test_init_doesNotTriggerClient() {
         let (_, client) = makeSUT()
         

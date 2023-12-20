@@ -35,7 +35,7 @@ final class PaginatedPhotosLoaderAdapterTests: XCTestCase {
         
         _ = try await sut.makePaginatedPhotos(page: page)
         
-        XCTAssertEqual(loader.loggedURLs, [makeURL(fromPage: page)])
+        XCTAssertEqual(loader.loggedURLs, [makeURL(for: page)])
     }
     
     func test_makePaginatedPhotos_convertsToPaginatedPhotosWithEmptyLoadMoreFromEmptyPhotos() async throws {
@@ -68,7 +68,7 @@ final class PaginatedPhotosLoaderAdapterTests: XCTestCase {
         let firstPaginated = try await sut.makePaginatedPhotos(page: firstPage)
         
         XCTAssertEqual(firstPaginated.items, firstPagePhotos)
-        XCTAssertEqual(loader.loggedURLs, [makeURL(fromPage: firstPage)], "Expect 1 page logged after the 1st request")
+        XCTAssertEqual(loader.loggedURLs, [makeURL(for: firstPage)], "Expect 1 page logged after the 1st request")
         
         let morePaginatedPhotos = try XCTUnwrap(firstPaginated.loadMore)
         let morePaginated = try await morePaginatedPhotos()
@@ -76,7 +76,7 @@ final class PaginatedPhotosLoaderAdapterTests: XCTestCase {
         XCTAssertEqual(morePaginated.items, morePagePhotos)
         XCTAssertEqual(
             loader.loggedURLs,
-            [makeURL(fromPage: firstPage), makeURL(fromPage: nextPage)],
+            [makeURL(for: firstPage), makeURL(for: nextPage)],
             "Expect 2 pages logged after the load more request"
         )
     }
@@ -95,7 +95,7 @@ final class PaginatedPhotosLoaderAdapterTests: XCTestCase {
         return (sut, loader)
     }
     
-    private func makeURL(fromPage page: Int) -> URL {
+    private func makeURL(for page: Int) -> URL {
         PhotosEndpoint.get(page: page).url
     }
 }
