@@ -431,10 +431,12 @@ final class PhotoListIntegrationTests: XCTestCase {
                          file: StaticString = #file,
                          line: UInt = #line) -> (sut: PhotoListViewController, loader: PhotosLoaderSpy) {
         let loader = PhotosLoaderSpy(photoStubs: photoStubs, dataStubs: dataStubs)
-        let viewModel = PhotoListViewModel(loader: loader)
+        let adapter = PaginatedPhotosLoaderAdapter(loader: loader)
+        let viewModel = PhotoListViewModel(paginatedPhotos: adapter.makePaginatedPhotos())
         let sut = PhotoListComposer.composeWith(viewModel: viewModel, imageLoader: loader, selection: selection)
         
         trackForMemoryLeaks(loader, file: file, line: line)
+        trackForMemoryLeaks(adapter, file: file, line: line)
         trackForMemoryLeaks(viewModel, file: file, line: line)
         trackForMemoryLeaks(sut, file: file, line: line)
         

@@ -8,10 +8,8 @@
 import Foundation
 
 struct Paginated<Item> {
-    typealias LoadMore = (() async throws -> Paginated<Item>)
-    
     let items: [Item]
-    let loadMore: LoadMore?
+    let loadMore: (() async throws -> Paginated<Item>)?
     
     static var empty: Self {
         .init(items: [], loadMore: nil)

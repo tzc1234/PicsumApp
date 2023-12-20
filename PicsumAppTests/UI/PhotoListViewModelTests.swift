@@ -142,9 +142,11 @@ final class PhotoListViewModelTests: XCTestCase {
                          file: StaticString = #file,
                          line: UInt = #line) -> (sut: PhotoListViewModel, loader: PhotosLoaderSpy) {
         let loader = PhotosLoaderSpy(photoStubs: stubs, dataStubs: [])
-        let sut = PhotoListViewModel(loader: loader)
+        let adapter = PaginatedPhotosLoaderAdapter(loader: loader)
+        let sut = PhotoListViewModel(paginatedPhotos: adapter.makePaginatedPhotos())
         
         trackForMemoryLeaks(loader, file: file, line: line)
+        trackForMemoryLeaks(adapter, file: file, line: line)
         trackForMemoryLeaks(sut, file: file, line: line)
         
         return (sut, loader)

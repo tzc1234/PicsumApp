@@ -10,6 +10,8 @@ import Foundation
 typealias Observer<T> = (T) -> Void
 
 final class PhotoListViewModel {
+    typealias PaginatedPhotos = () async throws -> Paginated<Photo>
+    
     var onLoad: Observer<Bool>?
     var onError: Observer<String?>?
     var didLoad: Observer<[Photo]>?
@@ -18,12 +20,12 @@ final class PhotoListViewModel {
     private var isLoadingMore = false
     private(set) var loadPhotosTask: Task<Void, Never>?
     private(set) var loadMorePhotosTask: Task<Void, Never>?
-    private var loadMore: Paginated<Photo>.LoadMore?
+    private var loadMore: PaginatedPhotos?
     
-    private let loader: PhotosLoader
+    private let firstPaginatedPhotos: PaginatedPhotos
     
-    init(loader: PhotosLoader) {
-        self.loader = loader
+    init(paginatedPhotos: @escaping PaginatedPhotos) {
+        self.firstPaginatedPhotos = paginatedPhotos
     }
     
     func loadPhotos() {
@@ -33,27 +35,13 @@ final class PhotoListViewModel {
         loadPhotosTask = loadPhotosTask(action: { [weak self] in
             guard let self else { return }
             
-            let firstLoad = makeFirstPaginatedPhotos()
-            let paginated = try await firstLoad()
+            let paginated = try await firstPaginatedPhotos()
             loadMore = paginated.loadMore
             
             didLoad?(paginated.items)
         }, completion: { [weak self] in
             self?.onLoad?(false)
         })
-    }
-    
-    private func makeFirstPaginatedPhotos(page: Int = 1) -> () async throws -> Paginated<Photo> {
-        { [weak self] in
-            guard let self else { return .empty }
-            
-            let morePhotos = try await loader.load(page: page)
-            let canLoadMore = !morePhotos.isEmpty
-            return Paginated(
-                items: morePhotos,
-                loadMore: canLoadMore ? makeFirstPaginatedPhotos(page: page+1) : nil
-            )
-        }
     }
     
     func loadMorePhotos() {
