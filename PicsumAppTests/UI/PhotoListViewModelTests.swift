@@ -140,19 +140,17 @@ final class PhotoListViewModelTests: XCTestCase {
     
     private func makeSUT(stubs: [PhotosLoaderSpy.PhotosResult] = [],
                          file: StaticString = #file,
-                         line: UInt = #line) -> (sut: PhotoListViewModel, loader: PhotosLoaderSpy) {
-        let loader = PhotosLoaderSpy(photoStubs: stubs)
-        let adapter = PaginatedPhotosLoaderAdapter(loader: loader)
-        let sut = PhotoListViewModel(paginatedPhotos: { try await adapter.makePaginatedPhotos() })
+                         line: UInt = #line) -> (sut: PhotoListViewModel, loader: PaginatedPhotosLoaderSpy) {
+        let loader = PaginatedPhotosLoaderSpy(photoStubs: stubs)
+        let sut = PhotoListViewModel(paginatedPhotos: { try await loader.makePaginatedPhotos() })
         
         trackForMemoryLeaks(loader, file: file, line: line)
-        trackForMemoryLeaks(adapter, file: file, line: line)
         trackForMemoryLeaks(sut, file: file, line: line)
         
         return (sut, loader)
     }
     
-    private func expectLoad(_ sut: PhotoListViewModel, loader: PhotosLoaderSpy,
+    private func expectLoad(_ sut: PhotoListViewModel, loader: PaginatedPhotosLoaderSpy,
                             expectedError: String? = nil, expectedPhotos: [Photo]? = nil,
                             file: StaticString = #file, line: UInt = #line) async {
         var isLoading: Bool?
@@ -178,7 +176,7 @@ final class PhotoListViewModelTests: XCTestCase {
         XCTAssertEqual(photos, expectedPhotos, file: file, line: line)
     }
     
-    private func expectLoadMore(_ sut: PhotoListViewModel, loader: PhotosLoaderSpy,
+    private func expectLoadMore(_ sut: PhotoListViewModel, loader: PaginatedPhotosLoaderSpy,
                                 expectedError: String? = nil, expectedPhotos: [Photo]? = nil,
                                 file: StaticString = #file, line: UInt = #line) async {
         var errorMessage: String?
@@ -197,5 +195,39 @@ final class PhotoListViewModelTests: XCTestCase {
         
         XCTAssertEqual(errorMessage, expectedError, file: file, line: line)
         XCTAssertEqual(photos, expectedPhotos, file: file, line: line)
+    }
+    
+    private class PaginatedPhotosLoaderSpy {
+        typealias PhotosResult = Result<[Photo], Error>
+        
+        var beforeLoad: (() -> Void)?
+        private(set) var loggedPages = [Int]()
+        private(set) var photoStubs: [PhotosResult]
+        
+        init(photoStubs: [PhotosResult]) {
+            self.photoStubs = photoStubs
+        }
+        
+        func makePaginatedPhotos(page: Int = 1) async throws -> Paginated<Photo> {
+            let photos = try await self.load(page: page)
+            let hasLoadMore = !photos.isEmpty
+            return Paginated(
+                items: photos,
+                loadMore: hasLoadMore ? { try await self.makePaginatedPhotos(page: page+1) } : nil
+            )
+        }
+        
+        struct CannotFindFirstPhotoStub: Error {}
+        
+        private func load(page: Int) async throws -> [Photo] {
+            beforeLoad?()
+            loggedPages.append(page)
+            
+            guard !photoStubs.isEmpty else {
+                throw CannotFindFirstPhotoStub()
+            }
+            
+            return try photoStubs.removeFirst().get()
+        }
     }
 }
