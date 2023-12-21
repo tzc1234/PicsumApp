@@ -28,12 +28,11 @@ final class PhotoDetailViewModel<Image> {
         self.imageConverter = imageConverter
     }
     
-    @MainActor
     func loadImageData() {
         onLoad?(true)
         shouldReload?(false)
         
-        task = Task {
+        task = Task { @MainActor in
             do {
                 let data = try await imageDataLoader.loadImageData(for: photo.url)
                 didLoad?(imageConverter(data))
