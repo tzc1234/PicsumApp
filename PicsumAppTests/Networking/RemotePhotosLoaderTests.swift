@@ -46,7 +46,7 @@ final class RemotePhotosLoaderTests: XCTestCase {
     
     func test_load_deliversErrorWhen200ResponseButInvalidData() async {
         let invalidData = Data("invalid data".utf8)
-        let (sut, _) = makeSUT(stubs: [.success((invalidData, HTTPURLResponse(statusCode: 200)))])
+        let (sut, _) = makeSUT(stubs: [.success((invalidData, .ok200Response))])
         
         await asyncAssertThrowsError(_ = try await sut.load(for: anyURL())) { error in
             assertInvalidDataError(error)
@@ -55,7 +55,7 @@ final class RemotePhotosLoaderTests: XCTestCase {
     
     func test_load_deliversErrorWhen200ResponseButEmptyData() async {
         let emptyData = Data()
-        let (sut, _) = makeSUT(stubs: [.success((emptyData, HTTPURLResponse(statusCode: 200)))])
+        let (sut, _) = makeSUT(stubs: [.success((emptyData, .ok200Response))])
         
         await asyncAssertThrowsError(_ = try await sut.load(for: anyURL())) { error in
             assertInvalidDataError(error)
@@ -64,7 +64,7 @@ final class RemotePhotosLoaderTests: XCTestCase {
     
     func test_load_deliversEmptyPhotosWhen200ResponseWithEmptyPhotosData() async throws {
         let emptyPhotos = [Photo]()
-        let (sut, _) = makeSUT(stubs: [.success((emptyPhotos.toData(), HTTPURLResponse(statusCode: 200)))])
+        let (sut, _) = makeSUT(stubs: [.success((emptyPhotos.toData(), .ok200Response))])
         
         let photos = try await sut.load(for: anyURL())
 
@@ -73,7 +73,7 @@ final class RemotePhotosLoaderTests: XCTestCase {
     
     func test_load_deliversOnePhotoWhen200ResponseWithOnePhotoData() async throws {
         let expectedPhotos = [makePhoto(byIndex: 0)]
-        let (sut, _) = makeSUT(stubs: [.success((expectedPhotos.toData(), HTTPURLResponse(statusCode: 200)))])
+        let (sut, _) = makeSUT(stubs: [.success((expectedPhotos.toData(), .ok200Response))])
         
         let photos = try await sut.load(for: anyURL())
 
@@ -82,7 +82,7 @@ final class RemotePhotosLoaderTests: XCTestCase {
     
     func test_load_deliversMultiplePhotosWhen200ResponseWithMultiplePhotosData() async throws {
         let expectedPhotos = [makePhoto(byIndex: 0), makePhoto(byIndex: 1), makePhoto(byIndex: 2)]
-        let (sut, _) = makeSUT(stubs: [.success((expectedPhotos.toData(), HTTPURLResponse(statusCode: 200)))])
+        let (sut, _) = makeSUT(stubs: [.success((expectedPhotos.toData(), .ok200Response))])
         
         let photos = try await sut.load(for: anyURL())
 

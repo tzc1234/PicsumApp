@@ -49,7 +49,7 @@ final class RemoteImageDataLoaderTests: XCTestCase {
     
     func test_loadImageData_deliversDataWhen200Response() async throws {
         let imageData = UIImage.makeData(withColor: .red)
-        let (sut, _) = makeSUT(stubs: [.success((imageData, HTTPURLResponse(statusCode: 200)))])
+        let (sut, _) = makeSUT(stubs: [.success((imageData, .ok200Response))])
         
         let data = try await sut.loadImageData(for: anyURL())
         
