@@ -32,14 +32,11 @@ final class PhotoImageViewModel<Image> {
         imageDataTask = Task { @MainActor [weak self] in
             guard let self, !Task.isCancelled else { return }
             
-            let data = try? await self.imageLoader.loadImageData(
-                by: self.photo.id,
-                width: photoDimension,
-                height: photoDimension)
-            let image = data.flatMap(self.imageConverter)
+            let data = try? await imageLoader.loadImageData(by: photo.id, width: photoDimension, height: photoDimension)
+            let image = data.flatMap(imageConverter)
             
-            self.didLoadImage?(image)
-            self.onLoadImage?(false)
+            didLoadImage?(image)
+            onLoadImage?(false)
         }
     }
     
