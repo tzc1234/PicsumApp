@@ -46,7 +46,8 @@ final actor SwiftDataImageDataStore: ModelActor, ImageDataStore {
     }
     
     func deleteAllData(until date: Date) throws {
-        
+        let predicate = #Predicate<SwiftDataImage> { $0.timestamp <= date }
+        try modelContext.delete(model: SwiftDataImage.self, where: predicate)
     }
 }
 
@@ -119,6 +120,33 @@ final class SwiftDataImageDataStoreTests: XCTestCase {
         
         XCTAssertNil(beforeDeleteAllData)
         XCTAssertNil(afterDeleteAllData)
+    }
+    
+    func test_deleteAll_removesDataLessThanOrEqualToTheDate() async throws {
+        let sut = try makeSUT()
+        let date = Date()
+        let lessThanDateInput = DataInput(
+            data: Data("less than date data".utf8),
+            date: date.adding(seconds: -1),
+            url: URL(string: "https://less-than-date-data-url.com")!)
+        let equalToDateInput = DataInput(
+            data: Data("equal to date data".utf8),
+            date: date,
+            url: URL(string: "https://equal-to-date-data-url.com")!)
+        let moreThanDateInput = DataInput(
+            data: Data("more than date data".utf8),
+            date: date.adding(seconds: 1),
+            url: URL(string: "https://more-than-date-data-url.com")!)
+        
+        try await insert(inputs: [lessThanDateInput, equalToDateInput, moreThanDateInput], into: sut)
+        try await sut.deleteAllData(until: date)
+        let lessThanDateData = try await sut.retrieveData(for: lessThanDateInput.url)
+        let equalToDateData = try await sut.retrieveData(for: equalToDateInput.url)
+        let moreThanDateData = try await sut.retrieveData(for: moreThanDateInput.url)
+        
+        XCTAssertNil(lessThanDateData)
+        XCTAssertNil(equalToDateData)
+        XCTAssertEqual(moreThanDateData, moreThanDateInput.data)
     }
     
     // MARK: - Helpers
