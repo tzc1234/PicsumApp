@@ -12,7 +12,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     private lazy var client = URLSessionHTTPClient(session: .shared)
     private lazy var remoteImageDataLoader = RemoteImageDataLoader(client: client)
     
-    private let storeURL = NSPersistentContainer.defaultDirectoryURL().appending(path: "data-store.sqlite")
+    private lazy var storeURL = NSPersistentContainer.defaultDirectoryURL().appending(path: "data-store.sqlite")
     private lazy var imageDataStore = {
         try? CoreDataImageDataStore(storeURL: storeURL)
     }()
