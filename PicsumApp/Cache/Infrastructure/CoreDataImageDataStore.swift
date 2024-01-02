@@ -12,7 +12,9 @@ final class CoreDataImageDataStore: ImageDataStore {
     private let context: NSManagedObjectContext
     
     init(storeURL: URL) throws {
-        self.container = try Self.loadContainer(for: storeURL)
+        guard let model = Self.model else { throw StoreError.modelNotFound }
+        
+        self.container = try Self.loadContainer(for: storeURL, model: model)
         self.context = container.newBackgroundContext()
     }
     
@@ -61,9 +63,20 @@ extension CoreDataImageDataStore {
     }
     
     private static let modelName = "DataStore"
+    private static let model = loadModel()
     
-    private static func loadContainer(for storeURL: URL) throws -> NSPersistentContainer {
-        let container = NSPersistentContainer(name: modelName, managedObjectModel: try loadModel())
+    private static func loadModel() -> NSManagedObjectModel? {
+        let bundle = Bundle(for: Self.self)
+        guard let model = bundle.url(forResource: modelName, withExtension: "momd")
+            .flatMap({ NSManagedObjectModel(contentsOf: $0) }) else {
+                return nil
+            }
+        
+        return model
+    }
+    
+    private static func loadContainer(for storeURL: URL, model: NSManagedObjectModel) throws -> NSPersistentContainer {
+        let container = NSPersistentContainer(name: modelName, managedObjectModel: model)
         container.persistentStoreDescriptions = [.init(url: storeURL)]
         
         var loadError: Error?
@@ -75,15 +88,5 @@ extension CoreDataImageDataStore {
         } catch {
             throw StoreError.loadContainerFailed
         }
-    }
-    
-    private static func loadModel() throws -> NSManagedObjectModel {
-        let bundle = Bundle(for: Self.self)
-        guard let model = bundle.url(forResource: modelName, withExtension: "momd")
-            .flatMap({ NSManagedObjectModel(contentsOf: $0) }) else {
-                throw StoreError.modelNotFound
-            }
-        
-        return model
     }
 }
