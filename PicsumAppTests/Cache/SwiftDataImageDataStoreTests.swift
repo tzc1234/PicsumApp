@@ -22,27 +22,29 @@ final class SwiftDataImage {
     }
 }
 
-actor SwiftDataImageDataStore: ImageDataStore {
-    private let container: ModelContainer
-    private let context: ModelContext
+final actor SwiftDataImageDataStore: ModelActor, ImageDataStore {
+    let modelContainer: ModelContainer
+    let modelExecutor: ModelExecutor
+    private let modelContext: ModelContext
     
     init(configuration: ModelConfiguration) throws {
-        self.container = try ModelContainer(for: SwiftDataImage.self, configurations: configuration)
-        self.context = ModelContext(container)
+        self.modelContainer = try ModelContainer(for: SwiftDataImage.self, configurations: configuration)
+        self.modelContext = ModelContext(modelContainer)
+        self.modelExecutor = DefaultSerialModelExecutor(modelContext: modelContext)
     }
     
-    func retrieveData(for url: URL) async throws -> Data? {
+    func retrieveData(for url: URL) throws -> Data? {
         var descriptor = FetchDescriptor<SwiftDataImage>()
         descriptor.fetchLimit = 1
-        return try context.fetch(descriptor).first?.data
+        return try modelContext.fetch(descriptor).first?.data
     }
     
-    func insert(data: Data, timestamp: Date, for url: URL) async throws {
-        context.insert(SwiftDataImage(data: data, timestamp: timestamp, url: url))
-        try context.save()
+    func insert(data: Data, timestamp: Date, for url: URL) throws {
+        modelContext.insert(SwiftDataImage(data: data, timestamp: timestamp, url: url))
+        try modelContext.save()
     }
     
-    func deleteAllData(until date: Date) async throws {
+    func deleteAllData(until date: Date) throws {
         
     }
 }
