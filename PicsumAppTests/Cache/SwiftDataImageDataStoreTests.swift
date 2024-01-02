@@ -32,6 +32,17 @@ final class SwiftDataImageDataStoreTests: XCTestCase {
         XCTAssertNil(retrievedData)
     }
     
+    func test_retrievesDataTwice_deliversNilWhenNoCacheWithNoSideEffects() async throws {
+        let sut = try makeSUT()
+        let url = anyURL()
+        
+        let firstRetrievedData = try await sut.retrieveData(for: url)
+        let lastRetrievedData = try await sut.retrieveData(for: url)
+        
+        XCTAssertNil(firstRetrievedData)
+        XCTAssertNil(lastRetrievedData)
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(file: StaticString = #filePath, line: UInt = #line) throws -> ImageDataStore {
