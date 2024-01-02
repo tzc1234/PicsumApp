@@ -47,6 +47,7 @@ extension LocalImageDataLoader: ImageDataCache {
         do {
             try await store.insert(data: data, timestamp: currentDate(), for: url)
         } catch {
+            print(error)
             throw SaveError.failed
         }
     }
