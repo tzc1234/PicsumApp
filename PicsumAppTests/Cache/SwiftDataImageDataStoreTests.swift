@@ -78,6 +78,19 @@ final class SwiftDataImageDataStoreTests: XCTestCase {
         XCTAssertEqual(retrievedData, data)
     }
     
+    func test_retrievesDataTwice_deliversSameCachedData() async throws {
+        let sut = try makeSUT()
+        let url = anyURL()
+        let data = anyData()
+        
+        try await insert(data: data, url: url, to: sut)
+        let firstRetrievedData = try await sut.retrieveData(for: url)
+        let lastRetrievedData = try await sut.retrieveData(for: url)
+        
+        XCTAssertEqual(firstRetrievedData, data)
+        XCTAssertEqual(lastRetrievedData, data)
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(file: StaticString = #filePath, line: UInt = #line) throws -> ImageDataStore {
