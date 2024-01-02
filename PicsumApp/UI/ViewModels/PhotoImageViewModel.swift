@@ -35,8 +35,10 @@ final class PhotoImageViewModel<Image> {
             let data = try? await imageLoader.loadImageData(by: photo.id, width: photoDimension, height: photoDimension)
             let image = data.flatMap(imageConverter)
             
-            didLoadImage?(image)
-            onLoadImage?(false)
+            if !Task.isCancelled {
+                didLoadImage?(image)
+                onLoadImage?(false)
+            }
         }
     }
     
