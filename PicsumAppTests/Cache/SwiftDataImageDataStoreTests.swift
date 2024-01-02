@@ -13,12 +13,12 @@ import SwiftData
 final class SwiftDataImage {
     var data: Data
     var timestamp: Date
-    var url: URL
+    @Attribute(.unique) var url: String
     
     init(data: Data, timestamp: Date, url: URL) {
         self.data = data
         self.timestamp = timestamp
-        self.url = url
+        self.url = url.absoluteString
     }
 }
 
@@ -34,7 +34,8 @@ final actor SwiftDataImageDataStore: ModelActor, ImageDataStore {
     }
     
     func retrieveData(for url: URL) throws -> Data? {
-        var descriptor = FetchDescriptor<SwiftDataImage>()
+        let predicate = #Predicate<SwiftDataImage> { $0.url == url.absoluteString }
+        var descriptor = FetchDescriptor<SwiftDataImage>(predicate: predicate)
         descriptor.fetchLimit = 1
         return try modelContext.fetch(descriptor).first?.data
     }
@@ -93,12 +94,34 @@ final class SwiftDataImageDataStoreTests: XCTestCase {
         XCTAssertEqual(lastRetrievedData, data)
     }
     
+    func test_insert_overridesOldDataWithNewData() async throws {
+        let sut = try makeSUT()
+        let overrideDataURL = URL(string: "https://override-data-url.com")!
+        let oldDataInput = DataInput(data: Data("old data".utf8), url: overrideDataURL)
+        let newDataInput = DataInput(data: Data("new data".utf8), url: overrideDataURL)
+        let otherDataInput = DataInput(data: Data("other data".utf8), url: URL(string: "https://other-data-url.com")!)
+        
+        try await insert(inputs: [otherDataInput, oldDataInput, newDataInput], into: sut)
+        let retrievedData = try await sut.retrieveData(for: overrideDataURL)
+        let retrievedOtherData = try await sut.retrieveData(for: otherDataInput.url)
+        
+        XCTAssertEqual(retrievedData, newDataInput.data)
+        XCTAssertEqual(retrievedOtherData, otherDataInput.data)
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(file: StaticString = #filePath, line: UInt = #line) throws -> ImageDataStore {
         let sut = try SwiftDataImageDataStore(configuration: .init(isStoredInMemoryOnly: true))
         trackForMemoryLeaks(sut, file: file, line: line)
         return sut
+    }
+    
+    private func insert(inputs: [DataInput], into sut: ImageDataStore,
+                        file: StaticString = #filePath, line: UInt = #line) async throws {
+        for input in inputs {
+            try await insert(data: input.data, timestamp: input.date, url: input.url, to: sut, file: file, line: line)
+        }
     }
     
     private func insert(data: Data, timestamp: Date = Date(), url: URL, to sut: ImageDataStore,
