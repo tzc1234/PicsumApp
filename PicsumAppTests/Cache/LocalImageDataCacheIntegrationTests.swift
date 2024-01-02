@@ -74,7 +74,7 @@ final class LocalImageDataCacheIntegrationTests: XCTestCase {
     
     private func deleteStoreArtifacts() async {
         try? FileManager.default.removeItem(at: storeURLForTest())
-        try? await Task.sleep(for: .seconds(0.01)) // Give a little bit time buffer for delete store artifacts
+        try? await Task.sleep(for: .seconds(0.01)) // Give a little bit time buffer for delete store artefacts
     }
     
     private func storeURLForTest() -> URL {

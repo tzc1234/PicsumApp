@@ -12,12 +12,12 @@ class ContextDidSaveNotificationSpy {
     
     init() {
         NotificationCenter.default.addObserver(self,
-                                               selector: #selector(contextDisSave),
+                                               selector: #selector(contextDidSave),
                                                name: .NSManagedObjectContextDidSave,
                                                object: nil)
     }
     
-    @objc private func contextDisSave() {
+    @objc private func contextDidSave() {
         saveCount += 1
     }
     
