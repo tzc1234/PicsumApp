@@ -79,31 +79,31 @@ final class SwiftDataImageDataStoreTests: XCTestCase {
         XCTAssertNil(afterDeleteAllData)
     }
     
-    func test_deleteAll_removesDataLessThanOrEqualToTheDate() async throws {
+    func test_deleteAll_removesExpiredAndOnExpirationData() async throws {
         let sut = try makeSUT()
         let date = Date()
-        let lessThanDateInput = DataInput(
-            data: Data("less than date data".utf8),
+        let expiredInput = DataInput(
+            data: Data("expired data".utf8),
             date: date.adding(seconds: -1),
-            url: URL(string: "https://less-than-date-data-url.com")!)
-        let equalToDateInput = DataInput(
-            data: Data("equal to date data".utf8),
+            url: URL(string: "https://expired-data-url.com")!)
+        let onExpirationInput = DataInput(
+            data: Data("on expiration data".utf8),
             date: date,
-            url: URL(string: "https://equal-to-date-data-url.com")!)
-        let moreThanDateInput = DataInput(
-            data: Data("more than date data".utf8),
+            url: URL(string: "https://on-expiration-data-url.com")!)
+        let nonExpiredInput = DataInput(
+            data: Data("non expired data".utf8),
             date: date.adding(seconds: 1),
-            url: URL(string: "https://more-than-date-data-url.com")!)
+            url: URL(string: "https://non-expired-data-url.com")!)
         
-        try await insert(inputs: [lessThanDateInput, equalToDateInput, moreThanDateInput], into: sut)
+        try await insert(inputs: [expiredInput, onExpirationInput, nonExpiredInput], into: sut)
         try await deleteAllData(in: sut, until: date)
-        let lessThanDateData = try await sut.retrieveData(for: lessThanDateInput.url)
-        let equalToDateData = try await sut.retrieveData(for: equalToDateInput.url)
-        let moreThanDateData = try await sut.retrieveData(for: moreThanDateInput.url)
+        let expiredData = try await sut.retrieveData(for: expiredInput.url)
+        let onExpirationData = try await sut.retrieveData(for: onExpirationInput.url)
+        let nonExpiredData = try await sut.retrieveData(for: nonExpiredInput.url)
         
-        XCTAssertNil(lessThanDateData)
-        XCTAssertNil(equalToDateData)
-        XCTAssertEqual(moreThanDateData, moreThanDateInput.data)
+        XCTAssertNil(expiredData)
+        XCTAssertNil(onExpirationData)
+        XCTAssertEqual(nonExpiredData, nonExpiredInput.data)
     }
     
     // MARK: - Helpers
