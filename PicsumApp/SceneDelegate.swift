@@ -17,9 +17,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         try? SwiftDataImageDataStore(configuration: .init(url: storeURL))
     }()
     private lazy var localImageDataLoader: LocalImageDataLoader? = {
-        guard let store = imageDataStore else { return nil }
-        
-        return LocalImageDataLoader(store: store)
+        imageDataStore.map { LocalImageDataLoader(store: $0) }
     }()
     
     var window: UIWindow?
