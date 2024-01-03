@@ -14,7 +14,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     private lazy var storeURL = NSPersistentContainer.defaultDirectoryURL().appending(path: "data-store.sqlite")
     private lazy var imageDataStore = {
-        try? CoreDataImageDataStore(storeURL: storeURL)
+        try? SwiftDataImageDataStore(configuration: .init(url: storeURL))
     }()
     private lazy var localImageDataLoader: LocalImageDataLoader? = {
         guard let store = imageDataStore else { return nil }
