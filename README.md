@@ -7,7 +7,7 @@
 ## Frameworks
 1. Async/await
 2. URLSession for [Picsum API](https://picsum.photos/)
-3. Core Data for image data caching
+3. ~~Core Data~~ SwiftData for image data caching
 4. UIKit
 5. XCTest
 
