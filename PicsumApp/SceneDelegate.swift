@@ -34,7 +34,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     func configureWindow() {
         let photosLoader = RemotePhotosLoader(client: client)
-        let imageDataLoader = makeImageLoader()
+        let imageDataLoader = makeImageDataLoader()
         let photoImageLoader = PhotoImageDataLoaderAdapter(imageDataLoader: imageDataLoader)
         let paginatedPhotosLoaderAdapter = PaginatedPhotosLoaderAdapter(loader: photosLoader)
         let viewModel = PhotoListViewModel(paginatedPhotos: {
@@ -58,7 +58,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         }
     }
     
-    private func makeImageLoader() -> ImageDataLoader {
+    private func makeImageDataLoader() -> ImageDataLoader {
         guard let localImageDataLoader else {
             return remoteImageDataLoader
         }
