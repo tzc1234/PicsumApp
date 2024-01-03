@@ -24,12 +24,10 @@ final class SwiftDataImage {
 final actor SwiftDataImageDataStore: ModelActor, ImageDataStore {
     let modelContainer: ModelContainer
     let modelExecutor: ModelExecutor
-    private let modelContext: ModelContext
     
     init(configuration: ModelConfiguration) throws {
         self.modelContainer = try ModelContainer(for: SwiftDataImage.self, configurations: configuration)
-        self.modelContext = ModelContext(modelContainer)
-        self.modelExecutor = DefaultSerialModelExecutor(modelContext: modelContext)
+        self.modelExecutor = DefaultSerialModelExecutor(modelContext: ModelContext(modelContainer))
     }
     
     func retrieveData(for url: URL) throws -> Data? {
