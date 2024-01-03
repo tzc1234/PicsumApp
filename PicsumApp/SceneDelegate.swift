@@ -13,7 +13,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     private lazy var remoteImageDataLoader = RemoteImageDataLoader(client: client)
     
     private lazy var storeURL = NSPersistentContainer.defaultDirectoryURL().appending(path: "data-store.sqlite")
-    private lazy var imageDataStore = try? SwiftDataImageDataStore(configuration: .init(url: storeURL))
+    private lazy var imageDataStore = try? SwiftDataImageDataStore(url: storeURL)
     private lazy var localImageDataLoader = imageDataStore.map { LocalImageDataLoader(store: $0) }
     
     var window: UIWindow?

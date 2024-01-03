@@ -76,7 +76,7 @@ final class LocalImageDataCacheIntegrationTests: XCTestCase {
     private func makeSUT(currentDate: @escaping () -> Date = Date.init,
                          file: StaticString = #filePath,
                          line: UInt = #line) throws -> LocalImageDataLoader {
-        let store = try SwiftDataImageDataStore(configuration: .init(url: storeURLForTest()))
+        let store = try SwiftDataImageDataStore(url: storeURLForTest())
         let sut = LocalImageDataLoader(store: store, currentDate: currentDate)
         trackForMemoryLeaks(store, file: file, line: line)
         trackForMemoryLeaks(sut, file: file, line: line)

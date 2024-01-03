@@ -109,7 +109,7 @@ final class SwiftDataImageDataStoreTests: XCTestCase {
     // MARK: - Helpers
     
     private func makeSUT(file: StaticString = #filePath, line: UInt = #line) throws -> ImageDataStore {
-        let sut = try SwiftDataImageDataStore(configuration: .init(isStoredInMemoryOnly: true))
+        let sut = try SwiftDataImageDataStore(isStoredInMemoryOnly: true)
         trackForMemoryLeaks(sut, file: file, line: line)
         return sut
     }

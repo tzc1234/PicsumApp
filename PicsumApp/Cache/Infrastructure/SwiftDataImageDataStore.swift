@@ -25,7 +25,15 @@ final actor SwiftDataImageDataStore: ModelActor, ImageDataStore {
     let modelContainer: ModelContainer
     let modelExecutor: ModelExecutor
     
-    init(configuration: ModelConfiguration) throws {
+    init(url: URL) throws {
+        try self.init(configuration: .init(url: url))
+    }
+    
+    init(isStoredInMemoryOnly: Bool) throws {
+        try self.init(configuration: .init(isStoredInMemoryOnly: isStoredInMemoryOnly))
+    }
+    
+    private init(configuration: ModelConfiguration) throws {
         self.modelContainer = try ModelContainer(for: SwiftDataImage.self, configurations: configuration)
         self.modelExecutor = DefaultSerialModelExecutor(modelContext: ModelContext(modelContainer))
     }
