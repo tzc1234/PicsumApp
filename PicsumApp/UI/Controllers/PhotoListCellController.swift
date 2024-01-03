@@ -23,13 +23,14 @@ final class PhotoListCellController {
     }
     
     func cell(in collectionView: UICollectionView, for indexPath: IndexPath) -> PhotoListCell {
-        cell = collectionView.dequeueReusableCell(
+        let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: PhotoListCell.identifier,
-            for: indexPath) as? PhotoListCell
-        cell?.imageView.image = nil
+            for: indexPath) as! PhotoListCell
+        self.cell = cell
+        cell.imageView.image = nil
         setupBindings()
         load()
-        return cell!
+        return cell
     }
     
     private func setupBindings() {
