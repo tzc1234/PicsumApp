@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import CoreData
 
 class ContextDidSaveNotificationSpy {
     private(set) var saveCount = 0
