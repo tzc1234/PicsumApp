@@ -60,12 +60,6 @@ extension PhotoListViewController {
         return collectionView.cellForItem(at: indexPath) as? PhotoListCell
     }
     
-    func renderedImage(at item: Int) async -> Data? {
-        let view = simulatePhotoViewVisible(at: item)
-        await completeImageDataLoading(at: item)
-        return view?.renderedImage
-    }
-    
     @discardableResult
     func simulatePhotoViewVisible(at item: Int) -> PhotoListCell? {
         let ds = collectionView.dataSource
@@ -105,6 +99,19 @@ extension PhotoListViewController {
         let indexPath = IndexPath(item: item, section: photoViewSection)
         let ds = collectionView.dataSource as? UICollectionViewDiffableDataSource<Int, PhotoListCellController>
         return ds?.itemIdentifier(for: indexPath)
+    }
+}
+
+extension PhotoListViewController {
+    func loadMore() async {
+        simulateUserInitiatedLoadMore()
+        await completeMorePhotosLoading()
+    }
+    
+    func renderedImage(at item: Int) async -> Data? {
+        let view = simulatePhotoViewVisible(at: item)
+        await completeImageDataLoading(at: item)
+        return view?.renderedImage
     }
 }
 

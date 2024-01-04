@@ -10,12 +10,19 @@ import XCTest
 
 final class PhotoListAcceptanceTests: XCTestCase {
     @MainActor
-    func test_onLaunch_displaysPhotosWhenUserHasConnectivityWithEmptyImageCache() async throws {
+    func test_onLaunch_displaysPhotosWhenUserHasConnectivity() async throws {
         let photos = try await onLaunch(.success(makeResponse), imageDataStore: .empty)
         
         XCTAssertEqual(photos.numberOfRenderedPhotoView(), 2)
         await assertImageData(for: photos, at: 0, asExpected: imageData0())
         await assertImageData(for: photos, at: 1, asExpected: imageData1())
+        
+        await photos.loadMore()
+        
+        XCTAssertEqual(photos.numberOfRenderedPhotoView(), 3)
+        await assertImageData(for: photos, at: 0, asExpected: imageData0())
+        await assertImageData(for: photos, at: 1, asExpected: imageData1())
+        await assertImageData(for: photos, at: 2, asExpected: imageData2())
     }
     
     // MARK: - Helpers
@@ -55,11 +62,17 @@ final class PhotoListAcceptanceTests: XCTestCase {
         case "/v2/list" where url.query()?.contains("page=1") == true:
             return page1Data()
             
-        case downloadURL(byId: "0").path():
+        case "/v2/list" where url.query()?.contains("page=2") == true:
+            return page2Data()
+            
+        case downloadURLFor(id: "0").path():
             return imageData0()
             
-        case downloadURL(byId: "1").path():
+        case downloadURLFor(id: "1").path():
             return imageData1()
+            
+        case downloadURLFor(id: "2").path():
+            return imageData2()
             
         default:
             return Data()
@@ -67,14 +80,14 @@ final class PhotoListAcceptanceTests: XCTestCase {
     }
     
     private func page1Data() -> Data {
-        let json: [[String: Any]] = [
+        [
             [
                 "id": "0",
                 "author": "author0",
                 "width": 0,
                 "height": 0,
                 "url": "https://photo-0.com",
-                "download_url": downloadURL(byId: "0").absoluteString
+                "download_url": downloadURLFor(id: "0").absoluteString
             ],
             [
                 "id": "1",
@@ -82,13 +95,25 @@ final class PhotoListAcceptanceTests: XCTestCase {
                 "width": 1,
                 "height": 1,
                 "url": "https://photo-1.com",
-                "download_url": downloadURL(byId: "1").absoluteString
+                "download_url": downloadURLFor(id: "1").absoluteString
             ]
-        ]
-        return try! JSONSerialization.data(withJSONObject: json)
+        ].toData()
     }
     
-    private func downloadURL(byId id: String, width: Int = .photoDimension, height: Int = .photoDimension) -> URL {
+    private func page2Data() -> Data {
+        [
+            [
+                "id": "2",
+                "author": "author2",
+                "width": 2,
+                "height": 2,
+                "url": "https://photo-2.com",
+                "download_url": downloadURLFor(id: "2").absoluteString
+            ]
+        ].toData()
+    }
+    
+    private func downloadURLFor(id: String, width: Int = .photoDimension, height: Int = .photoDimension) -> URL {
         URL(string: "https://picsum.photos/id/\(id)/\(width)/\(height)")!
     }
     
@@ -98,6 +123,16 @@ final class PhotoListAcceptanceTests: XCTestCase {
     
     private func imageData1() -> Data {
         UIImage.makeData(withColor: .green)
+    }
+    
+    private func imageData2() -> Data {
+        UIImage.makeData(withColor: .blue)
+    }
+}
+
+extension [[String: Any]] {
+    func toData() -> Data {
+        try! JSONSerialization.data(withJSONObject: self)
     }
 }
 
