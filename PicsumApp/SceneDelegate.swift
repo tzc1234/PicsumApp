@@ -8,12 +8,18 @@
 import UIKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
-    private lazy var client = URLSessionHTTPClient(session: .shared)
+    private lazy var client: HTTPClient = URLSessionHTTPClient(session: .shared)
     private lazy var remoteImageDataLoader = RemoteImageDataLoader(client: client)
     
     private lazy var storeURL = URL.applicationSupportDirectory.appending(path: "data-store.sqlite")
-    private lazy var imageDataStore = try? SwiftDataImageDataStore(url: storeURL)
+    private lazy var imageDataStore: ImageDataStore? = try? SwiftDataImageDataStore(url: storeURL)
     private lazy var localImageDataLoader = imageDataStore.map { LocalImageDataLoader(store: $0) }
+    
+    convenience init(client: HTTPClient, imageDataStore: ImageDataStore) {
+        self.init()
+        self.client = client
+        self.imageDataStore = imageDataStore
+    }
     
     var window: UIWindow?
     private var navigationController: UINavigationController?

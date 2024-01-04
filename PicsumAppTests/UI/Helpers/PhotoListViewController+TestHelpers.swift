@@ -60,6 +60,12 @@ extension PhotoListViewController {
         return collectionView.cellForItem(at: indexPath) as? PhotoListCell
     }
     
+    func renderedImage(at item: Int) async -> Data? {
+        let view = simulatePhotoViewVisible(at: item)
+        await completeImageDataLoading(at: item)
+        return view?.renderedImage
+    }
+    
     @discardableResult
     func simulatePhotoViewVisible(at item: Int) -> PhotoListCell? {
         let ds = collectionView.dataSource
