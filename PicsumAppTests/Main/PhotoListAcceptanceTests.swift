@@ -11,7 +11,7 @@ import XCTest
 final class PhotoListAcceptanceTests: XCTestCase {
     @MainActor
     func test_onLaunch_displaysPhotosWhenUserHasConnectivity() async throws {
-        let photos = try await onLaunch(.success(response))
+        let photos = try await onLaunch(.online(response))
         
         XCTAssertEqual(photos.numberOfRenderedPhotoView(), 2)
         await assertImageData(for: photos, at: 0, asExpected: imageData0())
@@ -27,7 +27,7 @@ final class PhotoListAcceptanceTests: XCTestCase {
     
     @MainActor
     func test_onLaunch_doesNotDisplayPhotosWhenUserHasNoConnectivity() async throws {
-        let photos = try await onLaunch(.failure)
+        let photos = try await onLaunch(.offline)
         
         XCTAssertEqual(photos.numberOfRenderedPhotoView(), 0)
     }
@@ -35,12 +35,12 @@ final class PhotoListAcceptanceTests: XCTestCase {
     @MainActor
     func test_onLaunch_displaysCachedPhotoImagesWhenCacheExisted() async throws {
         let store = InMemoryImageDataStore.empty
-        let photosWithoutCachedImage = try await onLaunch(.success(response), imageDataStore: store)
+        let photosWithoutCachedImage = try await onLaunch(.online(response), imageDataStore: store)
         
         await assertImageData(for: photosWithoutCachedImage, at: 0, asExpected: imageData0())
         await assertImageData(for: photosWithoutCachedImage, at: 1, asExpected: imageData1())
         
-        let photosWithCachedImage = try await onLaunch(.success(responseWithoutImageData), imageDataStore: store)
+        let photosWithCachedImage = try await onLaunch(.online(responseWithoutImageData), imageDataStore: store)
         
         await assertImageData(for: photosWithCachedImage, at: 0, asExpected: imageData0())
         await assertImageData(for: photosWithCachedImage, at: 1, asExpected: imageData1())
@@ -66,7 +66,7 @@ final class PhotoListAcceptanceTests: XCTestCase {
     
     @MainActor
     func test_selectPhoto_showsPhotoDetail() async throws {
-        let scene = scene(.success(response)) // Have to hold the reference of scene
+        let scene = scene(.online(response)) // Have to hold the reference of scene
         let photos = try await onLaunch(scene)
         
         photos.selectPhoto(at: 0)
@@ -106,7 +106,7 @@ final class PhotoListAcceptanceTests: XCTestCase {
     
     @MainActor
     private func enterBackground(with store: InMemoryImageDataStore) async {
-        let scene = scene(.success(response), imageDataStore: store)
+        let scene = scene(.online(response), imageDataStore: store)
         scene.sceneWillResignActive(UIApplication.shared.connectedScenes.first!)
         try? await Task.sleep(for: .seconds(0.01)) // Give a little bit time buffer for cache invalidation
     }

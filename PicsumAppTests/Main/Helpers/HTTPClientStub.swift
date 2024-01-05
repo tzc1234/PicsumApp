@@ -21,11 +21,11 @@ final class HTTPClientStub: HTTPClient {
         try stub(url)
     }
     
-    static var failure: HTTPClientStub {
+    static var offline: HTTPClientStub {
         .init { _ in throw anyNSError() }
     }
     
-    static func success(_ stub: @escaping Stub) -> HTTPClientStub {
+    static func online(_ stub: @escaping Stub) -> HTTPClientStub {
         .init(stub: stub)
     }
 }
