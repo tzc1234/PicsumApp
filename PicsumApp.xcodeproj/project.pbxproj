@@ -259,6 +259,24 @@
 			path = Helpers;
 			sourceTree = "<group>";
 		};
+		BE4983542B48556100CD03C6 /* Main */ = {
+			isa = PBXGroup;
+			children = (
+				BE756CE02A628EE4000636F0 /* SceneDelegateTests.swift */,
+				BE21A9CE2B46FC6C000385B1 /* PhotoListAcceptanceTests.swift */,
+			);
+			path = Main;
+			sourceTree = "<group>";
+		};
+		BE4983552B48556B00CD03C6 /* Main */ = {
+			isa = PBXGroup;
+			children = (
+				BE6560362A52D4A300CCD5D6 /* AppDelegate.swift */,
+				BE6560382A52D4A300CCD5D6 /* SceneDelegate.swift */,
+			);
+			path = Main;
+			sourceTree = "<group>";
+		};
 		BE5496792A56CFBF00D402A3 /* Endpoints */ = {
 			isa = PBXGroup;
 			children = (
@@ -343,8 +361,7 @@
 				BEC9C5392A5C564B0043B0C9 /* Cache */,
 				BE3635602A5FEACF0039EECD /* UI */,
 				BE36355F2A5FEA520039EECD /* Composition */,
-				BE6560362A52D4A300CCD5D6 /* AppDelegate.swift */,
-				BE6560382A52D4A300CCD5D6 /* SceneDelegate.swift */,
+				BE4983552B48556B00CD03C6 /* Main */,
 				BE65603F2A52D4A400CCD5D6 /* Assets.xcassets */,
 				BE6560412A52D4A400CCD5D6 /* LaunchScreen.storyboard */,
 				BE6560442A52D4A400CCD5D6 /* Info.plist */,
@@ -360,8 +377,7 @@
 				BE5DFCFE2A5C43AF007BD8A7 /* Cache */,
 				BEF0B5292A60054D0024625A /* UI */,
 				BEF0B5282A6004DC0024625A /* Composition */,
-				BE756CE02A628EE4000636F0 /* SceneDelegateTests.swift */,
-				BE21A9CE2B46FC6C000385B1 /* PhotoListAcceptanceTests.swift */,
+				BE4983542B48556100CD03C6 /* Main */,
 			);
 			path = PicsumAppTests;
 			sourceTree = "<group>";
