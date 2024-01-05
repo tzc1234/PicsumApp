@@ -226,28 +226,6 @@ private extension Int {
     static var photoDimension: Int { 600 }
 }
 
-final class HTTPClientStub: HTTPClient {
-    typealias Stub = (URL) throws -> (Data, HTTPURLResponse)
-    
-    private let stub: Stub
-    
-    init(stub: @escaping Stub) {
-        self.stub = stub
-    }
-    
-    func get(from url: URL) async throws -> (Data, HTTPURLResponse) {
-        try stub(url)
-    }
-    
-    static var failure: HTTPClientStub {
-        .init { _ in throw anyNSError() }
-    }
-    
-    static func success(_ stub: @escaping Stub) -> HTTPClientStub {
-        .init(stub: stub)
-    }
-}
-
 final class InMemoryImageDataStore: ImageDataStore {
     typealias Cache = (data: Data, timestamp: Date)
     
