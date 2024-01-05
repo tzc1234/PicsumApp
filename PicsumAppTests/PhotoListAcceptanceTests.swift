@@ -46,23 +46,48 @@ final class PhotoListAcceptanceTests: XCTestCase {
         await assertImageData(for: photosWithCachedImage, at: 1, asExpected: imageData1())
     }
     
+    @MainActor
+    func test_enteringBackground_invalidatesExpiredImageCache() async throws {
+        let store = InMemoryImageDataStore.withExpiredCache
+        let scene = try await scene(.success(response), imageDataStore: store)
+        
+        await enterBackground(scene)
+        
+        XCTAssertTrue(store.imageCache.isEmpty)
+    }
+    
     // MARK: - Helpers
 
+    @MainActor
+    private func scene(_ client: HTTPClientStub,
+                       imageDataStore: InMemoryImageDataStore = .empty,
+                       file: StaticString = #filePath,
+                       line: UInt = #line) async throws -> SceneDelegate {
+        let scene = SceneDelegate(client: client, imageDataStore: imageDataStore)
+        scene.window = UIWindow()
+        scene.configureWindow()
+        
+        return scene
+    }
+    
     @MainActor
     private func onLaunch(_ client: HTTPClientStub,
                           imageDataStore: InMemoryImageDataStore = .empty,
                           file: StaticString = #filePath,
                           line: UInt = #line) async throws -> PhotoListViewController {
-        let scene = SceneDelegate(client: client, imageDataStore: imageDataStore)
-        scene.window = UIWindow()
-        scene.configureWindow()
-        
+        let scene = try await scene(client, imageDataStore: imageDataStore, file: file, line: line)
         let nav = try XCTUnwrap(scene.window?.rootViewController as? UINavigationController)
         let vc = try XCTUnwrap(nav.topViewController as? PhotoListViewController)
         vc.simulateAppearance()
         await vc.completePhotosLoading()
         
         return vc
+    }
+    
+    @MainActor
+    private func enterBackground(_ scene: SceneDelegate) async {
+        scene.sceneWillResignActive(UIApplication.shared.connectedScenes.first!)
+        try? await Task.sleep(for: .seconds(0.01)) // Give a little bit time buffer for cache invalidation
     }
     
     private func assertImageData(for photoList: PhotoListViewController, 
@@ -193,19 +218,29 @@ final class HTTPClientStub: HTTPClient {
 final class InMemoryImageDataStore: ImageDataStore {
     typealias Cache = (data: Data, timestamp: Date)
     
-    private var imageData: [URL: Cache] = [:]
+    private(set) var imageCache: [URL: Cache] = [:]
+    
+    private init(cache: (data: Data, timestamp: Date, url: URL)? = nil) {
+        cache.map { self.imageCache[$0.url] = ($0.data, $0.timestamp) }
+    }
     
     func retrieveData(for url: URL) async throws -> Data? {
-        imageData[url]?.data
+        imageCache[url]?.data
     }
     
     func insert(data: Data, timestamp: Date, for url: URL) async throws {
-        imageData[url] = (data, timestamp)
+        imageCache[url] = (data, timestamp)
     }
     
-    func deleteAllData(until date: Date) async throws {}
+    func deleteAllData(until date: Date) async throws {
+        imageCache = imageCache.filter { _, cache in cache.timestamp > date }
+    }
     
     static var empty: InMemoryImageDataStore {
         .init()
+    }
+    
+    static var withExpiredCache: InMemoryImageDataStore {
+        .init(cache: (anyData(), Date.distantPast, anyURL()))
     }
 }
