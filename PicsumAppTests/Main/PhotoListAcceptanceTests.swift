@@ -77,10 +77,7 @@ final class PhotoListAcceptanceTests: XCTestCase {
     
     // MARK: - Helpers
     
-    private func scene(_ client: HTTPClientStub,
-                       imageDataStore: InMemoryImageDataStore = .empty,
-                       file: StaticString = #filePath,
-                       line: UInt = #line) -> SceneDelegate {
+    private func scene(_ client: HTTPClientStub, imageDataStore: InMemoryImageDataStore = .empty) -> SceneDelegate {
         let scene = SceneDelegate(client: client, imageDataStore: imageDataStore)
         scene.window = UIWindow()
         scene.configureWindow()
@@ -91,8 +88,8 @@ final class PhotoListAcceptanceTests: XCTestCase {
     private func onLaunch(_ scene: SceneDelegate,
                           file: StaticString = #filePath,
                           line: UInt = #line) async throws -> PhotoListViewController {
-        let nav = try XCTUnwrap(scene.window?.rootViewController as? UINavigationController)
-        let vc = try XCTUnwrap(nav.topViewController as? PhotoListViewController)
+        let nav = try XCTUnwrap(scene.window?.rootViewController as? UINavigationController, file: file, line: line)
+        let vc = try XCTUnwrap(nav.topViewController as? PhotoListViewController, file: file, line: line)
         vc.simulateAppearance()
         await vc.completePhotosLoading()
         return vc
@@ -103,8 +100,8 @@ final class PhotoListAcceptanceTests: XCTestCase {
                           imageDataStore: InMemoryImageDataStore = .empty,
                           file: StaticString = #filePath,
                           line: UInt = #line) async throws -> PhotoListViewController {
-        let scene = scene(client, imageDataStore: imageDataStore, file: file, line: line)
-        return try await onLaunch(scene)
+        let scene = scene(client, imageDataStore: imageDataStore)
+        return try await onLaunch(scene, file: file, line: line)
     }
     
     @MainActor
@@ -120,6 +117,7 @@ final class PhotoListAcceptanceTests: XCTestCase {
                                  line: UInt = #line) async {
         await photoDetail.completeImageDataLoading()
         let photoImage = await photoDetail.imageData
+        
         XCTAssertEqual(photoImage, data, file: file, line: line)
     }
     
@@ -129,6 +127,7 @@ final class PhotoListAcceptanceTests: XCTestCase {
                                  file: StaticString = #filePath,
                                  line: UInt = #line) async {
         let photoImage = await photoList.renderedImage(at: item)
+        
         XCTAssertEqual(photoImage, data, file: file, line: line)
     }
     
@@ -216,7 +215,7 @@ final class PhotoListAcceptanceTests: XCTestCase {
     }
 }
 
-extension [[String: Any]] {
+private extension [[String: Any]] {
     func toData() -> Data {
         try! JSONSerialization.data(withJSONObject: self)
     }
