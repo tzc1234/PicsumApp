@@ -11,7 +11,7 @@ import XCTest
 final class PhotoListAcceptanceTests: XCTestCase {
     @MainActor
     func test_onLaunch_displaysPhotosWhenUserHasConnectivity() async throws {
-        let photos = try await onLaunch(.success(makeResponse))
+        let photos = try await onLaunch(.success(response))
         
         XCTAssertEqual(photos.numberOfRenderedPhotoView(), 2)
         await assertImageData(for: photos, at: 0, asExpected: imageData0())
@@ -30,6 +30,20 @@ final class PhotoListAcceptanceTests: XCTestCase {
         let photos = try await onLaunch(.failure)
         
         XCTAssertEqual(photos.numberOfRenderedPhotoView(), 0)
+    }
+    
+    @MainActor
+    func test_onLaunch_displaysCachedPhotoImagesWhenCacheExisted() async throws {
+        let store = InMemoryImageDataStore.empty
+        let photosWithoutCachedImage = try await onLaunch(.success(response), imageDataStore: store)
+        
+        await assertImageData(for: photosWithoutCachedImage, at: 0, asExpected: imageData0())
+        await assertImageData(for: photosWithoutCachedImage, at: 1, asExpected: imageData1())
+        
+        let photosWithCachedImage = try await onLaunch(.success(responseWithoutImageData), imageDataStore: store)
+        
+        await assertImageData(for: photosWithCachedImage, at: 0, asExpected: imageData0())
+        await assertImageData(for: photosWithCachedImage, at: 1, asExpected: imageData1())
     }
     
     // MARK: - Helpers
@@ -60,29 +74,36 @@ final class PhotoListAcceptanceTests: XCTestCase {
         XCTAssertEqual(photoImage, data, file: file, line: line)
     }
     
-    private func makeResponse(for url: URL) -> (Data, HTTPURLResponse) {
-        (makeData(for: url), .ok200Response)
+    private func responseWithoutImageData(for url: URL) -> (Data, HTTPURLResponse) {
+        (pagesData(for: url) ?? Data(), .ok200Response)
     }
     
-    private func makeData(for url: URL) -> Data {
+    private func response(for url: URL) -> (Data, HTTPURLResponse) {
+        let data = pagesData(for: url) ?? imagesData(for: url) ?? Data()
+        return (data, .ok200Response)
+    }
+    
+    private func pagesData(for url: URL) -> Data? {
         switch url.path() {
         case "/v2/list" where url.query()?.contains("page=1") == true:
             return page1Data()
-            
         case "/v2/list" where url.query()?.contains("page=2") == true:
             return page2Data()
-            
+        default:
+            return nil
+        }
+    }
+    
+    private func imagesData(for url: URL) -> Data? {
+        switch url.path() {
         case downloadURLFor(id: "0").path():
             return imageData0()
-            
         case downloadURLFor(id: "1").path():
             return imageData1()
-            
         case downloadURLFor(id: "2").path():
             return imageData2()
-            
         default:
-            return Data()
+            return nil
         }
     }
     
@@ -178,7 +199,9 @@ final class InMemoryImageDataStore: ImageDataStore {
         imageData[url]?.data
     }
     
-    func insert(data: Data, timestamp: Date, for url: URL) async throws {}
+    func insert(data: Data, timestamp: Date, for url: URL) async throws {
+        imageData[url] = (data, timestamp)
+    }
     
     func deleteAllData(until date: Date) async throws {}
     
