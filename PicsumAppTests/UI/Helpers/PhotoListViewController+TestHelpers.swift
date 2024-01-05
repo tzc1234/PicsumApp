@@ -113,6 +113,10 @@ extension PhotoListViewController {
         await completeImageDataLoading(at: item)
         return view?.renderedImage
     }
+    
+    func selectPhoto(at item: Int) {
+        simulatePhotoViewSelected(at: item)
+    }
 }
 
 private class DraggingScrollView: UIScrollView {

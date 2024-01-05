@@ -49,24 +49,30 @@ final class PhotoListAcceptanceTests: XCTestCase {
     @MainActor
     func test_enteringBackground_invalidatesExpiredImageCache() async throws {
         let store = InMemoryImageDataStore.withExpiredCache
-        let scene = try await scene(.success(response), imageDataStore: store)
         
-        await enterBackground(scene)
+        await enterBackground(with: store)
         
         XCTAssertTrue(store.imageCache.isEmpty)
     }
     
-    // MARK: - Helpers
-
     @MainActor
+    func test_enteringBackground_doesNotInvalidateNonExpiredImageCache() async throws {
+        let store = InMemoryImageDataStore.withNonExpiredCache
+        
+        await enterBackground(with: store)
+        
+        XCTAssertFalse(store.imageCache.isEmpty)
+    }
+    
+    // MARK: - Helpers
+    
     private func scene(_ client: HTTPClientStub,
                        imageDataStore: InMemoryImageDataStore = .empty,
                        file: StaticString = #filePath,
-                       line: UInt = #line) async throws -> SceneDelegate {
+                       line: UInt = #line) -> SceneDelegate {
         let scene = SceneDelegate(client: client, imageDataStore: imageDataStore)
         scene.window = UIWindow()
         scene.configureWindow()
-        
         return scene
     }
     
@@ -75,7 +81,7 @@ final class PhotoListAcceptanceTests: XCTestCase {
                           imageDataStore: InMemoryImageDataStore = .empty,
                           file: StaticString = #filePath,
                           line: UInt = #line) async throws -> PhotoListViewController {
-        let scene = try await scene(client, imageDataStore: imageDataStore, file: file, line: line)
+        let scene = scene(client, imageDataStore: imageDataStore, file: file, line: line)
         let nav = try XCTUnwrap(scene.window?.rootViewController as? UINavigationController)
         let vc = try XCTUnwrap(nav.topViewController as? PhotoListViewController)
         vc.simulateAppearance()
@@ -85,7 +91,8 @@ final class PhotoListAcceptanceTests: XCTestCase {
     }
     
     @MainActor
-    private func enterBackground(_ scene: SceneDelegate) async {
+    private func enterBackground(with store: InMemoryImageDataStore) async {
+        let scene = scene(.success(response), imageDataStore: store)
         scene.sceneWillResignActive(UIApplication.shared.connectedScenes.first!)
         try? await Task.sleep(for: .seconds(0.01)) // Give a little bit time buffer for cache invalidation
     }
@@ -242,5 +249,9 @@ final class InMemoryImageDataStore: ImageDataStore {
     
     static var withExpiredCache: InMemoryImageDataStore {
         .init(cache: (anyData(), Date.distantPast, anyURL()))
+    }
+    
+    static var withNonExpiredCache: InMemoryImageDataStore {
+        .init(cache: (anyData(), Date.distantFuture, anyURL()))
     }
 }
