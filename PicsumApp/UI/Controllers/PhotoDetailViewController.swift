@@ -126,7 +126,8 @@ final class PhotoDetailViewController: UIViewController {
         stackView.addArrangedSubview(authorLabel)
         stackView.addArrangedSubview(webURLButton)
         
-        let imageViewHeight = CGFloat(viewModel.height) * UIScreen.main.bounds.width / CGFloat(viewModel.width)
+        let width = viewModel.width == 0 ? 1 : viewModel.width
+        let imageViewHeight = CGFloat(viewModel.height) * UIScreen.main.bounds.width / CGFloat(width)
         
         NSLayoutConstraint.activate([
             imageContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),

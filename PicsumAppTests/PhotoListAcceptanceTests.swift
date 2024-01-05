@@ -64,6 +64,17 @@ final class PhotoListAcceptanceTests: XCTestCase {
         XCTAssertFalse(store.imageCache.isEmpty)
     }
     
+    @MainActor
+    func test_selectPhoto_showsPhotoDetail() async throws {
+        let scene = scene(.success(response)) // Have to hold the reference of scene
+        let photos = try await onLaunch(scene)
+        
+        photos.selectPhoto(at: 0)
+        
+        let photoDetail = try XCTUnwrap(photos.presentedViewController as? PhotoDetailViewController)
+        await assertImageData(for: photoDetail, asExpected: imageData0())
+    }
+    
     // MARK: - Helpers
     
     private func scene(_ client: HTTPClientStub,
@@ -77,17 +88,23 @@ final class PhotoListAcceptanceTests: XCTestCase {
     }
     
     @MainActor
+    private func onLaunch(_ scene: SceneDelegate,
+                          file: StaticString = #filePath,
+                          line: UInt = #line) async throws -> PhotoListViewController {
+        let nav = try XCTUnwrap(scene.window?.rootViewController as? UINavigationController)
+        let vc = try XCTUnwrap(nav.topViewController as? PhotoListViewController)
+        vc.simulateAppearance()
+        await vc.completePhotosLoading()
+        return vc
+    }
+    
+    @MainActor
     private func onLaunch(_ client: HTTPClientStub,
                           imageDataStore: InMemoryImageDataStore = .empty,
                           file: StaticString = #filePath,
                           line: UInt = #line) async throws -> PhotoListViewController {
         let scene = scene(client, imageDataStore: imageDataStore, file: file, line: line)
-        let nav = try XCTUnwrap(scene.window?.rootViewController as? UINavigationController)
-        let vc = try XCTUnwrap(nav.topViewController as? PhotoListViewController)
-        vc.simulateAppearance()
-        await vc.completePhotosLoading()
-        
-        return vc
+        return try await onLaunch(scene)
     }
     
     @MainActor
@@ -95,6 +112,15 @@ final class PhotoListAcceptanceTests: XCTestCase {
         let scene = scene(.success(response), imageDataStore: store)
         scene.sceneWillResignActive(UIApplication.shared.connectedScenes.first!)
         try? await Task.sleep(for: .seconds(0.01)) // Give a little bit time buffer for cache invalidation
+    }
+    
+    private func assertImageData(for photoDetail: PhotoDetailViewController,
+                                 asExpected data: Data,
+                                 file: StaticString = #filePath,
+                                 line: UInt = #line) async {
+        await photoDetail.completeImageDataLoading()
+        let photoImage = await photoDetail.imageData
+        XCTAssertEqual(photoImage, data, file: file, line: line)
     }
     
     private func assertImageData(for photoList: PhotoListViewController, 
