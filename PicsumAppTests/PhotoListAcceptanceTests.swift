@@ -11,7 +11,7 @@ import XCTest
 final class PhotoListAcceptanceTests: XCTestCase {
     @MainActor
     func test_onLaunch_displaysPhotosWhenUserHasConnectivity() async throws {
-        let photos = try await onLaunch(.success(makeResponse), imageDataStore: .empty)
+        let photos = try await onLaunch(.success(makeResponse))
         
         XCTAssertEqual(photos.numberOfRenderedPhotoView(), 2)
         await assertImageData(for: photos, at: 0, asExpected: imageData0())
@@ -25,11 +25,18 @@ final class PhotoListAcceptanceTests: XCTestCase {
         await assertImageData(for: photos, at: 2, asExpected: imageData2())
     }
     
+    @MainActor
+    func test_onLaunch_doesNotDisplayPhotosWhenUserHasNoConnectivity() async throws {
+        let photos = try await onLaunch(.failure)
+        
+        XCTAssertEqual(photos.numberOfRenderedPhotoView(), 0)
+    }
+    
     // MARK: - Helpers
 
     @MainActor
     private func onLaunch(_ client: HTTPClientStub,
-                          imageDataStore: InMemoryImageDataStore,
+                          imageDataStore: InMemoryImageDataStore = .empty,
                           file: StaticString = #filePath,
                           line: UInt = #line) async throws -> PhotoListViewController {
         let scene = SceneDelegate(client: client, imageDataStore: imageDataStore)
