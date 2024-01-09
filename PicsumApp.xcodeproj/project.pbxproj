@@ -83,6 +83,7 @@
 		BEF6E38D2A645D24004C6511 /* PhotoDetailComposer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEF6E38C2A645D24004C6511 /* PhotoDetailComposer.swift */; };
 		BEF6E38F2A645E46004C6511 /* PhotoDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEF6E38E2A645E46004C6511 /* PhotoDetailViewModel.swift */; };
 		BEF751D62B4D5DEB00F49FD7 /* PhotoDetailPresentationAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEF751D52B4D5DEB00F49FD7 /* PhotoDetailPresentationAdapter.swift */; };
+		BEF751D82B4D874300F49FD7 /* PhotoImagePresentationAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEF751D72B4D874300F49FD7 /* PhotoImagePresentationAdapter.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -176,6 +177,7 @@
 		BEF6E38C2A645D24004C6511 /* PhotoDetailComposer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoDetailComposer.swift; sourceTree = "<group>"; };
 		BEF6E38E2A645E46004C6511 /* PhotoDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoDetailViewModel.swift; sourceTree = "<group>"; };
 		BEF751D52B4D5DEB00F49FD7 /* PhotoDetailPresentationAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoDetailPresentationAdapter.swift; sourceTree = "<group>"; };
+		BEF751D72B4D874300F49FD7 /* PhotoImagePresentationAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoImagePresentationAdapter.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -216,6 +218,7 @@
 				BEF6E38C2A645D24004C6511 /* PhotoDetailComposer.swift */,
 				BEC368672B331A6B001888E0 /* PaginatedPhotosLoaderAdapter.swift */,
 				BEF751D52B4D5DEB00F49FD7 /* PhotoDetailPresentationAdapter.swift */,
+				BEF751D72B4D874300F49FD7 /* PhotoImagePresentationAdapter.swift */,
 			);
 			path = Composition;
 			sourceTree = "<group>";
@@ -642,6 +645,7 @@
 				BE5496802A5702C900D402A3 /* HTTPClient.swift in Sources */,
 				BE5496842A5705E000D402A3 /* PhotosResponseConverter.swift in Sources */,
 				BEF6E38D2A645D24004C6511 /* PhotoDetailComposer.swift in Sources */,
+				BEF751D82B4D874300F49FD7 /* PhotoImagePresentationAdapter.swift in Sources */,
 				BE6560392A52D4A300CCD5D6 /* SceneDelegate.swift in Sources */,
 				BE4876D82A542E4900F6AE3F /* PhotoListCell.swift in Sources */,
 				BEC368682B331A6B001888E0 /* PaginatedPhotosLoaderAdapter.swift in Sources */,

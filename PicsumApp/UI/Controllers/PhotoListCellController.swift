@@ -7,18 +7,31 @@
 
 import UIKit
 
+protocol PhotoListCellControllerDelegate {
+    var task: Task<Void, Never>? { get }
+    func loadImage()
+    func cancelLoad()
+}
+
 final class PhotoListCellController {
-    private var cell: PhotoListCell?
+    private(set) var cell: PhotoListCell?
     
     var loadImageTask: Task<Void, Never>? {
-        viewModel.imageDataTask
+        delegate.task
     }
     
-    private let viewModel: PhotoImageViewModel<UIImage>
+    private let author: String
+    private let delegate: PhotoListCellControllerDelegate
+    private let setupBindings: (PhotoListCellController) -> Void
     let selection: () -> Void
     
-    init(viewModel: PhotoImageViewModel<UIImage>, selection: @escaping () -> Void) {
-        self.viewModel = viewModel
+    init(author: String,
+         delegate: PhotoListCellControllerDelegate,
+         setupBindings: @escaping (PhotoListCellController) -> Void,
+         selection: @escaping () -> Void) {
+        self.author = author
+        self.delegate = delegate
+        self.setupBindings = setupBindings
         self.selection = selection
     }
     
@@ -28,19 +41,9 @@ final class PhotoListCellController {
             for: indexPath) as! PhotoListCell
         self.cell = cell
         cell.imageView.image = nil
-        setupBindings()
+        setupBindings(self)
         load()
         return cell
-    }
-    
-    private func setupBindings() {
-        viewModel.onLoadImage = { [weak self] isLoading in
-            self?.cell?.imageContainerView.isShimmering = isLoading
-        }
-        
-        viewModel.didLoadImage = { [weak self] image in
-            self?.cell?.imageView.image = image
-        }
     }
     
     func load(for cell: UICollectionViewCell) {
@@ -51,13 +54,13 @@ final class PhotoListCellController {
     }
     
     private func load() {
-        cell?.authorLabel.text = viewModel.author
-        viewModel.loadImage()
+        cell?.authorLabel.text = author
+        delegate.loadImage()
     }
     
     func cancelLoad() {
         releaseForReuse()
-        viewModel.cancelLoad()
+        delegate.cancelLoad()
     }
     
     private func releaseForReuse() {
