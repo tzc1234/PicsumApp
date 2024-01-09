@@ -30,30 +30,7 @@ enum PhotoListComposer {
                                         imageLoader: PhotoImageDataLoader,
                                         selection: @escaping (Photo) -> Void) -> [PhotoListCellController] {
         photos.map { photo in
-            let viewModel = PhotoImageViewModel<UIImage>()
-            let adapter = PhotoImagePresentationAdapter(
-                photoId: photo.id,
-                viewModel: viewModel,
-                imageLoader: imageLoader,
-                imageConverter: UIImage.init)
-            return PhotoListCellController(
-                author: photo.author,
-                delegate: adapter,
-                setupBindings: { vc in
-                    setupImageViewBindingsBetween(viewModel: viewModel, viewController: vc)
-                },
-                selection: { selection(photo) })
-        }
-    }
-    
-    private static func setupImageViewBindingsBetween(viewModel: PhotoImageViewModel<UIImage>,
-                                                      viewController: PhotoListCellController) {
-        viewModel.onLoadImage = { [weak viewController] isLoading in
-            viewController?.cell?.imageContainerView.isShimmering = isLoading
-        }
-        
-        viewModel.didLoadImage = { [weak viewController] image in
-            viewController?.cell?.imageView.image = image
+            PhotoViewComposer.composerWith(photo: photo, imageLoader: imageLoader, selection: { selection(photo) })
         }
     }
 }

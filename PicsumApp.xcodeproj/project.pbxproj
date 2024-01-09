@@ -84,6 +84,7 @@
 		BEF6E38F2A645E46004C6511 /* PhotoDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEF6E38E2A645E46004C6511 /* PhotoDetailViewModel.swift */; };
 		BEF751D62B4D5DEB00F49FD7 /* PhotoDetailPresentationAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEF751D52B4D5DEB00F49FD7 /* PhotoDetailPresentationAdapter.swift */; };
 		BEF751D82B4D874300F49FD7 /* PhotoImagePresentationAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEF751D72B4D874300F49FD7 /* PhotoImagePresentationAdapter.swift */; };
+		BEF751DA2B4D90D200F49FD7 /* PhotoViewComposer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEF751D92B4D90D200F49FD7 /* PhotoViewComposer.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -178,6 +179,7 @@
 		BEF6E38E2A645E46004C6511 /* PhotoDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoDetailViewModel.swift; sourceTree = "<group>"; };
 		BEF751D52B4D5DEB00F49FD7 /* PhotoDetailPresentationAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoDetailPresentationAdapter.swift; sourceTree = "<group>"; };
 		BEF751D72B4D874300F49FD7 /* PhotoImagePresentationAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoImagePresentationAdapter.swift; sourceTree = "<group>"; };
+		BEF751D92B4D90D200F49FD7 /* PhotoViewComposer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoViewComposer.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -212,6 +214,7 @@
 			isa = PBXGroup;
 			children = (
 				BE8103142A55C2C400CE012A /* PhotoListComposer.swift */,
+				BEF751D92B4D90D200F49FD7 /* PhotoViewComposer.swift */,
 				BE5DFCFA2A5C14FF007BD8A7 /* PhotoImageDataLoaderAdapter.swift */,
 				BEF0B5262A6002DF0024625A /* ImageDataLoaderCacheDecorator.swift */,
 				BEF0B52E2A600CA40024625A /* ImageDataLoaderWithFallbackComposite.swift */,
@@ -637,6 +640,7 @@
 				BE6E12A22B32E5F300214E4B /* Paginated.swift in Sources */,
 				BEF6E38F2A645E46004C6511 /* PhotoDetailViewModel.swift in Sources */,
 				BE4876DA2A547B2A00F6AE3F /* PhotoImageDataLoader.swift in Sources */,
+				BEF751DA2B4D90D200F49FD7 /* PhotoViewComposer.swift in Sources */,
 				BE8103132A55C19700CE012A /* PhotoListCellController.swift in Sources */,
 				BEC9C53D2A5C56930043B0C9 /* LocalImageDataLoader.swift in Sources */,
 				BE8103152A55C2C400CE012A /* PhotoListComposer.swift in Sources */,
