@@ -14,24 +14,24 @@ protocol PhotoListCellControllerDelegate {
 }
 
 final class PhotoListCellController {
-    private(set) var cell: PhotoListCell?
+    private var cell: PhotoListCell?
     
     var loadImageTask: Task<Void, Never>? {
         delegate.task
     }
     
     private let author: String
+    private let viewModel: PhotoImageViewModel<UIImage>
     private let delegate: PhotoListCellControllerDelegate
-    private let setupBindings: (PhotoListCellController) -> Void
     let selection: () -> Void
     
     init(author: String,
+         viewModel: PhotoImageViewModel<UIImage>,
          delegate: PhotoListCellControllerDelegate,
-         setupBindings: @escaping (PhotoListCellController) -> Void,
          selection: @escaping () -> Void) {
         self.author = author
+        self.viewModel = viewModel
         self.delegate = delegate
-        self.setupBindings = setupBindings
         self.selection = selection
     }
     
@@ -41,9 +41,19 @@ final class PhotoListCellController {
             for: indexPath) as! PhotoListCell
         self.cell = cell
         cell.imageView.image = nil
-        setupBindings(self)
+        setupBindings()
         load()
         return cell
+    }
+    
+    private func setupBindings() {
+        viewModel.onLoadImage = { [weak self] isLoading in
+            self?.cell?.imageContainerView.isShimmering = isLoading
+        }
+        
+        viewModel.didLoadImage = { [weak self] image in
+            self?.cell?.imageView.image = image
+        }
     }
     
     func load(for cell: UICollectionViewCell) {

@@ -19,21 +19,8 @@ enum PhotoViewComposer {
             imageConverter: UIImage.init)
         return PhotoListCellController(
             author: photo.author,
+            viewModel: viewModel,
             delegate: adapter,
-            setupBindings: { vc in
-                setupBindingsBetween(viewModel: viewModel, viewController: vc)
-            },
             selection: selection)
-    }
-    
-    private static func setupBindingsBetween(viewModel: PhotoImageViewModel<UIImage>,
-                                             viewController: PhotoListCellController) {
-        viewModel.onLoadImage = { [weak viewController] isLoading in
-            viewController?.cell?.imageContainerView.isShimmering = isLoading
-        }
-        
-        viewModel.didLoadImage = { [weak viewController] image in
-            viewController?.cell?.imageView.image = image
-        }
     }
 }

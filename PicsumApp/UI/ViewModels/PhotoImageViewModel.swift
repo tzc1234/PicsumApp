@@ -10,13 +10,4 @@ import Foundation
 final class PhotoImageViewModel<Image> {
     var onLoadImage: Observer<Bool>?
     var didLoadImage: Observer<Image?>?
-    
-    func didStartLoading() {
-        onLoadImage?(true)
-    }
-    
-    func didFinishLoading(with image: Image?) {
-        didLoadImage?(image)
-        onLoadImage?(false)
-    }
 }

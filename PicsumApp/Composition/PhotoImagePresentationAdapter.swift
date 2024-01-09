@@ -47,3 +47,14 @@ final class PhotoImagePresentationAdapter: PhotoListCellControllerDelegate {
         task = nil
     }
 }
+
+private extension PhotoImageViewModel {
+    func didStartLoading() {
+        onLoadImage?(true)
+    }
+    
+    func didFinishLoading(with image: Image?) {
+        didLoadImage?(image)
+        onLoadImage?(false)
+    }
+}
