@@ -7,6 +7,13 @@
 
 import Foundation
 
+struct PhotoDetail {
+    let author: String
+    let webURL: URL
+    let width: Int
+    let height: Int
+}
+
 final class PhotoDetailViewModel<Image> {
     var onLoad: Observer<Bool>?
     var didLoad: Observer<Image?>?
@@ -20,22 +27,6 @@ final class PhotoDetailViewModel<Image> {
     
     init(photo: Photo) {
         self.photo = photo
-    }
-    
-    func didStartLoading() {
-        onLoad?(true)
-        shouldReload?(false)
-    }
-    
-    func didFinishLoading(with image: Image?) {
-        didLoad?(image)
-        shouldReload?(false)
-        onLoad?(false)
-    }
-    
-    func didFinishLoadingWithError() {
-        shouldReload?(true)
-        onLoad?(false)
     }
     
     static var title: String {

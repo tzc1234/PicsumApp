@@ -12,13 +12,6 @@ protocol PhotoDetailViewControllerDelegate {
     func loadImageData()
 }
 
-struct PhotoDetail {
-    let author: String
-    let webURL: URL
-    let width: Int
-    let height: Int
-}
-
 final class PhotoDetailViewController: UIViewController {
     private lazy var stackView = {
         let sv = UIStackView()
@@ -71,12 +64,18 @@ final class PhotoDetailViewController: UIViewController {
         delegate.task
     }
     
-    private let photoDetail: PhotoDetail
+    private var photoDetail: PhotoDetail {
+        viewModel.photoDetail
+    }
+    
+    private let viewModel: PhotoDetailViewModel<UIImage>
     private let urlHandler: (URL) -> Void
     private let delegate: PhotoDetailViewControllerDelegate
     
-    init(photoDetail: PhotoDetail, urlHandler: @escaping (URL) -> Void, delegate: PhotoDetailViewControllerDelegate) {
-        self.photoDetail = photoDetail
+    init(viewModel: PhotoDetailViewModel<UIImage>,
+         urlHandler: @escaping (URL) -> Void,
+         delegate: PhotoDetailViewControllerDelegate) {
+        self.viewModel = viewModel
         self.urlHandler = urlHandler
         self.delegate = delegate
         super.init(nibName: nil, bundle: nil)
@@ -89,6 +88,7 @@ final class PhotoDetailViewController: UIViewController {
         
         setAuthorText()
         setWebURL()
+        setupBindings()
         configureUI()
         onViewIsAppearing = { vc in
             vc.loadImage()
@@ -111,6 +111,20 @@ final class PhotoDetailViewController: UIViewController {
         let attributedStr = NSMutableAttributedString(string: url)
         attributedStr.addAttribute(.link, value: url, range: .init(location: 0, length: url.count))
         webURLButton.setAttributedTitle(attributedStr, for: .normal)
+    }
+    
+    private func setupBindings() {
+        viewModel.onLoad = { [weak imageContainerView] isLoading in
+            imageContainerView?.isShimmering = isLoading
+        }
+        
+        viewModel.didLoad = { [weak imageView] image in
+            imageView?.image = image
+        }
+        
+        viewModel.shouldReload = { [weak reloadButton] shouldReload in
+            reloadButton?.isHidden = !shouldReload
+        }
     }
     
     private func configureUI() {

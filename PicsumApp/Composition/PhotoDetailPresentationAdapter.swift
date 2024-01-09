@@ -37,3 +37,21 @@ final class PhotoDetailPresentationAdapter: PhotoDetailViewControllerDelegate {
         }
     }
 }
+
+private extension PhotoDetailViewModel {
+    func didStartLoading() {
+        onLoad?(true)
+        shouldReload?(false)
+    }
+    
+    func didFinishLoading(with image: Image?) {
+        didLoad?(image)
+        shouldReload?(false)
+        onLoad?(false)
+    }
+    
+    func didFinishLoadingWithError() {
+        shouldReload?(true)
+        onLoad?(false)
+    }
+}
