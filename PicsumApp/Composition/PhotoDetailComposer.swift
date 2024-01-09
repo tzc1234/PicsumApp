@@ -13,10 +13,12 @@ enum PhotoDetailComposer {
                             urlHandler: @escaping (URL) -> Void = { url in
                                 UIApplication.shared.open(url)
                             }) -> PhotoDetailViewController {
-        let viewModel = PhotoDetailViewModel(
-            photo: photo,
+        let viewModel = PhotoDetailViewModel<UIImage>(photo: photo)
+        let adapter = PhotoDetailPresentationAdapter(
+            photoURL: photo.url,
+            viewModel: viewModel,
             imageDataLoader: imageDataLoader,
             imageConverter: UIImage.init)
-        return PhotoDetailViewController(viewModel: viewModel, urlHandler: urlHandler)
+        return PhotoDetailViewController(viewModel: viewModel, urlHandler: urlHandler, delegate: adapter)
     }
 }
