@@ -11,10 +11,10 @@ final class PhotoDetailViewModel<Image> {
     var onLoad: Observer<Bool>?
     var didLoad: Observer<Image?>?
     var shouldReload: Observer<Bool>?
-    var author: String { photo.author }
-    var webURL: URL { photo.webURL }
-    var width: Int { photo.width }
-    var height: Int { photo.height }
+    
+    var photoDetail: PhotoDetail {
+        .init(author: photo.author, webURL: photo.webURL, width: photo.width, height: photo.height)
+    }
     
     private let photo: Photo
     

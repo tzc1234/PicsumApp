@@ -19,6 +19,9 @@ enum PhotoDetailComposer {
             viewModel: viewModel,
             imageDataLoader: imageDataLoader,
             imageConverter: UIImage.init)
-        return PhotoDetailViewController(viewModel: viewModel, urlHandler: urlHandler, delegate: adapter)
+        let controller = PhotoDetailViewController(viewModel: viewModel, urlHandler: urlHandler, delegate: adapter)
+        controller.title = PhotoDetailViewModel<UIImage>.title
+        
+        return controller
     }
 }

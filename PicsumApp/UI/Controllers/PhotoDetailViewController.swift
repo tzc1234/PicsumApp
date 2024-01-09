@@ -12,6 +12,13 @@ protocol PhotoDetailViewControllerDelegate {
     func loadImageData()
 }
 
+struct PhotoDetail {
+    let author: String
+    let webURL: URL
+    let width: Int
+    let height: Int
+}
+
 final class PhotoDetailViewController: UIViewController {
     private lazy var stackView = {
         let sv = UIStackView()
@@ -64,6 +71,10 @@ final class PhotoDetailViewController: UIViewController {
         delegate.task
     }
     
+    private var photoDetail: PhotoDetail {
+        viewModel.photoDetail
+    }
+    
     private let viewModel: PhotoDetailViewModel<UIImage>
     private let urlHandler: (URL) -> Void
     private let delegate: PhotoDetailViewControllerDelegate
@@ -74,7 +85,6 @@ final class PhotoDetailViewController: UIViewController {
         self.urlHandler = urlHandler
         self.delegate = delegate
         super.init(nibName: nil, bundle: nil)
-        self.title = PhotoDetailViewModel<UIImage>.title
     }
     
     required init?(coder: NSCoder) { nil }
@@ -99,19 +109,19 @@ final class PhotoDetailViewController: UIViewController {
     }
     
     private func setAuthorText() {
-        authorLabel.text = viewModel.author
+        authorLabel.text = photoDetail.author
     }
     
     private func setWebURL() {
-        let url = viewModel.webURL.absoluteString
+        let url = photoDetail.webURL.absoluteString
         let attributedStr = NSMutableAttributedString(string: url)
         attributedStr.addAttribute(.link, value: url, range: .init(location: 0, length: url.count))
         webURLButton.setAttributedTitle(attributedStr, for: .normal)
     }
     
     private func setupBindings() {
-        viewModel.onLoad = { [weak self] isLoading in
-            self?.imageContainerView.isShimmering = isLoading
+        viewModel.onLoad = { [weak imageContainerView] isLoading in
+            imageContainerView?.isShimmering = isLoading
         }
         
         viewModel.didLoad = { [weak imageView] image in
@@ -134,7 +144,7 @@ final class PhotoDetailViewController: UIViewController {
         stackView.addArrangedSubview(authorLabel)
         stackView.addArrangedSubview(webURLButton)
         
-        let ratio = CGFloat(viewModel.height) / CGFloat(max(viewModel.width, 1))
+        let ratio = CGFloat(photoDetail.height) / CGFloat(max(photoDetail.width, 1))
         
         NSLayoutConstraint.activate([
             imageContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -158,7 +168,7 @@ final class PhotoDetailViewController: UIViewController {
     }
     
     @objc private func openWeb() {
-        urlHandler(viewModel.webURL)
+        urlHandler(photoDetail.webURL)
     }
     
     @objc private func loadImage() {
