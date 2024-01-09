@@ -21,13 +21,13 @@ enum PhotoViewComposer {
             author: photo.author,
             delegate: adapter,
             setupBindings: { vc in
-                setupImageViewBindingsBetween(viewModel: viewModel, viewController: vc)
+                setupBindingsBetween(viewModel: viewModel, viewController: vc)
             },
             selection: selection)
     }
     
-    private static func setupImageViewBindingsBetween(viewModel: PhotoImageViewModel<UIImage>,
-                                                      viewController: PhotoListCellController) {
+    private static func setupBindingsBetween(viewModel: PhotoImageViewModel<UIImage>,
+                                             viewController: PhotoListCellController) {
         viewModel.onLoadImage = { [weak viewController] isLoading in
             viewController?.cell?.imageContainerView.isShimmering = isLoading
         }
