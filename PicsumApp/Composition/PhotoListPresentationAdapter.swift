@@ -61,3 +61,29 @@ final class PhotoListPresentationAdapter: PhotoListViewControllerDelegate {
         }
     }
 }
+
+private extension PhotoListViewModel {
+    func didStartLoading() {
+        onLoad?(true)
+    }
+    
+    func didFinishLoading(with photos: [Photo]) {
+        didLoad?(photos)
+        onError?(nil)
+        onLoad?(false)
+    }
+    
+    func didFinishLoadingWithError() {
+        onError?(Self.errorMessage)
+        onLoad?(false)
+    }
+    
+    func didFinishLoadingMore(with photos: [Photo]) {
+        didLoadMore?(photos)
+        onError?(nil)
+    }
+    
+    func didFinishLoadingMoreWithError() {
+        onError?(Self.errorMessage)
+    }
+}

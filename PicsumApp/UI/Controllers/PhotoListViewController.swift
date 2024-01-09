@@ -37,10 +37,12 @@ final class PhotoListViewController: UICollectionViewController {
         delegate?.loadMorePhotosTask
     }
     
+    private var viewModel: PhotoListViewModel?
     private var delegate: PhotoListViewControllerDelegate?
     
-    convenience init(delegate: PhotoListViewControllerDelegate) {
+    convenience init(viewModel: PhotoListViewModel, delegate: PhotoListViewControllerDelegate) {
         self.init(collectionViewLayout: UICollectionViewFlowLayout())
+        self.viewModel = viewModel
         self.delegate = delegate
     }
     
@@ -48,6 +50,7 @@ final class PhotoListViewController: UICollectionViewController {
         super.viewDidLoad()
         
         configureCollectionView()
+        setupBindings()
         onViewIsAppear = { vc in
             vc.reloadPhotos()
             vc.onViewIsAppear = nil
@@ -83,14 +86,28 @@ final class PhotoListViewController: UICollectionViewController {
         return layout
     }
     
-    @objc private func reloadPhotos() {
-        delegate?.loadPhotos()
+    private func setupBindings() {
+        viewModel?.onLoad = { [weak self] isLoading in
+            if isLoading {
+                self?.collectionView.refreshControl?.beginRefreshing()
+            } else {
+                self?.collectionView.refreshControl?.endRefreshing()
+            }
+        }
+        
+        viewModel?.onError = { [weak self] message in
+            message.map { self?.showErrorView(message: $0) }
+        }
     }
     
-    func showErrorView(message: String) {
+    private func showErrorView(message: String) {
         let alert = UIAlertController(title: "Oops!", message: message, preferredStyle: .alert)
         alert.addAction(.init(title: "Cancel", style: .cancel))
         present(alert, animated: true)
+    }
+    
+    @objc private func reloadPhotos() {
+        delegate?.loadPhotos()
     }
     
     func display(_ cellControllers: [PhotoListCellController]) {

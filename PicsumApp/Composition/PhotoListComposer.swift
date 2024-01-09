@@ -16,7 +16,7 @@ enum PhotoListComposer {
         let presentationAdapter = PhotoListPresentationAdapter(viewModel: viewModel, paginatedPhotos: {
             try await paginatedPhotosLoaderAdapter.makePaginatedPhotos()
         })
-        let viewController = PhotoListViewController(delegate: presentationAdapter)
+        let viewController = PhotoListViewController(viewModel: viewModel, delegate: presentationAdapter)
         viewController.title = PhotoListViewModel.title
         
         setupBindingsBetween(viewModel: viewModel, 
@@ -39,18 +39,6 @@ enum PhotoListComposer {
         viewModel.didLoadMore = { [weak viewController] photos in
             viewController?.displayMore(cellControllers(
                 from: photos, imageLoader: imageLoader, selection: selection))
-        }
-        
-        viewModel.onLoad = { [weak viewController] isLoading in
-            if isLoading {
-                viewController?.collectionView.refreshControl?.beginRefreshing()
-            } else {
-                viewController?.collectionView.refreshControl?.endRefreshing()
-            }
-        }
-        
-        viewModel.onError = { [weak viewController] message in
-            message.map { viewController?.showErrorView(message: $0) }
         }
     }
     
