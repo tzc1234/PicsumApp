@@ -85,6 +85,7 @@
 		BEF751D62B4D5DEB00F49FD7 /* PhotoDetailPresentationAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEF751D52B4D5DEB00F49FD7 /* PhotoDetailPresentationAdapter.swift */; };
 		BEF751D82B4D874300F49FD7 /* PhotoImagePresentationAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEF751D72B4D874300F49FD7 /* PhotoImagePresentationAdapter.swift */; };
 		BEF751DA2B4D90D200F49FD7 /* PhotoViewComposer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEF751D92B4D90D200F49FD7 /* PhotoViewComposer.swift */; };
+		BEF751DC2B4D9E2E00F49FD7 /* PhotoListPresentationAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEF751DB2B4D9E2E00F49FD7 /* PhotoListPresentationAdapter.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -180,6 +181,7 @@
 		BEF751D52B4D5DEB00F49FD7 /* PhotoDetailPresentationAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoDetailPresentationAdapter.swift; sourceTree = "<group>"; };
 		BEF751D72B4D874300F49FD7 /* PhotoImagePresentationAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoImagePresentationAdapter.swift; sourceTree = "<group>"; };
 		BEF751D92B4D90D200F49FD7 /* PhotoViewComposer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoViewComposer.swift; sourceTree = "<group>"; };
+		BEF751DB2B4D9E2E00F49FD7 /* PhotoListPresentationAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoListPresentationAdapter.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -222,6 +224,7 @@
 				BEC368672B331A6B001888E0 /* PaginatedPhotosLoaderAdapter.swift */,
 				BEF751D52B4D5DEB00F49FD7 /* PhotoDetailPresentationAdapter.swift */,
 				BEF751D72B4D874300F49FD7 /* PhotoImagePresentationAdapter.swift */,
+				BEF751DB2B4D9E2E00F49FD7 /* PhotoListPresentationAdapter.swift */,
 			);
 			path = Composition;
 			sourceTree = "<group>";
@@ -632,6 +635,7 @@
 				BE5496822A57032B00D402A3 /* RemotePhotosLoader.swift in Sources */,
 				BED008B92A5FE763002D94F5 /* ImageDataCache.swift in Sources */,
 				BE54968C2A57156E00D402A3 /* RemoteImageDataLoader.swift in Sources */,
+				BEF751DC2B4D9E2E00F49FD7 /* PhotoListPresentationAdapter.swift in Sources */,
 				BE6560722A53237B00CCD5D6 /* PhotoListViewModel.swift in Sources */,
 				BE5496762A56BA1300D402A3 /* PhotoImageViewModel.swift in Sources */,
 				BEF0B5272A6002DF0024625A /* ImageDataLoaderCacheDecorator.swift in Sources */,

@@ -10,70 +10,33 @@ import Foundation
 typealias Observer<T> = (T) -> Void
 
 final class PhotoListViewModel {
-    typealias PaginatedPhotos = () async throws -> Paginated<Photo>
-    
     var onLoad: Observer<Bool>?
     var onError: Observer<String?>?
     var didLoad: Observer<[Photo]>?
     var didLoadMore: Observer<[Photo]>?
     
-    private var isLoadingMore = false
-    private(set) var loadPhotosTask: Task<Void, Never>?
-    private(set) var loadMorePhotosTask: Task<Void, Never>?
-    private var loadMore: PaginatedPhotos?
-    
-    private let firstPaginatedPhotos: PaginatedPhotos
-    
-    init(paginatedPhotos: @escaping PaginatedPhotos) {
-        self.firstPaginatedPhotos = paginatedPhotos
-    }
-    
-    func loadPhotos() {
+    func didStartLoading() {
         onLoad?(true)
-        
-        loadPhotosTask?.cancel()
-        loadPhotosTask = loadPhotosTask(action: { [weak self] in
-            guard let self else { return }
-            
-            let paginated = try await firstPaginatedPhotos()
-            loadMore = paginated.loadMore
-            
-            didLoad?(paginated.items)
-        }, completion: { [weak self] in
-            self?.onLoad?(false)
-        })
     }
     
-    func loadMorePhotos() {
-        guard !isLoadingMore, let loadMore else { return }
-        
-        isLoadingMore = true
-        loadMorePhotosTask = loadPhotosTask(action: { [weak self] in
-            guard let self else { return }
-            
-            let paginated = try await loadMore()
-            self.loadMore = paginated.loadMore
-            
-            didLoadMore?(paginated.items)
-        }, completion: { [weak self] in
-            self?.isLoadingMore = false
-        })
+    func didFinishLoading(with photos: [Photo]) {
+        didLoad?(photos)
+        onError?(nil)
+        onLoad?(false)
     }
     
-    private func loadPhotosTask(action: @escaping () async throws -> Void,
-                                completion: @escaping () -> Void) -> Task<Void, Never> {
-        Task { @MainActor in
-            guard !Task.isCancelled else { return }
-            
-            do {
-                try await action()
-                onError?(nil)
-            } catch {
-                onError?(Self.errorMessage)
-            }
-            
-            completion()
-        }
+    func didFinishLoadingWithError() {
+        onError?(Self.errorMessage)
+        onLoad?(false)
+    }
+    
+    func didFinishLoadingMore(with photos: [Photo]) {
+        didLoadMore?(photos)
+        onError?(nil)
+    }
+    
+    func didFinishLoadingMoreWithError() {
+        onError?(Self.errorMessage)
     }
     
     static var errorMessage: String {

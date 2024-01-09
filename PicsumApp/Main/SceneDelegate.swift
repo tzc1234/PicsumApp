@@ -35,12 +35,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let photosLoader = RemotePhotosLoader(client: client)
         let imageDataLoader = makeImageDataLoader()
         let photoImageLoader = PhotoImageDataLoaderAdapter(imageDataLoader: imageDataLoader)
-        let paginatedPhotosLoaderAdapter = PaginatedPhotosLoaderAdapter(loader: photosLoader)
-        let viewModel = PhotoListViewModel(paginatedPhotos: {
-            try await paginatedPhotosLoaderAdapter.makePaginatedPhotos()
-        })
         let photoListViewController = PhotoListComposer.composeWith(
-            viewModel: viewModel,
+            photosLoader: photosLoader,
             imageLoader: photoImageLoader,
             selection: { [weak self] photo in
                 self?.showPhotoDetail(photo: photo, imageDataLoader: imageDataLoader)

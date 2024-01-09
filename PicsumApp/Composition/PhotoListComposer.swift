@@ -8,11 +8,29 @@
 import UIKit
 
 enum PhotoListComposer {
-    static func composeWith(viewModel: PhotoListViewModel,
+    static func composeWith(photosLoader: PhotosLoader,
                             imageLoader: PhotoImageDataLoader,
                             selection: @escaping (Photo) -> Void) -> PhotoListViewController {
-        let viewController = PhotoListViewController(viewModel: viewModel)
+        let viewModel = PhotoListViewModel()
+        let paginatedPhotosLoaderAdapter = PaginatedPhotosLoaderAdapter(loader: photosLoader)
+        let presentationAdapter = PhotoListPresentationAdapter(viewModel: viewModel, paginatedPhotos: {
+            try await paginatedPhotosLoaderAdapter.makePaginatedPhotos()
+        })
+        let viewController = PhotoListViewController(delegate: presentationAdapter)
+        viewController.title = PhotoListViewModel.title
         
+        setupBindingsBetween(viewModel: viewModel, 
+                             viewController: viewController,
+                             withImageLoader: imageLoader, 
+                             andSelection: selection)
+        
+        return viewController
+    }
+    
+    private static func setupBindingsBetween(viewModel: PhotoListViewModel, 
+                                             viewController: PhotoListViewController,
+                                             withImageLoader imageLoader: PhotoImageDataLoader,
+                                             andSelection selection: @escaping (Photo) -> Void) {
         viewModel.didLoad = { [weak viewController] photos in
             viewController?.display(cellControllers(
                 from: photos, imageLoader: imageLoader, selection: selection))
@@ -23,7 +41,17 @@ enum PhotoListComposer {
                 from: photos, imageLoader: imageLoader, selection: selection))
         }
         
-        return viewController
+        viewModel.onLoad = { [weak viewController] isLoading in
+            if isLoading {
+                viewController?.collectionView.refreshControl?.beginRefreshing()
+            } else {
+                viewController?.collectionView.refreshControl?.endRefreshing()
+            }
+        }
+        
+        viewModel.onError = { [weak viewController] message in
+            message.map { viewController?.showErrorView(message: $0) }
+        }
     }
     
     private static func cellControllers(from photos: [Photo],

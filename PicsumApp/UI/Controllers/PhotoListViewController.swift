@@ -7,6 +7,13 @@
 
 import UIKit
 
+protocol PhotoListViewControllerDelegate {
+    var loadPhotosTask: Task<Void, Never>? { get }
+    var loadMorePhotosTask: Task<Void, Never>? { get }
+    func loadPhotos()
+    func loadMorePhotos()
+}
+
 final class PhotoListViewController: UICollectionViewController {
     private lazy var refreshControl = {
         let refresh = UIRefreshControl()
@@ -23,26 +30,24 @@ final class PhotoListViewController: UICollectionViewController {
     private var onViewIsAppear: ((PhotoListViewController) -> Void)?
     
     var loadPhotosTask: Task<Void, Never>? {
-        viewModel?.loadPhotosTask
+        delegate?.loadPhotosTask
     }
     
     var loadMorePhotosTask: Task<Void, Never>? {
-        viewModel?.loadMorePhotosTask
+        delegate?.loadMorePhotosTask
     }
     
-    private var viewModel: PhotoListViewModel?
+    private var delegate: PhotoListViewControllerDelegate?
     
-    convenience init(viewModel: PhotoListViewModel) {
+    convenience init(delegate: PhotoListViewControllerDelegate) {
         self.init(collectionViewLayout: UICollectionViewFlowLayout())
-        self.title = PhotoListViewModel.title
-        self.viewModel = viewModel
+        self.delegate = delegate
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         configureCollectionView()
-        setupBindings()
         onViewIsAppear = { vc in
             vc.reloadPhotos()
             vc.onViewIsAppear = nil
@@ -78,28 +83,14 @@ final class PhotoListViewController: UICollectionViewController {
         return layout
     }
     
-    private func setupBindings() {
-        viewModel?.onLoad = { [weak self] isLoading in
-            if isLoading {
-                self?.collectionView.refreshControl?.beginRefreshing()
-            } else {
-                self?.collectionView.refreshControl?.endRefreshing()
-            }
-        }
-        
-        viewModel?.onError = { [weak self] message in
-            message.flatMap { self?.showErrorView(message: $0) }
-        }
+    @objc private func reloadPhotos() {
+        delegate?.loadPhotos()
     }
     
-    private func showErrorView(message: String) {
+    func showErrorView(message: String) {
         let alert = UIAlertController(title: "Oops!", message: message, preferredStyle: .alert)
         alert.addAction(.init(title: "Cancel", style: .cancel))
         present(alert, animated: true)
-    }
-    
-    @objc private func reloadPhotos() {
-        viewModel?.loadPhotos()
     }
     
     func display(_ cellControllers: [PhotoListCellController]) {
@@ -137,7 +128,7 @@ extension PhotoListViewController {
         guard scrollView.isDragging else { return }
         
         if shouldLoadMorePhotos(to: scrollView) {
-            viewModel?.loadMorePhotos()
+            delegate?.loadMorePhotos()
         }
     }
     
