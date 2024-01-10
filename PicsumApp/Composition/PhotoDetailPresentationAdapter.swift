@@ -5,20 +5,20 @@
 //  Created by Tsz-Lung on 09/01/2024.
 //
 
-import UIKit
+import Foundation
 
-final class PhotoDetailPresentationAdapter: PhotoDetailViewControllerDelegate {
+final class PhotoDetailPresentationAdapter<Image>: PhotoDetailViewControllerDelegate {
     private(set) var task: Task<Void, Never>?
     
     private let photoURL: URL
-    private let viewModel: PhotoDetailViewModel<UIImage>
+    private let viewModel: PhotoDetailViewModel<Image>
     private let imageDataLoader: ImageDataLoader
-    private let imageConverter: (Data) -> UIImage?
+    private let imageConverter: (Data) -> Image?
     
     init(photoURL: URL,
-         viewModel: PhotoDetailViewModel<UIImage>,
+         viewModel: PhotoDetailViewModel<Image>,
          imageDataLoader: ImageDataLoader,
-         imageConverter: @escaping (Data) -> UIImage?) {
+         imageConverter: @escaping (Data) -> Image?) {
         self.photoURL = photoURL
         self.viewModel = viewModel
         self.imageDataLoader = imageDataLoader

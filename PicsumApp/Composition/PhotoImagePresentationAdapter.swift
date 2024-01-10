@@ -5,21 +5,21 @@
 //  Created by Tsz-Lung on 09/01/2024.
 //
 
-import UIKit
+import Foundation
 
-final class PhotoImagePresentationAdapter: PhotoListCellControllerDelegate {
+final class PhotoImagePresentationAdapter<Image>: PhotoListCellControllerDelegate {
     private let photoDimension = 600
     private(set) var task: Task<Void, Never>?
     
     private let photoId: String
-    private let viewModel: PhotoImageViewModel<UIImage>
+    private let viewModel: PhotoImageViewModel<Image>
     private let imageLoader: PhotoImageDataLoader
-    private let imageConverter: (Data) -> UIImage?
+    private let imageConverter: (Data) -> Image?
     
     init(photoId: String,
-         viewModel: PhotoImageViewModel<UIImage>,
+         viewModel: PhotoImageViewModel<Image>,
          imageLoader: PhotoImageDataLoader,
-         imageConverter: @escaping (Data) -> UIImage?) {
+         imageConverter: @escaping (Data) -> Image?) {
         self.photoId = photoId
         self.viewModel = viewModel
         self.imageLoader = imageLoader
