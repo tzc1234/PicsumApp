@@ -422,6 +422,29 @@ final class PhotoListIntegrationTests: XCTestCase {
         sut.dismiss(animated: false) { exp.fulfill() }
         await fulfillment(of: [exp])
     }
+    
+    @MainActor
+    func test_errorView_showsErrorWhenLoadMorePhotoRequestOnError() async throws {
+        let nonEmptyPhotos = [makePhoto()]
+        let (sut, _) = makeSUT(photoStubs: [.success(nonEmptyPhotos), anyFailure()])
+        let window = UIWindow()
+        window.addSubview(sut.view)
+        
+        sut.simulateAppearance()
+        await sut.completePhotosLoading()
+        
+        XCTAssertNil(sut.presentedViewController, "Expect no error view after loading photo successfully")
+        
+        sut.simulateUserInitiatedLoadMore()
+        await sut.completeMorePhotosLoading()
+        
+        let alert = try XCTUnwrap(sut.presentedViewController as? UIAlertController)
+        XCTAssertEqual(alert.message, PhotoListViewModel.errorMessage)
+        
+        let exp = expectation(description: "Wait for sut dismiss to prevent memory leak.")
+        sut.dismiss(animated: false) { exp.fulfill() }
+        await fulfillment(of: [exp])
+    }
 
     // MARK: - Helpers
 
