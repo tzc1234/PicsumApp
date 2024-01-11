@@ -20,6 +20,13 @@ Also, when instantiating more than one `ModelContainer` with same `URL` upfront,
 `Error Domain=NSCocoaErrorDomain Code=134020 "The model configuration used to open the store is incompatible with the one that was used to create the store.` will occur.
 This is annoying when I was doing integration tests.
 
+Benefiting from dependency injection/clean architecture, I can easily switch frameworks from `CoreData` to `SwiftData`. 
+Changing an implementation of an `ImageDataStore` is not much effort when backing by automated tests, ensuring the whole code base work properly.
+
+Before: `LocalImageDataLoader` use -> `<ImageDataStore>` <- implement `CoreDataImageDataStore`
+
+Now: `LocalImageDataLoader` use -> `<ImageDataStore>` <- implement `SwiftDataImageDataStore`
+
 ### Extract async logic from view model to adapter
 I find that it is easier to understand the code after separating these concerns to different components. 
 View models become only care about bindings, emit states to the UI, very lightweight. And the dirty async code is all handled in an adapter.
