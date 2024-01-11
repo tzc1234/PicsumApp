@@ -31,6 +31,11 @@ Now: `UI` -> `adapter` -> `remote service` response data back -> `adapter` -> `v
 
 The complexity is obviously increased, harder to reason.
 
+### About preview
+In iOS 17, UIKit can utilize preview now as SwiftUI. However, I've tried preview for `PhotoListViewController`, it does not work properly.
+The `UICollectionViewDiffableDataSource` is not running in preview, no collection view cell shown, I have no idea of this.
+Therefore, I decide not to use preview at the moment.
+
 ## Screenshot
 <img src="https://github.com/tzc1234/PicsumApp/blob/main/Screenshots/preview.png" alt="preview" width="256" height="554"/>
 
