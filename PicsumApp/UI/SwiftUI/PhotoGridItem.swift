@@ -38,6 +38,7 @@ struct PhotoGridItem: View {
                     .background(.thinMaterial)
             }
         }
+        .aspectRatio(1, contentMode: .fit)
         .clipShape(RoundedRectangle(cornerRadius: 8))
         .overlay(
             RoundedRectangle(cornerRadius: 8)
@@ -48,6 +49,6 @@ struct PhotoGridItem: View {
 
 #Preview {
     PhotoGridItem(author: "Author", image: nil, isLoading: true)
-        .frame(width: 200, height: 200, alignment: .center)
+        .frame(width: 200, alignment: .center)
         
 }

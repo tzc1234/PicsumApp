@@ -55,6 +55,7 @@
 		BE8103112A559F4C00CE012A /* PhotoListViewController+TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8103102A559F4C00CE012A /* PhotoListViewController+TestHelpers.swift */; };
 		BE8103132A55C19700CE012A /* PhotoListCellController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8103122A55C19700CE012A /* PhotoListCellController.swift */; };
 		BE8103152A55C2C400CE012A /* PhotoListComposer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8103142A55C2C400CE012A /* PhotoListComposer.swift */; };
+		BE81BCF42B52EA9A00C9E6A1 /* PhotoGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE81BCF32B52EA9A00C9E6A1 /* PhotoGridView.swift */; };
 		BE9E00E62B443ADF003439C1 /* SwiftDataImageDataStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9E00E52B443ADF003439C1 /* SwiftDataImageDataStoreTests.swift */; };
 		BE9E00E82B44560E003439C1 /* SwiftDataImageDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9E00E72B44560E003439C1 /* SwiftDataImageDataStore.swift */; };
 		BEA70FB42B319F22001D667B /* RefreshControlSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEA70FB32B319F22001D667B /* RefreshControlSpy.swift */; };
@@ -153,6 +154,7 @@
 		BE8103102A559F4C00CE012A /* PhotoListViewController+TestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PhotoListViewController+TestHelpers.swift"; sourceTree = "<group>"; };
 		BE8103122A55C19700CE012A /* PhotoListCellController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoListCellController.swift; sourceTree = "<group>"; };
 		BE8103142A55C2C400CE012A /* PhotoListComposer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoListComposer.swift; sourceTree = "<group>"; };
+		BE81BCF32B52EA9A00C9E6A1 /* PhotoGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoGridView.swift; sourceTree = "<group>"; };
 		BE9E00E52B443ADF003439C1 /* SwiftDataImageDataStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftDataImageDataStoreTests.swift; sourceTree = "<group>"; };
 		BE9E00E72B44560E003439C1 /* SwiftDataImageDataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftDataImageDataStore.swift; sourceTree = "<group>"; };
 		BEA70FB32B319F22001D667B /* RefreshControlSpy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshControlSpy.swift; sourceTree = "<group>"; };
@@ -490,6 +492,7 @@
 			children = (
 				BED4E3B22B519D6300089CEA /* Helpers */,
 				BED4E3AB2B5184D600089CEA /* PhotoGridItem.swift */,
+				BE81BCF32B52EA9A00C9E6A1 /* PhotoGridView.swift */,
 			);
 			path = SwiftUI;
 			sourceTree = "<group>";
@@ -678,6 +681,7 @@
 				BEF751DA2B4D90D200F49FD7 /* PhotoViewComposer.swift in Sources */,
 				BED4E3AF2B51858C00089CEA /* UIImage+Helpers.swift in Sources */,
 				BE8103132A55C19700CE012A /* PhotoListCellController.swift in Sources */,
+				BE81BCF42B52EA9A00C9E6A1 /* PhotoGridView.swift in Sources */,
 				BEC9C53D2A5C56930043B0C9 /* LocalImageDataLoader.swift in Sources */,
 				BE8103152A55C2C400CE012A /* PhotoListComposer.swift in Sources */,
 				BE54967B2A56CFEC00D402A3 /* PhotosEndpoint.swift in Sources */,
