@@ -91,6 +91,24 @@ final class PhotoGridIntegrationTests: XCTestCase {
         ViewHosting.expel()
     }
     
+    @MainActor
+    func test_loadPhotosCompletion_doesNotAlterCurrentRenderedPhotoViewsOnLoaderError() async throws {
+        let photo0 = makePhoto(id: "0", author: "author0")
+        let photo1 = makePhoto(id: "1", author: "author1")
+        let (sut, _) = makeSUT(photoStubs: [.success([photo0, photo1]), anyFailure()])
+        
+        await sut.completePhotosLoading()
+        
+        try assertThat(sut, isRendering: [photo0, photo1])
+        
+        sut.simulateUserInitiateReload()
+        await sut.completePhotosLoading()
+        
+        try assertThat(sut, isRendering: [photo0, photo1])
+        
+        ViewHosting.expel()
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(photoStubs: [PhotosLoaderSpy.PhotosResult] = [],
@@ -137,6 +155,10 @@ final class PhotoGridIntegrationTests: XCTestCase {
     private func emptySuccessPhotos() -> PhotosLoaderSpy.PhotosResult {
         .success([])
     }
+    
+    private func anyFailure() -> PhotosLoaderSpy.PhotosResult {
+        .failure(anyNSError())
+    }
 }
 
 extension PhotoGridView {
@@ -166,8 +188,13 @@ extension PhotoGridView {
     }
     
     func authorText(at index: Int) throws -> String {
-        try renderedViews()[index]
-            .find(viewWithAccessibilityIdentifier: "photo-grid-item-author")
+        try renderedViews()[index].authorText()
+    }
+}
+
+extension InspectableView<ViewType.View<PhotoGridItem>> {
+    func authorText() throws -> String {
+        try find(viewWithAccessibilityIdentifier: "photo-grid-item-author")
             .text()
             .string()
     }
