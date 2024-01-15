@@ -15,8 +15,6 @@ final class PhotoGridIntegrationTests: XCTestCase {
         let (_, loader) = makeSUT()
         
         XCTAssertTrue(loader.loggedURLs.isEmpty)
-        
-        ViewHosting.expel()
     }
     
     @MainActor
@@ -29,8 +27,6 @@ final class PhotoGridIntegrationTests: XCTestCase {
         sut.simulateUserInitiateReload()
         await sut.completePhotosLoading()
         XCTAssertEqual(loader.loggedURLs.count, 2, "Expect 2 requests after user initiate reload")
-        
-        ViewHosting.expel()
     }
     
     @MainActor
@@ -45,12 +41,10 @@ final class PhotoGridIntegrationTests: XCTestCase {
         
         XCTAssertTrue(previousPhotosLoadingTask.isCancelled, "Expect previous unfinished task is cancelled after user initiate new photos loading")
         XCTAssertFalse(newPhotosLoadingTask.isCancelled, "Expect new task is not cancelled")
-        
-        ViewHosting.expel()
     }
     
     // ViewInspector does not support extracting loading indicator from refreshable.
-    // Don't know should I add this test.
+    // Not sure should I add this test.
     @MainActor
     func test_loadingIndicator_showsLoadingIndicatorWhileLoadingPhotos() async {
         let (sut, _) = makeSUT()
@@ -68,8 +62,6 @@ final class PhotoGridIntegrationTests: XCTestCase {
         await sut.completePhotosLoading()
         
         XCTAssertFalse(sut.isShowingLoadingIndicator, "Expect not showing loading indicator after user initiated reload completed")
-        
-        ViewHosting.expel()
     }
     
     @MainActor
@@ -87,8 +79,6 @@ final class PhotoGridIntegrationTests: XCTestCase {
         await sut.completePhotosLoading()
         
         try assertThat(sut, isRendering: [photo0, photo1, photo2])
-        
-        ViewHosting.expel()
     }
     
     @MainActor
@@ -105,8 +95,6 @@ final class PhotoGridIntegrationTests: XCTestCase {
         await sut.completePhotosLoading()
         
         try assertThat(sut, isRendering: [photo0, photo1])
-        
-        ViewHosting.expel()
     }
     
     // MARK: - Helpers
@@ -119,8 +107,25 @@ final class PhotoGridIntegrationTests: XCTestCase {
         let loader = PhotosLoaderSpy(photoStubs: photoStubs, dataStubs: dataStubs)
         let sut = PhotoGridComposer.composeWith(photosLoader: loader)
         ViewHosting.host(view: sut, function: function)
-        trackForMemoryLeaks(loader, file: file, line: line)
+        trackMemoryLeaks(for: loader, function: function, file: file, line: line)
         return (sut, loader)
+    }
+    
+    private func trackMemoryLeaks(for instance: AnyObject,
+                                  function: String = #function,
+                                  file: StaticString = #file,
+                                  line: UInt = #line) {
+        addTeardownBlock { [weak instance] in
+            await MainActor.run { ViewHosting.expel(function: function) }
+            try? await Task.sleep(for: .seconds(0.01)) // Buffer time for instance releasing.
+            
+            XCTAssertNil(
+                instance,
+                "Instance should have been deallocated. Potential memory leak.",
+                file: file,
+                line: line
+            )
+        }
     }
     
     private func assertThat(_ sut: PhotoGridView, 
