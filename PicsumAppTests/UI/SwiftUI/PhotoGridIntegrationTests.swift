@@ -49,6 +49,29 @@ final class PhotoGridIntegrationTests: XCTestCase {
         ViewHosting.expel()
     }
     
+    // ViewInspector does not support extracting loading indicator from refreshable.
+    // Don't know should I add this test.
+    @MainActor
+    func test_loadingIndicator_showsLoadingIndicatorWhileLoadingPhotos() async {
+        let (sut, _) = makeSUT()
+        
+        XCTAssertTrue(sut.isShowingLoadingIndicator, "Expect showing loading indicator after view rendered")
+        
+        await sut.completePhotosLoading()
+        
+        XCTAssertFalse(sut.isShowingLoadingIndicator, "Expect not showing loading indicator after photos loading completed")
+        
+        sut.simulateUserInitiateReload()
+        
+        XCTAssertTrue(sut.isShowingLoadingIndicator, "Expect showing loading indicator after user initiated reload")
+        
+        await sut.completePhotosLoading()
+        
+        XCTAssertFalse(sut.isShowingLoadingIndicator, "Expect not showing loading indicator after user initiated reload completed")
+        
+        ViewHosting.expel()
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(photoStubs: [PhotosLoaderSpy.PhotosResult] = [],
@@ -80,5 +103,9 @@ extension PhotoGridView {
     
     var photosLoadingTask: Task<Void, Never>? {
         store.delegate.loadPhotosTask
+    }
+    
+    var isShowingLoadingIndicator: Bool {
+        store.isLoading
     }
 }

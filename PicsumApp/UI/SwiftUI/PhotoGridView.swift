@@ -8,7 +8,7 @@
 import SwiftUI
 
 final class PhotoGridStore: ObservableObject {
-    @Published private(set) var isLoading = false
+    private(set) var isLoading = false
     
     private let model: PhotoListViewModel
     let delegate: PhotoListViewControllerDelegate
@@ -26,19 +26,16 @@ final class PhotoGridStore: ObservableObject {
     }
     
     func loadPhotos() {
+        isLoading = true
         delegate.loadPhotos()
     }
     
-    func loadPhotos() async {
-        delegate.loadPhotos()
-        await finishLoading()
-    }
-    
-    private func finishLoading() async {
-        try? await Task.sleep(for: .seconds(0.5))
-        if !isLoading {
-            await finishLoading()
-        }
+    func trackFinishLoading() async {
+        let finishedLoading = !isLoading
+        guard finishedLoading else { return }
+        
+        try? await Task.sleep(for: .seconds(0.1))
+        await trackFinishLoading()
     }
     
     static var title: String {
@@ -68,7 +65,8 @@ struct PhotoGridView: View {
             .navigationTitle(PhotoGridStore.title)
             .navigationBarTitleDisplayMode(.inline)
             .refreshable {
-                await store.loadPhotos()
+                store.loadPhotos()
+                await store.trackFinishLoading()
             }
             .onAppear {
                 store.loadPhotos()
