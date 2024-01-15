@@ -13,6 +13,9 @@
 		BE3635642A5FF8C30039EECD /* ImageDataLoaderCacheDecoratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3635632A5FF8C30039EECD /* ImageDataLoaderCacheDecoratorTests.swift */; };
 		BE3635662A5FF9970039EECD /* ImageDataLoaderSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3635652A5FF9970039EECD /* ImageDataLoaderSpy.swift */; };
 		BE3691092A5566EE00DF0560 /* UIImage+TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3691082A5566EE00DF0560 /* UIImage+TestHelpers.swift */; };
+		BE37F78A2B553D0F0098FF2E /* PhotoGridIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE37F7892B553D0F0098FF2E /* PhotoGridIntegrationTests.swift */; };
+		BE37F78D2B553F530098FF2E /* ViewInspector in Frameworks */ = {isa = PBXBuildFile; productRef = BE37F78C2B553F530098FF2E /* ViewInspector */; };
+		BE37F78F2B5540C50098FF2E /* PhotoGridComposer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE37F78E2B5540C50098FF2E /* PhotoGridComposer.swift */; };
 		BE4876D82A542E4900F6AE3F /* PhotoListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE4876D72A542E4900F6AE3F /* PhotoListCell.swift */; };
 		BE4876DA2A547B2A00F6AE3F /* PhotoImageDataLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE4876D92A547B2A00F6AE3F /* PhotoImageDataLoader.swift */; };
 		BE4876DD2A54996900F6AE3F /* ShimmeringView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE4876DC2A54996900F6AE3F /* ShimmeringView.swift */; };
@@ -109,6 +112,8 @@
 		BE3635632A5FF8C30039EECD /* ImageDataLoaderCacheDecoratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDataLoaderCacheDecoratorTests.swift; sourceTree = "<group>"; };
 		BE3635652A5FF9970039EECD /* ImageDataLoaderSpy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDataLoaderSpy.swift; sourceTree = "<group>"; };
 		BE3691082A5566EE00DF0560 /* UIImage+TestHelpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+TestHelpers.swift"; sourceTree = "<group>"; };
+		BE37F7892B553D0F0098FF2E /* PhotoGridIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoGridIntegrationTests.swift; sourceTree = "<group>"; };
+		BE37F78E2B5540C50098FF2E /* PhotoGridComposer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoGridComposer.swift; sourceTree = "<group>"; };
 		BE4876D72A542E4900F6AE3F /* PhotoListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoListCell.swift; sourceTree = "<group>"; };
 		BE4876D92A547B2A00F6AE3F /* PhotoImageDataLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoImageDataLoader.swift; sourceTree = "<group>"; };
 		BE4876DC2A54996900F6AE3F /* ShimmeringView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShimmeringView.swift; sourceTree = "<group>"; };
@@ -204,6 +209,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BE37F78D2B553F530098FF2E /* ViewInspector in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -233,6 +239,7 @@
 				BEF751D52B4D5DEB00F49FD7 /* PhotoDetailPresentationAdapter.swift */,
 				BEF751D72B4D874300F49FD7 /* PhotoImagePresentationAdapter.swift */,
 				BEF751DB2B4D9E2E00F49FD7 /* PhotoListPresentationAdapter.swift */,
+				BE37F78E2B5540C50098FF2E /* PhotoGridComposer.swift */,
 			);
 			path = Composition;
 			sourceTree = "<group>";
@@ -265,6 +272,14 @@
 				BE9E00E72B44560E003439C1 /* SwiftDataImageDataStore.swift */,
 			);
 			path = Infrastructure;
+			sourceTree = "<group>";
+		};
+		BE37F6892B553C700098FF2E /* SwiftUI */ = {
+			isa = PBXGroup;
+			children = (
+				BE37F7892B553D0F0098FF2E /* PhotoGridIntegrationTests.swift */,
+			);
+			path = SwiftUI;
 			sourceTree = "<group>";
 		};
 		BE4876D62A542E2D00F6AE3F /* Views */ = {
@@ -534,6 +549,7 @@
 				BEF0B52A2A6005640024625A /* Helpers */,
 				BED8ECCC2A5340870077FFF9 /* PhotoListIntegrationTests.swift */,
 				BE62278E2A63FFFC0082ED1B /* PhotoDetailIntegrationTests.swift */,
+				BE37F6892B553C700098FF2E /* SwiftUI */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -593,6 +609,9 @@
 				BE65604B2A52D4A400CCD5D6 /* PBXTargetDependency */,
 			);
 			name = PicsumAppTests;
+			packageProductDependencies = (
+				BE37F78C2B553F530098FF2E /* ViewInspector */,
+			);
 			productName = PicsumAppTests;
 			productReference = BE6560492A52D4A400CCD5D6 /* PicsumAppTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -625,6 +644,9 @@
 				Base,
 			);
 			mainGroup = BE65602A2A52D4A300CCD5D6;
+			packageReferences = (
+				BE37F78B2B553F530098FF2E /* XCRemoteSwiftPackageReference "ViewInspector" */,
+			);
 			productRefGroup = BE6560342A52D4A300CCD5D6 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -661,6 +683,7 @@
 			files = (
 				BEF6E38B2A64296F004C6511 /* PhotoDetailViewController.swift in Sources */,
 				BE4876DD2A54996900F6AE3F /* ShimmeringView.swift in Sources */,
+				BE37F78F2B5540C50098FF2E /* PhotoGridComposer.swift in Sources */,
 				BEC9C53B2A5C56730043B0C9 /* ImageDataStore.swift in Sources */,
 				BEF751D62B4D5DEB00F49FD7 /* PhotoDetailPresentationAdapter.swift in Sources */,
 				BE73DE832A584B5A00B5F438 /* PhotoImageEndpoint.swift in Sources */,
@@ -717,6 +740,7 @@
 				BE5DFD002A5C43F0007BD8A7 /* LoadCachedImageDataUseCaseTests.swift in Sources */,
 				BE76D45A2A7D5752000EA213 /* XCTestCase+AssertThrows.swift in Sources */,
 				BE5496882A570ED400D402A3 /* RemoteImageDataLoaderTests.swift in Sources */,
+				BE37F78A2B553D0F0098FF2E /* PhotoGridIntegrationTests.swift in Sources */,
 				BE81030F2A559EB700CE012A /* PhotoListCell+TestHelpers.swift in Sources */,
 				BEB90FB72A5F0A6500A22904 /* ContextDidSaveNotificationSpy.swift in Sources */,
 				BED283B82A5C6E7500521BC8 /* ImageDataStoreSpy.swift in Sources */,
@@ -1027,6 +1051,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		BE37F78B2B553F530098FF2E /* XCRemoteSwiftPackageReference "ViewInspector" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/nalexn/ViewInspector";
+			requirement = {
+				kind = exactVersion;
+				version = 0.9.9;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		BE37F78C2B553F530098FF2E /* ViewInspector */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BE37F78B2B553F530098FF2E /* XCRemoteSwiftPackageReference "ViewInspector" */;
+			productName = ViewInspector;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = BE65602B2A52D4A300CCD5D6 /* Project object */;
 }
