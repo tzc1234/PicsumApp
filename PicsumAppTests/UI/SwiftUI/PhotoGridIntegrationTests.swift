@@ -10,10 +10,27 @@ import ViewInspector
 @testable import PicsumApp
 
 final class PhotoGridIntegrationTests: XCTestCase {
-    func test_init_doesNotTriggerLoader() {
+    @MainActor
+    func test_init_doesNotTriggerLoader() async {
         let (_, loader) = makeSUT()
         
         XCTAssertTrue(loader.loggedURLs.isEmpty)
+        
+        ViewHosting.expel()
+    }
+    
+    @MainActor
+    func test_loadPhotos_requestPhotosFromLoader() async {
+        let (sut, loader) = makeSUT(photoStubs: [emptySuccessPhotos(), emptySuccessPhotos()])
+        
+        await sut.completePhotosLoading()
+        XCTAssertEqual(loader.loggedURLs.count, 1, "Expect 1 request once view rendered")
+        
+        sut.simulateUserInitiateReload()
+        await sut.completePhotosLoading()
+        XCTAssertEqual(loader.loggedURLs.count, 2, "Expect 2 request after user initiate reload")
+        
+        ViewHosting.expel()
     }
     
     // MARK: - Helpers
@@ -21,13 +38,28 @@ final class PhotoGridIntegrationTests: XCTestCase {
     private func makeSUT(photoStubs: [PhotosLoaderSpy.PhotosResult] = [],
                          dataStubs: [PhotosLoaderSpy.DataResult] = [],
                          selection: @escaping (Photo) -> Void = { _ in },
+                         function: String = #function,
                          file: StaticString = #file,
                          line: UInt = #line) -> (sut: PhotoGridView, loader: PhotosLoaderSpy) {
         let loader = PhotosLoaderSpy(photoStubs: photoStubs, dataStubs: dataStubs)
         let sut = PhotoGridComposer.composeWith(photosLoader: loader)
-        
+        ViewHosting.host(view: sut, function: function)
         trackForMemoryLeaks(loader, file: file, line: line)
-        
         return (sut, loader)
+    }
+    
+    private func emptySuccessPhotos() -> PhotosLoaderSpy.PhotosResult {
+        .success([])
+    }
+}
+
+extension PhotoGridView {
+    func completePhotosLoading() async {
+        await delegate.loadPhotosTask?.value
+    }
+    
+    func simulateUserInitiateReload() {
+        // ViewInspector does not support SwiftUI refreshable yet
+        delegate.loadPhotos()
     }
 }

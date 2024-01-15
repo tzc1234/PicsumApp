@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct PhotoGridView: View {
+    let delegate: PhotoListViewControllerDelegate
     private let range = 0...49
     
     var body: some View {
@@ -27,10 +28,24 @@ struct PhotoGridView: View {
             }
             .navigationTitle("Photos")
             .navigationBarTitleDisplayMode(.inline)
+            .refreshable {
+                delegate.loadPhotos()
+            }
+            .onAppear {
+                delegate.loadPhotos()
+            }
         }
     }
 }
 
 #Preview {
-    PhotoGridView()
+    class DummyPhotoListViewControllerDelegate: PhotoListViewControllerDelegate {
+        var loadPhotosTask: Task<Void, Never>?
+        var loadMorePhotosTask: Task<Void, Never>?
+        
+        func loadPhotos() {}
+        func loadMorePhotos() {}
+    }
+    
+    return PhotoGridView(delegate: DummyPhotoListViewControllerDelegate())
 }
