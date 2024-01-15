@@ -28,7 +28,23 @@ final class PhotoGridIntegrationTests: XCTestCase {
         
         sut.simulateUserInitiateReload()
         await sut.completePhotosLoading()
-        XCTAssertEqual(loader.loggedURLs.count, 2, "Expect 2 request after user initiate reload")
+        XCTAssertEqual(loader.loggedURLs.count, 2, "Expect 2 requests after user initiate reload")
+        
+        ViewHosting.expel()
+    }
+    
+    @MainActor
+    func test_loadPhotos_cancelsPreviousUnfinishedPhotosLoadingBeforeNewPhotosLoading() async throws {
+        let (sut, _) = makeSUT()
+        
+        let previousPhotosLoadingTask = try XCTUnwrap(sut.photosLoadingTask)
+        XCTAssertFalse(previousPhotosLoadingTask.isCancelled, "Expect previous task is not cancelled just after view rendered")
+        
+        sut.simulateUserInitiateReload()
+        let newPhotosLoadingTask = try XCTUnwrap(sut.photosLoadingTask)
+        
+        XCTAssertTrue(previousPhotosLoadingTask.isCancelled, "Expect previous unfinished task is cancelled after user initiate new photos loading")
+        XCTAssertFalse(newPhotosLoadingTask.isCancelled, "Expect new task is not cancelled")
         
         ViewHosting.expel()
     }
@@ -37,7 +53,6 @@ final class PhotoGridIntegrationTests: XCTestCase {
     
     private func makeSUT(photoStubs: [PhotosLoaderSpy.PhotosResult] = [],
                          dataStubs: [PhotosLoaderSpy.DataResult] = [],
-                         selection: @escaping (Photo) -> Void = { _ in },
                          function: String = #function,
                          file: StaticString = #file,
                          line: UInt = #line) -> (sut: PhotoGridView, loader: PhotosLoaderSpy) {
@@ -59,7 +74,11 @@ extension PhotoGridView {
     }
     
     func simulateUserInitiateReload() {
-        // ViewInspector does not support SwiftUI refreshable yet
+        // ViewInspector does not support SwiftUI refreshable yet, therefore directly trigger the loadPhotos()
         delegate.loadPhotos()
+    }
+    
+    var photosLoadingTask: Task<Void, Never>? {
+        delegate.loadPhotosTask
     }
 }
