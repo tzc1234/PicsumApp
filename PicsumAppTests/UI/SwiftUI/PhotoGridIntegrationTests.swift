@@ -70,15 +70,15 @@ final class PhotoGridIntegrationTests: XCTestCase {
 
 extension PhotoGridView {
     func completePhotosLoading() async {
-        await delegate.loadPhotosTask?.value
+        await store.delegate.loadPhotosTask?.value
     }
     
     func simulateUserInitiateReload() {
         // ViewInspector does not support SwiftUI refreshable yet, therefore directly trigger the loadPhotos()
-        delegate.loadPhotos()
+        store.loadPhotos()
     }
     
     var photosLoadingTask: Task<Void, Never>? {
-        delegate.loadPhotosTask
+        store.delegate.loadPhotosTask
     }
 }

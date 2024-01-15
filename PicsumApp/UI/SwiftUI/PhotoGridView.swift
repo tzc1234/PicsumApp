@@ -7,8 +7,47 @@
 
 import SwiftUI
 
-struct PhotoGridView: View {
+final class PhotoGridStore: ObservableObject {
+    @Published private(set) var isLoading = false
+    
+    private let model: PhotoListViewModel
     let delegate: PhotoListViewControllerDelegate
+    
+    init(model: PhotoListViewModel, delegate: PhotoListViewControllerDelegate) {
+        self.model = model
+        self.delegate = delegate
+        self.setupBindings()
+    }
+    
+    private func setupBindings() {
+        model.onLoad = { [weak self] isLoading in
+            self?.isLoading = isLoading
+        }
+    }
+    
+    func loadPhotos() {
+        delegate.loadPhotos()
+    }
+    
+    func loadPhotos() async {
+        delegate.loadPhotos()
+        await finishLoading()
+    }
+    
+    private func finishLoading() async {
+        try? await Task.sleep(for: .seconds(0.5))
+        if !isLoading {
+            await finishLoading()
+        }
+    }
+    
+    static var title: String {
+        PhotoListViewModel.title
+    }
+}
+
+struct PhotoGridView: View {
+    @ObservedObject var store: PhotoGridStore
     private let range = 0...49
     
     var body: some View {
@@ -26,13 +65,13 @@ struct PhotoGridView: View {
                 }
                 .padding(.horizontal, 8)
             }
-            .navigationTitle("Photos")
+            .navigationTitle(PhotoGridStore.title)
             .navigationBarTitleDisplayMode(.inline)
             .refreshable {
-                delegate.loadPhotos()
+                await store.loadPhotos()
             }
             .onAppear {
-                delegate.loadPhotos()
+                store.loadPhotos()
             }
         }
     }
@@ -47,5 +86,7 @@ struct PhotoGridView: View {
         func loadMorePhotos() {}
     }
     
-    return PhotoGridView(delegate: DummyPhotoListViewControllerDelegate())
+    let viewModel = PhotoGridStore(model: PhotoListViewModel(), delegate: DummyPhotoListViewControllerDelegate())
+    
+    return PhotoGridView(store: viewModel)
 }
