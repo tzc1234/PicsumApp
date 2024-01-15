@@ -9,6 +9,7 @@ import SwiftUI
 
 final class PhotoGridStore: ObservableObject {
     private(set) var isLoading = false
+    @Published private(set) var photos = [Photo]()
     
     private let model: PhotoListViewModel
     let delegate: PhotoListViewControllerDelegate
@@ -22,6 +23,10 @@ final class PhotoGridStore: ObservableObject {
     private func setupBindings() {
         model.onLoad = { [weak self] isLoading in
             self?.isLoading = isLoading
+        }
+        
+        model.didLoad = { [weak self] photos in
+            self?.photos = photos
         }
     }
     
@@ -45,16 +50,15 @@ final class PhotoGridStore: ObservableObject {
 
 struct PhotoGridView: View {
     @ObservedObject var store: PhotoGridStore
-    private let range = 0...49
     
     var body: some View {
         NavigationView {
             ScrollView {
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 8) {
-                    ForEach(range, id: \.self) { index in
-                        PhotoGridItem(author: "\(index)", image: nil, isLoading: false)
+                    ForEach(Array(zip(store.photos.indices, store.photos)), id: \.1.id) { index, photo in
+                        PhotoGridItem(author: photo.author, image: nil, isLoading: false)
                             .onAppear {
-                                if index == range.upperBound {
+                                if index == store.photos.count-1 {
                                     print("last item appeared")
                                 }
                             }

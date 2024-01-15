@@ -72,6 +72,25 @@ final class PhotoGridIntegrationTests: XCTestCase {
         ViewHosting.expel()
     }
     
+    @MainActor
+    func test_loadPhotosCompletion_rendersPhotoViewsSuccessfully() async throws {
+        let photo0 = makePhoto(id: "0", author: "author0")
+        let photo1 = makePhoto(id: "1", author: "author1")
+        let photo2 = makePhoto(id: "2", author: "author2")
+        let (sut, _) = makeSUT(photoStubs: [.success([photo0, photo1]), .success([photo0, photo1, photo2])])
+        
+        await sut.completePhotosLoading()
+        
+        try assertThat(sut, isRendering: [photo0, photo1])
+        
+        sut.simulateUserInitiateReload()
+        await sut.completePhotosLoading()
+        
+        try assertThat(sut, isRendering: [photo0, photo1, photo2])
+        
+        ViewHosting.expel()
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(photoStubs: [PhotosLoaderSpy.PhotosResult] = [],
@@ -84,6 +103,35 @@ final class PhotoGridIntegrationTests: XCTestCase {
         ViewHosting.host(view: sut, function: function)
         trackForMemoryLeaks(loader, file: file, line: line)
         return (sut, loader)
+    }
+    
+    private func assertThat(_ sut: PhotoGridView, 
+                            isRendering photos: [Photo],
+                            file: StaticString = #file, 
+                            line: UInt = #line) throws {
+        let viewCount = try sut.numberOfRenderedViews()
+        guard photos.count == viewCount else {
+            XCTFail("Expect \(photos.count) photo views, got \(viewCount) instead", file: file, line: line)
+            return
+        }
+        
+        for tuple in photos.enumerated() {
+            try assertThat(sut, hasViewConfigureFor: tuple.element, at: tuple.offset, file: file, line: line)
+        }
+    }
+    
+    private func assertThat(_ sut: PhotoGridView, 
+                            hasViewConfigureFor photo: Photo,
+                            at index: Int,
+                            file: StaticString = #file, 
+                            line: UInt = #line) throws {
+        XCTAssertEqual(
+            try sut.authorText(at: index),
+            photo.author,
+            "Expect author: \(photo.author) for index \(index)",
+            file: file,
+            line: line
+        )
     }
     
     private func emptySuccessPhotos() -> PhotosLoaderSpy.PhotosResult {
@@ -107,5 +155,20 @@ extension PhotoGridView {
     
     var isShowingLoadingIndicator: Bool {
         store.isLoading
+    }
+    
+    func renderedViews() throws -> [InspectableView<ViewType.View<PhotoGridItem>>] {
+        try inspect().findAll(PhotoGridItem.self)
+    }
+    
+    func numberOfRenderedViews() throws -> Int {
+        try renderedViews().count
+    }
+    
+    func authorText(at index: Int) throws -> String {
+        try renderedViews()[index]
+            .find(viewWithAccessibilityIdentifier: "photo-grid-item-author")
+            .text()
+            .string()
     }
 }

@@ -36,6 +36,7 @@ struct PhotoGridItem: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(8)
                     .background(.thinMaterial)
+                    .accessibilityIdentifier("photo-grid-item-author")
             }
         }
         .aspectRatio(1, contentMode: .fit)
