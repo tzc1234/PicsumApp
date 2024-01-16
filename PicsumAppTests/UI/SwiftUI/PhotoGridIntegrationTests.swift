@@ -97,6 +97,25 @@ final class PhotoGridIntegrationTests: XCTestCase {
         try assertThat(sut, isRendering: [photo0, photo1])
     }
     
+    // MARK: - Photo view tests
+    
+    @MainActor
+    func test_photoView_loadsImageWhenVisible() async throws {
+        let photo0 = makePhoto(id: "0")
+        let photo1 = makePhoto(id: "1")
+        let (sut, loader) = makeSUT(
+            photoStubs: [.success([photo0, photo1])],
+            dataStubs: [anySuccessData(), anySuccessData()]
+        )
+        
+        XCTAssertEqual(loader.loggedPhotoIDSet, [], "Expect no photo data request just after view is rendered")
+        
+        await sut.completePhotosLoading()
+        try await sut.completeImageDataLoading(at: 0)
+        
+        XCTAssertEqual(loader.loggedPhotoIDSet, [photo0.id, photo1.id], "Expect 2 photo data requests after 2 photo views are rendered")
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(photoStubs: [PhotosLoaderSpy.PhotosResult] = [],
@@ -105,7 +124,7 @@ final class PhotoGridIntegrationTests: XCTestCase {
                          file: StaticString = #file,
                          line: UInt = #line) -> (sut: PhotoGridView, loader: PhotosLoaderSpy) {
         let loader = PhotosLoaderSpy(photoStubs: photoStubs, dataStubs: dataStubs)
-        let sut = PhotoGridComposer.composeWith(photosLoader: loader)
+        let sut = PhotoGridComposer.composeWith(photosLoader: loader, imageLoader: loader)
         ViewHosting.host(view: sut, function: function)
         trackMemoryLeaks(for: loader, function: function, file: file, line: line)
         return (sut, loader)
@@ -164,6 +183,10 @@ final class PhotoGridIntegrationTests: XCTestCase {
     private func anyFailure() -> PhotosLoaderSpy.PhotosResult {
         .failure(anyNSError())
     }
+    
+    private func anySuccessData() -> PhotosLoaderSpy.DataResult {
+        .success(Data())
+    }
 }
 
 extension PhotoGridView {
@@ -194,6 +217,15 @@ extension PhotoGridView {
     
     func authorText(at index: Int) throws -> String {
         try renderedViews()[index].authorText()
+    }
+    
+    func completeImageDataLoading(at index: Int) async throws {
+        try await renderedViewContainers()[index].store.delegate.task?.value
+        try? await Task.sleep(for: .seconds(0.01))
+    }
+    
+    private func renderedViewContainers() throws -> [PhotoGridItemContainer] {
+        try inspect().findAll(PhotoGridItemContainer.self).map { try $0.actualView() }
     }
 }
 

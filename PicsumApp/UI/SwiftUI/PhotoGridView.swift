@@ -55,13 +55,14 @@ final class PhotoGridStore: ObservableObject {
 
 struct PhotoGridView: View {
     @ObservedObject var store: PhotoGridStore
+    let gridItem: (Photo) -> AnyView
     
     var body: some View {
         NavigationView {
             ScrollView {
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 8) {
                     ForEach(Array(zip(store.photos.indices, store.photos)), id: \.1.id) { index, photo in
-                        PhotoGridItem(author: photo.author, image: nil, isLoading: false)
+                        gridItem(photo)
                             .onAppear {
                                 let isTheLastOne = index == store.photos.count-1
                                 if isTheLastOne {
@@ -95,5 +96,10 @@ struct PhotoGridView: View {
     
     let viewModel = PhotoGridStore(model: PhotoListViewModel(), delegate: DummyPhotoListViewControllerDelegate())
     
-    return PhotoGridView(store: viewModel)
+    return PhotoGridView(
+        store: viewModel,
+        gridItem: { photo in
+            PhotoGridItem(author: photo.author, image: nil, isLoading: false).eraseToAnyView()
+        }
+    )
 }

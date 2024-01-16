@@ -7,6 +7,28 @@
 
 import SwiftUI
 
+final class PhotoGridItemStore: ObservableObject {
+    let delegate: PhotoListCellControllerDelegate
+    
+    init(delegate: PhotoListCellControllerDelegate) {
+        self.delegate = delegate
+    }
+    
+    func loadImage() {
+        delegate.loadImage()
+    }
+}
+
+struct PhotoGridItemContainer: View {
+    @ObservedObject var store: PhotoGridItemStore
+    let author: String
+    
+    var body: some View {
+        PhotoGridItem(author: author, image: nil, isLoading: false)
+            .onAppear(perform: store.loadImage)
+    }
+}
+
 struct PhotoGridItem: View {
     let author: String
     let image: UIImage?
