@@ -116,6 +116,26 @@ final class PhotoGridIntegrationTests: XCTestCase {
         XCTAssertEqual(loader.loggedPhotoIDSet, [photo0.id, photo1.id], "Expect 2 photo data requests after 2 photo views are rendered")
     }
     
+    @MainActor
+    func test_photoView_cancelsImageLoadWhenItIsInvisible() async throws {
+        let photo0 = makePhoto(id: "0")
+        let photo1 = makePhoto(id: "1")
+        let imageData = UIImage.makeData(withColor: .blue)
+        let (sut, _) = makeSUT(
+            photoStubs: [.success([photo0, photo1])],
+            dataStubs: [.success(imageData), .success(imageData)]
+        )
+        await sut.completePhotosLoading()
+        
+        try sut.simulatePhotoViewInvisible(at: 1)
+        try await sut.completeImageDataLoading(at: 0)
+        
+        let renderedImageData0 = try sut.photoView(at: 0).imageData()
+        let renderedImageData1 = try sut.photoView(at: 1).imageData()
+        XCTAssertEqual(renderedImageData0, imageData, "Expect image rendered on first view since it is visible")
+        XCTAssertNil(renderedImageData1, "Expect no image rendered on second view since it is invisible")
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(photoStubs: [PhotosLoaderSpy.PhotosResult] = [],
@@ -168,7 +188,7 @@ final class PhotoGridIntegrationTests: XCTestCase {
                             file: StaticString = #file, 
                             line: UInt = #line) throws {
         XCTAssertEqual(
-            try sut.authorText(at: index),
+            try sut.photoView(at: index).authorText(),
             photo.author,
             "Expect author: \(photo.author) for index \(index)",
             file: file,
@@ -207,25 +227,38 @@ extension PhotoGridView {
         store.isLoading
     }
     
-    func renderedViews() throws -> [PhotoGridItem] {
-        try inspect().findAll(PhotoGridItem.self).map { try $0.actualView() }
+    func photoView(at index: Int) throws -> PhotoGridItem {
+        try photoViews()[index]
     }
     
     func numberOfRenderedViews() throws -> Int {
-        try renderedViews().count
+        try inspectablePhotoViews().count
     }
     
-    func authorText(at index: Int) throws -> String {
-        try renderedViews()[index].authorText()
+    private func photoViews() throws -> [PhotoGridItem] {
+        try inspectablePhotoViews().map { try $0.actualView() }
+    }
+    
+    private func inspectablePhotoViews() throws -> [InspectableView<ViewType.View<PhotoGridItem>>] {
+        try inspect().findAll(PhotoGridItem.self)
     }
     
     func completeImageDataLoading(at index: Int) async throws {
-        try await renderedViewContainers()[index].store.delegate.task?.value
-        try? await Task.sleep(for: .seconds(0.01))
+        try await photoViewContainers()[index].store.delegate.task?.value
     }
     
-    private func renderedViewContainers() throws -> [PhotoGridItemContainer] {
-        try inspect().findAll(PhotoGridItemContainer.self).map { try $0.actualView() }
+    func simulatePhotoViewInvisible(at index: Int) throws {
+        try inspectablePhotoViewContainers()[index]
+            .find(viewWithAccessibilityIdentifier: "photo-grid-item-container-stack")
+            .callOnDisappear()
+    }
+    
+    private func photoViewContainers() throws -> [PhotoGridItemContainer] {
+        try inspectablePhotoViewContainers().map { try $0.actualView() }
+    }
+    
+    private func inspectablePhotoViewContainers() throws -> [InspectableView<ViewType.View<PhotoGridItemContainer>>] {
+        try inspect().findAll(PhotoGridItemContainer.self)
     }
 }
 
@@ -235,5 +268,14 @@ extension PhotoGridItem {
             .find(viewWithAccessibilityIdentifier: "photo-grid-item-author")
             .text()
             .string()
+    }
+    
+    func imageData() throws -> Data? {
+        try inspect()
+            .find(viewWithAccessibilityIdentifier: "photo-grid-item-image")
+            .image()
+            .actualImage()
+            .uiImage()
+            .pngData()
     }
 }

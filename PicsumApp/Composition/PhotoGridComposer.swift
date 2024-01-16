@@ -8,6 +8,8 @@
 import SwiftUI
 
 enum PhotoGridComposer {
+    private typealias PhotoID = String
+    
     static func composeWith(photosLoader: PhotosLoader,
                             imageLoader: PhotoImageDataLoader) -> PhotoGridView {
         let viewModel = PhotoListViewModel()
@@ -17,20 +19,27 @@ enum PhotoGridComposer {
         })
         
         let store = PhotoGridStore(model: viewModel, delegate: presentationAdapter)
+        var containers = [PhotoID: PhotoGridItemContainer]()
         return PhotoGridView(store: store, gridItem: { photo in
-            makePhotoGridItem(photo: photo, imageLoader: imageLoader).eraseToAnyView()
+            guard let container = containers[photo.id] else {
+                let newContainer = makeGridItemContainer(photo: photo, imageLoader: imageLoader)
+                containers[photo.id] = newContainer
+                return newContainer.eraseToAnyView()
+            }
+            
+            return container.eraseToAnyView()
         })
     }
     
-    private static func makePhotoGridItem(photo: Photo,
-                                          imageLoader: PhotoImageDataLoader) -> PhotoGridItemContainer {
+    private static func makeGridItemContainer(photo: Photo,
+                                              imageLoader: PhotoImageDataLoader) -> PhotoGridItemContainer {
         let viewModel = PhotoImageViewModel<UIImage>()
         let adapter = PhotoImagePresentationAdapter(
             photoId: photo.id,
             viewModel: viewModel,
             imageLoader: imageLoader,
             imageConverter: UIImage.init)
-        let store = PhotoGridItemStore(delegate: adapter)
+        let store = PhotoGridItemStore(viewModel: viewModel, delegate: adapter)
         return PhotoGridItemContainer(store: store, author: photo.author)
     }
 }

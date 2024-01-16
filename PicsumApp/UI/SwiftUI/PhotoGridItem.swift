@@ -7,25 +7,44 @@
 
 import SwiftUI
 
-final class PhotoGridItemStore: ObservableObject {
+final class PhotoGridItemStore<Image>: ObservableObject {
+    @Published private(set) var image: Image?
+    
+    private let viewModel: PhotoImageViewModel<Image>
     let delegate: PhotoListCellControllerDelegate
     
-    init(delegate: PhotoListCellControllerDelegate) {
+    init(viewModel: PhotoImageViewModel<Image>, delegate: PhotoListCellControllerDelegate) {
+        self.viewModel = viewModel
         self.delegate = delegate
+        self.setupBindings()
+    }
+    
+    private func setupBindings() {
+        viewModel.didLoadImage = { [weak self] image in
+            self?.image = image
+        }
     }
     
     func loadImage() {
         delegate.loadImage()
     }
+    
+    func cancelLoadImage() {
+        delegate.cancelLoad()
+    }
 }
 
 struct PhotoGridItemContainer: View {
-    @ObservedObject var store: PhotoGridItemStore
+    @ObservedObject var store: PhotoGridItemStore<UIImage>
     let author: String
     
     var body: some View {
-        PhotoGridItem(author: author, image: nil, isLoading: false)
-            .onAppear(perform: store.loadImage)
+        VStack {
+            PhotoGridItem(author: author, image: store.image, isLoading: false)
+        }
+        .accessibilityIdentifier("photo-grid-item-container-stack")
+        .onAppear(perform: store.loadImage)
+        .onDisappear(perform: store.cancelLoadImage)
     }
 }
 
@@ -45,11 +64,10 @@ struct PhotoGridItem: View {
                 .scaledToFit()
                 .scaleEffect(0.35)
             
-            if let image {
-                Image(uiImage: image)
-                    .resizable()
-                    .scaledToFill()
-            }
+            Image(uiImage: image ?? UIImage())
+                .resizable()
+                .scaledToFill()
+                .accessibilityIdentifier("photo-grid-item-image")
             
             VStack {
                 Spacer()
