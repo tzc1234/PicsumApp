@@ -136,6 +136,24 @@ final class PhotoGridIntegrationTests: XCTestCase {
         XCTAssertNil(renderedImageData1, "Expect no image rendered on second view since it is invisible")
     }
     
+    @MainActor
+    func test_photoView_loadsImageAgainWhileInvisibleViewIsVisibleAgain() async throws {
+        let photo0 = makePhoto(id: "0")
+        let (sut, loader) = makeSUT(photoStubs: [.success([photo0])], dataStubs: [anySuccessData(), anySuccessData()])
+        
+        await sut.completePhotosLoading()
+        
+        try await sut.completeImageDataLoading(at: 0)
+        XCTAssertEqual(loader.loggedPhotoIDs, [photo0.id], "Expect 1 photo data request after photo view is visible")
+        
+        try sut.simulatePhotoViewInvisible(at: 0)
+        XCTAssertEqual(loader.loggedPhotoIDs, [photo0.id], "Expect no photo data requests changes after photo view is invisible")
+        
+        try sut.simulatePhotoViewVisible(at: 0)
+        try await sut.completeImageDataLoading(at: 0)
+        XCTAssertEqual(loader.loggedPhotoIDs, [photo0.id, photo0.id], "Expect 2 photo data requests after photo view is visible again")
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(photoStubs: [PhotosLoaderSpy.PhotosResult] = [],
@@ -248,9 +266,16 @@ extension PhotoGridView {
     }
     
     func simulatePhotoViewInvisible(at index: Int) throws {
+        try photoViewContainerStack(at: index).callOnDisappear()
+    }
+    
+    func simulatePhotoViewVisible(at index: Int) throws {
+        try photoViewContainerStack(at: index).callOnAppear()
+    }
+    
+    private func photoViewContainerStack(at index: Int) throws -> InspectableView<ViewType.ClassifiedView> {
         try inspectablePhotoViewContainers()[index]
             .find(viewWithAccessibilityIdentifier: "photo-grid-item-container-stack")
-            .callOnDisappear()
     }
     
     private func photoViewContainers() throws -> [PhotoGridItemContainer] {
