@@ -184,8 +184,8 @@ extension PhotoGridView {
         store.isLoading
     }
     
-    func renderedViews() throws -> [InspectableView<ViewType.View<PhotoGridItem>>] {
-        try inspect().findAll(PhotoGridItem.self)
+    func renderedViews() throws -> [PhotoGridItem] {
+        try inspect().findAll(PhotoGridItem.self).map { try $0.actualView() }
     }
     
     func numberOfRenderedViews() throws -> Int {
@@ -197,9 +197,10 @@ extension PhotoGridView {
     }
 }
 
-extension InspectableView<ViewType.View<PhotoGridItem>> {
+extension PhotoGridItem {
     func authorText() throws -> String {
-        try find(viewWithAccessibilityIdentifier: "photo-grid-item-author")
+        try inspect()
+            .find(viewWithAccessibilityIdentifier: "photo-grid-item-author")
             .text()
             .string()
     }
