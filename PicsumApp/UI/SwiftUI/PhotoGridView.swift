@@ -7,9 +7,10 @@
 
 import SwiftUI
 
-final class PhotoGridStore: ObservableObject {
+@Observable
+final class PhotoGridStore {
     private(set) var isLoading = false
-    @Published private(set) var photos = [Photo]()
+    private(set) var photos = [Photo]()
     
     private let viewModel: PhotoListViewModel
     let delegate: PhotoListViewControllerDelegate
@@ -54,7 +55,7 @@ final class PhotoGridStore: ObservableObject {
 }
 
 struct PhotoGridView: View {
-    @ObservedObject var store: PhotoGridStore
+    let store: PhotoGridStore
     let gridItem: (Photo) -> AnyView
     let onGridItemDisappear: (Photo) -> Void
     

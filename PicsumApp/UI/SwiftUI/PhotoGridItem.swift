@@ -7,9 +7,10 @@
 
 import SwiftUI
 
-final class PhotoGridItemStore<Image>: ObservableObject {
-    @Published private(set) var image: Image?
-    @Published private(set) var isLoading = false
+@Observable
+final class PhotoGridItemStore<Image> {
+    private(set) var image: Image?
+    private(set) var isLoading = false
     
     private let viewModel: PhotoImageViewModel<Image>
     let delegate: PhotoListCellControllerDelegate
@@ -40,7 +41,7 @@ final class PhotoGridItemStore<Image>: ObservableObject {
 }
 
 struct PhotoGridItemContainer: View {
-    @ObservedObject var store: PhotoGridItemStore<UIImage>
+    let store: PhotoGridItemStore<UIImage>
     let author: String
     
     var body: some View {
