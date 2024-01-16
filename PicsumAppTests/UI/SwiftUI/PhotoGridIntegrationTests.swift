@@ -173,6 +173,24 @@ final class PhotoGridIntegrationTests: XCTestCase {
         XCTAssertNil(renderedImageData1, "Expect no image rendered on second view since it is invisible")
     }
     
+    @MainActor
+    func test_photoView_rendersNoImageOnError() async throws {
+        let photo0 = makePhoto(id: "0")
+        let imageData = UIImage.makeData(withColor: .blue)
+        let (sut, _) = makeSUT(
+            photoStubs: [.success([photo0])],
+            dataStubs: [anyFailure(), .success(imageData)]
+        )
+        await sut.completePhotosLoading()
+        
+        try await sut.completeImageDataLoading(at: 0)
+        XCTAssertNil(try sut.photoView(at: 0).imageData(), "Expect no image rendered on photo view when photo image request completed with error")
+        
+        try sut.simulatePhotoViewVisible(at: 0)
+        try await sut.completeImageDataLoading(at: 0)
+        XCTAssertEqual(try sut.photoView(at: 0).imageData(), imageData, "Expect image rendered on photo view when photo image re-request completed with image data successfully")
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(photoStubs: [PhotosLoaderSpy.PhotosResult] = [],
@@ -238,6 +256,10 @@ final class PhotoGridIntegrationTests: XCTestCase {
     }
     
     private func anyFailure() -> PhotosLoaderSpy.PhotosResult {
+        .failure(anyNSError())
+    }
+    
+    private func anyFailure() -> PhotosLoaderSpy.DataResult {
         .failure(anyNSError())
     }
     
