@@ -35,7 +35,12 @@ final class PhotoGridStore: ObservableObject {
         delegate.loadPhotos()
     }
     
-    func trackFinishLoading() async {
+    func asyncLoadPhotos() async {
+        loadPhotos()
+        await trackFinishLoading()
+    }
+    
+    private func trackFinishLoading() async {
         let finishedLoading = !isLoading
         guard finishedLoading else { return }
         
@@ -58,7 +63,8 @@ struct PhotoGridView: View {
                     ForEach(Array(zip(store.photos.indices, store.photos)), id: \.1.id) { index, photo in
                         PhotoGridItem(author: photo.author, image: nil, isLoading: false)
                             .onAppear {
-                                if index == store.photos.count-1 {
+                                let isTheLastOne = index == store.photos.count-1
+                                if isTheLastOne {
                                     print("last item appeared")
                                 }
                             }
@@ -69,8 +75,7 @@ struct PhotoGridView: View {
             .navigationTitle(PhotoGridStore.title)
             .navigationBarTitleDisplayMode(.inline)
             .refreshable {
-                store.loadPhotos()
-                await store.trackFinishLoading()
+                await store.asyncLoadPhotos()
             }
             .onAppear {
                 store.loadPhotos()
