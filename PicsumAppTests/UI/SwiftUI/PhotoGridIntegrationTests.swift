@@ -117,6 +117,43 @@ final class PhotoGridIntegrationTests: XCTestCase {
     }
     
     @MainActor
+    func test_photoView_loadsImageAgainWhileInvisibleViewIsVisibleAgain() async throws {
+        let photo0 = makePhoto(id: "0")
+        let (sut, loader) = makeSUT(photoStubs: [.success([photo0])], dataStubs: [anySuccessData(), anySuccessData()])
+        
+        await sut.completePhotosLoading()
+        
+        try await sut.completeImageDataLoading(at: 0)
+        XCTAssertEqual(loader.loggedPhotoIDs, [photo0.id], "Expect 1 photo data request after photo view is visible")
+        
+        try sut.simulatePhotoViewInvisible(at: 0)
+        XCTAssertEqual(loader.loggedPhotoIDs, [photo0.id], "Expect no photo data requests changes after photo view is invisible")
+        
+        try sut.simulatePhotoViewVisible(at: 0)
+        try await sut.completeImageDataLoading(at: 0)
+        XCTAssertEqual(loader.loggedPhotoIDs, [photo0.id, photo0.id], "Expect 2 photo data requests after photo view is visible again")
+    }
+    
+    @MainActor
+    func test_photoViewLoadingIndicator_showsLoadingIndicatorWhileLoadingImage() async throws {
+        let photo0 = makePhoto(id: "0")
+        let photo1 = makePhoto(id: "1")
+        let (sut, _) = makeSUT(
+            photoStubs: [.success([photo0, photo1])],
+            dataStubs: [anySuccessData(), anySuccessData()]
+        )
+        await sut.completePhotosLoading()
+        
+        XCTAssertTrue(try sut.photoView(at: 0).isShowingLoadingIndicator, "Expect a loading indicator while 1st photo image request is loading")
+        XCTAssertTrue(try sut.photoView(at: 1).isShowingLoadingIndicator, "Expect a loading indicator while 2nd photo image request is loading")
+        
+        try await sut.completeImageDataLoading(at: 0)
+        
+        XCTAssertFalse(try sut.photoView(at: 0).isShowingLoadingIndicator, "Expect no loading indicator after 1st photo image request is completed")
+        XCTAssertFalse(try sut.photoView(at: 1).isShowingLoadingIndicator, "Expect no loading indicator after 2nd photo image request is completed")
+    }
+    
+    @MainActor
     func test_photoView_cancelsImageLoadWhenItIsInvisible() async throws {
         let photo0 = makePhoto(id: "0")
         let photo1 = makePhoto(id: "1")
@@ -134,24 +171,6 @@ final class PhotoGridIntegrationTests: XCTestCase {
         let renderedImageData1 = try sut.photoView(at: 1).imageData()
         XCTAssertEqual(renderedImageData0, imageData, "Expect image rendered on first view since it is visible")
         XCTAssertNil(renderedImageData1, "Expect no image rendered on second view since it is invisible")
-    }
-    
-    @MainActor
-    func test_photoView_loadsImageAgainWhileInvisibleViewIsVisibleAgain() async throws {
-        let photo0 = makePhoto(id: "0")
-        let (sut, loader) = makeSUT(photoStubs: [.success([photo0])], dataStubs: [anySuccessData(), anySuccessData()])
-        
-        await sut.completePhotosLoading()
-        
-        try await sut.completeImageDataLoading(at: 0)
-        XCTAssertEqual(loader.loggedPhotoIDs, [photo0.id], "Expect 1 photo data request after photo view is visible")
-        
-        try sut.simulatePhotoViewInvisible(at: 0)
-        XCTAssertEqual(loader.loggedPhotoIDs, [photo0.id], "Expect no photo data requests changes after photo view is invisible")
-        
-        try sut.simulatePhotoViewVisible(at: 0)
-        try await sut.completeImageDataLoading(at: 0)
-        XCTAssertEqual(loader.loggedPhotoIDs, [photo0.id, photo0.id], "Expect 2 photo data requests after photo view is visible again")
     }
     
     // MARK: - Helpers
@@ -302,5 +321,9 @@ extension PhotoGridItem {
             .actualImage()
             .uiImage()
             .pngData()
+    }
+    
+    var isShowingLoadingIndicator: Bool {
+        isLoading
     }
 }

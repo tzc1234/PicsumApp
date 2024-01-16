@@ -9,6 +9,7 @@ import SwiftUI
 
 final class PhotoGridItemStore<Image>: ObservableObject {
     @Published private(set) var image: Image?
+    @Published private(set) var isLoading = false
     
     private let viewModel: PhotoImageViewModel<Image>
     let delegate: PhotoListCellControllerDelegate
@@ -22,6 +23,10 @@ final class PhotoGridItemStore<Image>: ObservableObject {
     private func setupBindings() {
         viewModel.didLoadImage = { [weak self] image in
             self?.image = image
+        }
+        
+        viewModel.onLoadImage = { [weak self] isLoading in
+            self?.isLoading = isLoading
         }
     }
     
@@ -40,7 +45,7 @@ struct PhotoGridItemContainer: View {
     
     var body: some View {
         VStack {
-            PhotoGridItem(author: author, image: store.image, isLoading: false)
+            PhotoGridItem(author: author, image: store.image, isLoading: store.isLoading)
         }
         .accessibilityIdentifier("photo-grid-item-container-stack")
         .onAppear(perform: store.loadImage)
