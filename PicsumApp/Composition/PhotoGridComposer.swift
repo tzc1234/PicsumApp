@@ -20,15 +20,21 @@ enum PhotoGridComposer {
         
         let store = PhotoGridStore(viewModel: viewModel, delegate: presentationAdapter)
         var containers = [PhotoID: PhotoGridItemContainer]()
-        return PhotoGridView(store: store, gridItem: { photo in
-            guard let container = containers[photo.id] else {
-                let newContainer = makeGridItemContainer(photo: photo, imageLoader: imageLoader)
-                containers[photo.id] = newContainer
-                return newContainer.eraseToAnyView()
+        return PhotoGridView(
+            store: store,
+            gridItem: { photo in
+                guard let container = containers[photo.id] else {
+                    let newContainer = makeGridItemContainer(photo: photo, imageLoader: imageLoader)
+                    containers[photo.id] = newContainer
+                    return newContainer.eraseToAnyView()
+                }
+                
+                return container.eraseToAnyView()
+            }, 
+            onGridItemDisappear: { photo in
+                containers[photo.id] = nil
             }
-            
-            return container.eraseToAnyView()
-        })
+        )
     }
     
     private static func makeGridItemContainer(photo: Photo,

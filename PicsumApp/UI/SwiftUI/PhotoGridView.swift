@@ -56,6 +56,7 @@ final class PhotoGridStore: ObservableObject {
 struct PhotoGridView: View {
     @ObservedObject var store: PhotoGridStore
     let gridItem: (Photo) -> AnyView
+    let onGridItemDisappear: (Photo) -> Void
     
     var body: some View {
         NavigationView {
@@ -69,6 +70,7 @@ struct PhotoGridView: View {
                                     print("last item appeared")
                                 }
                             }
+                            .onDisappear { onGridItemDisappear(photo) }
                     }
                 }
                 .padding(.horizontal, 8)
@@ -100,6 +102,7 @@ struct PhotoGridView: View {
         store: viewModel,
         gridItem: { photo in
             PhotoGridItem(author: photo.author, image: nil, isLoading: false).eraseToAnyView()
-        }
+        }, 
+        onGridItemDisappear: { _ in }
     )
 }
