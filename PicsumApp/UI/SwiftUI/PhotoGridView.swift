@@ -11,21 +11,21 @@ final class PhotoGridStore: ObservableObject {
     private(set) var isLoading = false
     @Published private(set) var photos = [Photo]()
     
-    private let model: PhotoListViewModel
+    private let viewModel: PhotoListViewModel
     let delegate: PhotoListViewControllerDelegate
     
-    init(model: PhotoListViewModel, delegate: PhotoListViewControllerDelegate) {
-        self.model = model
+    init(viewModel: PhotoListViewModel, delegate: PhotoListViewControllerDelegate) {
+        self.viewModel = viewModel
         self.delegate = delegate
         self.setupBindings()
     }
     
     private func setupBindings() {
-        model.onLoad = { [weak self] isLoading in
+        viewModel.onLoad = { [weak self] isLoading in
             self?.isLoading = isLoading
         }
         
-        model.didLoad = { [weak self] photos in
+        viewModel.didLoad = { [weak self] photos in
             self?.photos = photos
         }
     }
@@ -94,7 +94,7 @@ struct PhotoGridView: View {
         func loadMorePhotos() {}
     }
     
-    let viewModel = PhotoGridStore(model: PhotoListViewModel(), delegate: DummyPhotoListViewControllerDelegate())
+    let viewModel = PhotoGridStore(viewModel: PhotoListViewModel(), delegate: DummyPhotoListViewControllerDelegate())
     
     return PhotoGridView(
         store: viewModel,

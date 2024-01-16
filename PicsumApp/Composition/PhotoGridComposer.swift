@@ -18,7 +18,7 @@ enum PhotoGridComposer {
             try await paginatedPhotosLoaderAdapter.makePaginatedPhotos()
         })
         
-        let store = PhotoGridStore(model: viewModel, delegate: presentationAdapter)
+        let store = PhotoGridStore(viewModel: viewModel, delegate: presentationAdapter)
         var containers = [PhotoID: PhotoGridItemContainer]()
         return PhotoGridView(store: store, gridItem: { photo in
             guard let container = containers[photo.id] else {
