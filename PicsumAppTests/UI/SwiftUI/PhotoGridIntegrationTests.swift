@@ -115,7 +115,8 @@ final class PhotoGridIntegrationTests: XCTestCase {
         XCTAssertEqual(loader.loggedPhotoIDSet, [], "Expect no photo data request just after view is rendered")
         
         await sut.completePhotosLoading()
-        try await sut.completeImageDataLoading(at: 0)
+        let container = try XCTUnwrap(sut.inspectablePhotoViewContainers().first)
+        try await container.completeImageDataLoading()
         
         XCTAssertEqual(loader.loggedPhotoIDSet, [photo0.id, photo1.id], "Expect 2 photo data requests after 2 photo views are rendered")
     }
@@ -127,14 +128,15 @@ final class PhotoGridIntegrationTests: XCTestCase {
         
         await sut.completePhotosLoading()
         
-        try await sut.completeImageDataLoading(at: 0)
+        let containers = try sut.inspectablePhotoViewContainers()
+        try await containers[0].completeImageDataLoading()
         XCTAssertEqual(loader.loggedPhotoIDs, [photo0.id], "Expect 1 photo data request after photo view is visible")
         
-        try sut.simulatePhotoViewInvisible(at: 0)
+        try containers[0].simulatePhotoViewInvisible()
         XCTAssertEqual(loader.loggedPhotoIDs, [photo0.id], "Expect no photo data requests changes after photo view is invisible")
         
-        try sut.simulatePhotoViewVisible(at: 0)
-        try await sut.completeImageDataLoading(at: 0)
+        try containers[0].simulatePhotoViewVisible()
+        try await containers[0].completeImageDataLoading()
         XCTAssertEqual(loader.loggedPhotoIDs, [photo0.id, photo0.id], "Expect 2 photo data requests after photo view is visible again")
     }
     
@@ -151,7 +153,8 @@ final class PhotoGridIntegrationTests: XCTestCase {
         XCTAssertTrue(try sut.photoView(at: 0).isShowingLoadingIndicator, "Expect a loading indicator while 1st photo image request is loading")
         XCTAssertTrue(try sut.photoView(at: 1).isShowingLoadingIndicator, "Expect a loading indicator while 2nd photo image request is loading")
         
-        try await sut.completeImageDataLoading(at: 0)
+        let container = try XCTUnwrap(sut.inspectablePhotoViewContainers().first)
+        try await container.completeImageDataLoading()
         
         XCTAssertFalse(try sut.photoView(at: 0).isShowingLoadingIndicator, "Expect no loading indicator after 1st photo image request is completed")
         XCTAssertFalse(try sut.photoView(at: 1).isShowingLoadingIndicator, "Expect no loading indicator after 2nd photo image request is completed")
@@ -168,13 +171,13 @@ final class PhotoGridIntegrationTests: XCTestCase {
         )
         await sut.completePhotosLoading()
         
-        try sut.simulatePhotoViewInvisible(at: 1)
-        try await sut.completeImageDataLoading(at: 0)
+        let containers = try sut.inspectablePhotoViewContainers()
+        try containers[1].simulatePhotoViewInvisible()
+        try await containers[0].completeImageDataLoading()
+        try await containers[1].completeImageDataLoading()
         
-        let renderedImageData0 = try sut.photoView(at: 0).imageData
-        let renderedImageData1 = try sut.photoView(at: 1).imageData
-        XCTAssertEqual(renderedImageData0, imageData, "Expect image rendered on first view since it is visible")
-        XCTAssertNil(renderedImageData1, "Expect no image rendered on second view since it is invisible")
+        XCTAssertEqual(try containers[0].imageData(), imageData, "Expect image rendered on first view since it is visible")
+        XCTAssertNil(try containers[1].imageData(), "Expect no image rendered on second view since it is invisible")
     }
     
     @MainActor
@@ -187,12 +190,13 @@ final class PhotoGridIntegrationTests: XCTestCase {
         )
         await sut.completePhotosLoading()
         
-        try await sut.completeImageDataLoading(at: 0)
-        XCTAssertNil(try sut.photoView(at: 0).imageData, "Expect no image rendered on photo view when photo image request completed with error")
+        let container = try XCTUnwrap(sut.inspectablePhotoViewContainers().first)
+        try await container.completeImageDataLoading()
+        XCTAssertNil(try container.imageData(), "Expect no image rendered on photo view when photo image request completed with error")
         
-        try sut.simulatePhotoViewVisible(at: 0)
-        try await sut.completeImageDataLoading(at: 0)
-        XCTAssertEqual(try sut.photoView(at: 0).imageData, imageData, "Expect image rendered on photo view when photo image re-request completed with image data successfully")
+        try container.simulatePhotoViewVisible()
+        try await container.completeImageDataLoading()
+        XCTAssertEqual(try container.imageData(), imageData, "Expect image rendered on photo view when photo image re-request completed with image data successfully")
     }
     
     @MainActor
@@ -214,24 +218,24 @@ final class PhotoGridIntegrationTests: XCTestCase {
         var containers = try sut.inspectablePhotoViewContainers()
         try await containers[0].completeImageDataLoading()
         XCTAssertEqual(containers.count, 1)
-        XCTAssertEqual(try containers[0].photoView().imageData, imageData0)
+        XCTAssertEqual(try containers[0].imageData(), imageData0)
         
         await sut.completeLoadMorePhotos()
         
         containers = try sut.inspectablePhotoViewContainers()
         try await containers[1].completeImageDataLoading()
         XCTAssertEqual(containers.count, 2)
-        XCTAssertEqual(try containers[0].photoView().imageData, imageData0)
-        XCTAssertEqual(try containers[1].photoView().imageData, imageData1)
+        XCTAssertEqual(try containers[0].imageData(), imageData0)
+        XCTAssertEqual(try containers[1].imageData(), imageData1)
         
         await sut.completeLoadMorePhotos()
         
         containers = try sut.inspectablePhotoViewContainers()
         try await containers[2].completeImageDataLoading()
         XCTAssertEqual(containers.count, 3)
-        XCTAssertEqual(try containers[0].photoView().imageData, imageData0)
-        XCTAssertEqual(try containers[1].photoView().imageData, imageData1)
-        XCTAssertEqual(try containers[2].photoView().imageData, imageData2)
+        XCTAssertEqual(try containers[0].imageData(), imageData0)
+        XCTAssertEqual(try containers[1].imageData(), imageData1)
+        XCTAssertEqual(try containers[2].imageData(), imageData2)
     }
     
     // MARK: - Helpers
@@ -345,27 +349,6 @@ extension PhotoGridView {
         try inspect().findAll(PhotoGridItem.self)
     }
     
-    func completeImageDataLoading(at index: Int) async throws {
-        try await photoViewContainers()[index].store.delegate.task?.value
-    }
-    
-    func simulatePhotoViewInvisible(at index: Int) throws {
-        try photoViewContainerStack(at: index).callOnDisappear()
-    }
-    
-    func simulatePhotoViewVisible(at index: Int) throws {
-        try photoViewContainerStack(at: index).callOnAppear()
-    }
-    
-    private func photoViewContainerStack(at index: Int) throws -> InspectableView<ViewType.ClassifiedView> {
-        try inspectablePhotoViewContainers()[index]
-            .find(viewWithAccessibilityIdentifier: "photo-grid-item-container-stack")
-    }
-    
-    private func photoViewContainers() throws -> [PhotoGridItemContainer] {
-        try inspectablePhotoViewContainers().map { try $0.actualView() }
-    }
-    
     func inspectablePhotoViewContainers() throws -> [InspectableView<ViewType.View<PhotoGridItemContainer>>] {
         try inspect().findAll(PhotoGridItemContainer.self)
     }
@@ -376,7 +359,23 @@ extension InspectableView<ViewType.View<PhotoGridItemContainer>> {
         try await actualView().store.delegate.task?.value
     }
     
-    func photoView() throws -> PhotoGridItem {
+    func simulatePhotoViewInvisible() throws {
+        try stack().callOnDisappear()
+    }
+    
+    func simulatePhotoViewVisible() throws {
+        try stack().callOnAppear()
+    }
+    
+    private func stack() throws -> InspectableView<ViewType.ClassifiedView> {
+        try find(viewWithAccessibilityIdentifier: "photo-grid-item-container-stack")
+    }
+    
+    func imageData() throws -> Data? {
+        try photoView().imageData
+    }
+    
+    private func photoView() throws -> PhotoGridItem {
         try find(PhotoGridItem.self).actualView()
     }
 }
