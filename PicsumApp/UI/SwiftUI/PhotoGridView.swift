@@ -29,15 +29,26 @@ final class PhotoGridStore {
         viewModel.didLoad = { [weak self] photos in
             self?.photos = photos
         }
+        
+        viewModel.didLoadMore = { [weak self] photos in
+            self?.photos += photos
+        }
     }
     
+    @MainActor
     func loadPhotos() {
         isLoading = true
+        cancelAllPendingPhotosTask()
         delegate.loadPhotos()
     }
     
+    private func cancelAllPendingPhotosTask() {
+        delegate.loadPhotosTask?.cancel()
+        delegate.loadMorePhotosTask?.cancel()
+    }
+    
     func asyncLoadPhotos() async {
-        loadPhotos()
+        await loadPhotos()
         await trackFinishLoading()
     }
     
@@ -47,6 +58,11 @@ final class PhotoGridStore {
         
         try? await Task.sleep(for: .seconds(0.1))
         await trackFinishLoading()
+    }
+    
+    @MainActor
+    func loadMorePhotos() {
+        delegate.loadMorePhotos()
     }
     
     static var title: String {
@@ -68,7 +84,7 @@ struct PhotoGridView: View {
                             .onAppear {
                                 let isTheLastOne = index == store.photos.count-1
                                 if isTheLastOne {
-                                    print("last item appeared")
+                                    store.loadMorePhotos()
                                 }
                             }
                             .onDisappear { onGridItemDisappear(photo) }

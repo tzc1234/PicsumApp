@@ -69,16 +69,20 @@ final class PhotoGridIntegrationTests: XCTestCase {
         let photo0 = makePhoto(id: "0", author: "author0")
         let photo1 = makePhoto(id: "1", author: "author1")
         let photo2 = makePhoto(id: "2", author: "author2")
-        let (sut, _) = makeSUT(photoStubs: [.success([photo0, photo1]), .success([photo0, photo1, photo2])])
+        let (sut, _) = makeSUT(photoStubs: [.success([photo0]), .success([photo1, photo2]), .success([photo0])])
         
         await sut.completePhotosLoading()
         
-        try assertThat(sut, isRendering: [photo0, photo1])
+        try assertThat(try sut.photoViews(), isRendering: [photo0])
+        
+        await sut.completeLoadMorePhotos()
+        
+        try assertThat(try sut.photoViews(), isRendering: [photo0, photo1, photo2])
         
         sut.simulateUserInitiateReload()
         await sut.completePhotosLoading()
         
-        try assertThat(sut, isRendering: [photo0, photo1, photo2])
+        try assertThat(try sut.photoViews(), isRendering: [photo0])
     }
     
     @MainActor
@@ -89,12 +93,12 @@ final class PhotoGridIntegrationTests: XCTestCase {
         
         await sut.completePhotosLoading()
         
-        try assertThat(sut, isRendering: [photo0, photo1])
+        try assertThat(try sut.photoViews(), isRendering: [photo0, photo1])
         
         sut.simulateUserInitiateReload()
         await sut.completePhotosLoading()
         
-        try assertThat(sut, isRendering: [photo0, photo1])
+        try assertThat(try sut.photoViews(), isRendering: [photo0, photo1])
     }
     
     // MARK: - Photo view tests
@@ -167,8 +171,8 @@ final class PhotoGridIntegrationTests: XCTestCase {
         try sut.simulatePhotoViewInvisible(at: 1)
         try await sut.completeImageDataLoading(at: 0)
         
-        let renderedImageData0 = try sut.photoView(at: 0).imageData()
-        let renderedImageData1 = try sut.photoView(at: 1).imageData()
+        let renderedImageData0 = try sut.photoView(at: 0).imageData
+        let renderedImageData1 = try sut.photoView(at: 1).imageData
         XCTAssertEqual(renderedImageData0, imageData, "Expect image rendered on first view since it is visible")
         XCTAssertNil(renderedImageData1, "Expect no image rendered on second view since it is invisible")
     }
@@ -184,11 +188,50 @@ final class PhotoGridIntegrationTests: XCTestCase {
         await sut.completePhotosLoading()
         
         try await sut.completeImageDataLoading(at: 0)
-        XCTAssertNil(try sut.photoView(at: 0).imageData(), "Expect no image rendered on photo view when photo image request completed with error")
+        XCTAssertNil(try sut.photoView(at: 0).imageData, "Expect no image rendered on photo view when photo image request completed with error")
         
         try sut.simulatePhotoViewVisible(at: 0)
         try await sut.completeImageDataLoading(at: 0)
-        XCTAssertEqual(try sut.photoView(at: 0).imageData(), imageData, "Expect image rendered on photo view when photo image re-request completed with image data successfully")
+        XCTAssertEqual(try sut.photoView(at: 0).imageData, imageData, "Expect image rendered on photo view when photo image re-request completed with image data successfully")
+    }
+    
+    @MainActor
+    func test_loadMorePhotos_rendersMorePhotoViewsWhenNextPageLoadingCompleted() async throws {
+        let photo0 = makePhoto(id: "0", author: "author0")
+        let photo1 = makePhoto(id: "1", author: "author1")
+        let photo2 = makePhoto(id: "2", author: "author2")
+        let imageData0 = UIImage.makeData(withColor: .red)
+        let imageData1 = UIImage.makeData(withColor: .green)
+        let imageData2 = UIImage.makeData(withColor: .blue)
+        let (sut, _) = makeSUT(
+            photoStubs: [.success([photo0]), .success([photo1]), .success([photo2])],
+            dataStubs: [.success(imageData0), .success(imageData1), .success(imageData2)]
+        )
+        
+        sut.simulateUserInitiateReload()
+        await sut.completePhotosLoading()
+        
+        var containers = try sut.inspectablePhotoViewContainers()
+        try await containers[0].completeImageDataLoading()
+        XCTAssertEqual(containers.count, 1)
+        XCTAssertEqual(try containers[0].photoView().imageData, imageData0)
+        
+        await sut.completeLoadMorePhotos()
+        
+        containers = try sut.inspectablePhotoViewContainers()
+        try await containers[1].completeImageDataLoading()
+        XCTAssertEqual(containers.count, 2)
+        XCTAssertEqual(try containers[0].photoView().imageData, imageData0)
+        XCTAssertEqual(try containers[1].photoView().imageData, imageData1)
+        
+        await sut.completeLoadMorePhotos()
+        
+        containers = try sut.inspectablePhotoViewContainers()
+        try await containers[2].completeImageDataLoading()
+        XCTAssertEqual(containers.count, 3)
+        XCTAssertEqual(try containers[0].photoView().imageData, imageData0)
+        XCTAssertEqual(try containers[1].photoView().imageData, imageData1)
+        XCTAssertEqual(try containers[2].photoView().imageData, imageData2)
     }
     
     // MARK: - Helpers
@@ -222,28 +265,27 @@ final class PhotoGridIntegrationTests: XCTestCase {
         }
     }
     
-    private func assertThat(_ sut: PhotoGridView, 
+    private func assertThat(_ photoViews: [PhotoGridItem],
                             isRendering photos: [Photo],
-                            file: StaticString = #file, 
+                            file: StaticString = #file,
                             line: UInt = #line) throws {
-        let viewCount = try sut.numberOfRenderedViews()
-        guard photos.count == viewCount else {
-            XCTFail("Expect \(photos.count) photo views, got \(viewCount) instead", file: file, line: line)
+        guard photos.count == photoViews.count else {
+            XCTFail("Expect \(photos.count) photo views, got \(photoViews.count) instead", file: file, line: line)
             return
         }
         
-        for tuple in photos.enumerated() {
-            try assertThat(sut, hasViewConfigureFor: tuple.element, at: tuple.offset, file: file, line: line)
+        for i in 0..<photos.count {
+            try assertThat(photoViews[i], hasViewConfigureFor: photos[i], at: i, file: file, line: line)
         }
     }
     
-    private func assertThat(_ sut: PhotoGridView, 
+    private func assertThat(_ photoView: PhotoGridItem,
                             hasViewConfigureFor photo: Photo,
                             at index: Int,
-                            file: StaticString = #file, 
+                            file: StaticString = #file,
                             line: UInt = #line) throws {
         XCTAssertEqual(
-            try sut.photoView(at: index).authorText(),
+            photoView.authorText,
             photo.author,
             "Expect author: \(photo.author) for index \(index)",
             file: file,
@@ -273,6 +315,11 @@ extension PhotoGridView {
         await store.delegate.loadPhotosTask?.value
     }
     
+    func completeLoadMorePhotos() async {
+        await store.delegate.loadMorePhotosTask?.value
+    }
+    
+    @MainActor 
     func simulateUserInitiateReload() {
         // ViewInspector does not support SwiftUI refreshable yet, therefore directly trigger the loadPhotos()
         store.loadPhotos()
@@ -290,11 +337,7 @@ extension PhotoGridView {
         try photoViews()[index]
     }
     
-    func numberOfRenderedViews() throws -> Int {
-        try inspectablePhotoViews().count
-    }
-    
-    private func photoViews() throws -> [PhotoGridItem] {
+    func photoViews() throws -> [PhotoGridItem] {
         try inspectablePhotoViews().map { try $0.actualView() }
     }
     
@@ -323,26 +366,28 @@ extension PhotoGridView {
         try inspectablePhotoViewContainers().map { try $0.actualView() }
     }
     
-    private func inspectablePhotoViewContainers() throws -> [InspectableView<ViewType.View<PhotoGridItemContainer>>] {
+    func inspectablePhotoViewContainers() throws -> [InspectableView<ViewType.View<PhotoGridItemContainer>>] {
         try inspect().findAll(PhotoGridItemContainer.self)
     }
 }
 
-extension PhotoGridItem {
-    func authorText() throws -> String {
-        try inspect()
-            .find(viewWithAccessibilityIdentifier: "photo-grid-item-author")
-            .text()
-            .string()
+extension InspectableView<ViewType.View<PhotoGridItemContainer>> {
+    func completeImageDataLoading() async throws {
+        try await actualView().store.delegate.task?.value
     }
     
-    func imageData() throws -> Data? {
-        try inspect()
-            .find(viewWithAccessibilityIdentifier: "photo-grid-item-image")
-            .image()
-            .actualImage()
-            .uiImage()
-            .pngData()
+    func photoView() throws -> PhotoGridItem {
+        try find(PhotoGridItem.self).actualView()
+    }
+}
+
+extension PhotoGridItem {
+    var authorText: String {
+        author
+    }
+    
+    var imageData: Data? {
+        image?.pngData()
     }
     
     var isShowingLoadingIndicator: Bool {

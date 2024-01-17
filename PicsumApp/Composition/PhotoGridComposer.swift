@@ -19,33 +19,34 @@ enum PhotoGridComposer {
         })
         
         let store = PhotoGridStore(viewModel: viewModel, delegate: presentationAdapter)
-        var containers = [PhotoID: PhotoGridItemContainer]()
+        var gridItemStores = [PhotoID: PhotoGridItemStore<UIImage>]()
         return PhotoGridView(
             store: store,
             gridItem: { photo in
-                guard let container = containers[photo.id] else {
-                    let newContainer = makeGridItemContainer(photo: photo, imageLoader: imageLoader)
-                    containers[photo.id] = newContainer
-                    return newContainer.eraseToAnyView()
+                let store = if let cachedStore = gridItemStores[photo.id] {
+                    cachedStore
+                } else {
+                    makeGridItemStore(photo: photo, imageLoader: imageLoader)
                 }
                 
-                return container.eraseToAnyView()
-            }, 
+                gridItemStores[photo.id] = store
+                
+                return PhotoGridItemContainer(store: store, author: photo.author).eraseToAnyView()
+            },
             onGridItemDisappear: { photo in
-                containers[photo.id] = nil
+                gridItemStores[photo.id] = nil
             }
         )
     }
     
-    private static func makeGridItemContainer(photo: Photo,
-                                              imageLoader: PhotoImageDataLoader) -> PhotoGridItemContainer {
+    private static func makeGridItemStore(photo: Photo,
+                                          imageLoader: PhotoImageDataLoader) -> PhotoGridItemStore<UIImage> {
         let viewModel = PhotoImageViewModel<UIImage>()
         let adapter = PhotoImagePresentationAdapter(
             photoId: photo.id,
             viewModel: viewModel,
             imageLoader: imageLoader,
             imageConverter: UIImage.init)
-        let store = PhotoGridItemStore(viewModel: viewModel, delegate: adapter)
-        return PhotoGridItemContainer(store: store, author: photo.author)
+        return PhotoGridItemStore(viewModel: viewModel, delegate: adapter)
     }
 }
