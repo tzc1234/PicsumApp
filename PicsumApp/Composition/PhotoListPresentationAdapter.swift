@@ -62,7 +62,7 @@ final class PhotoListPresentationAdapter: PhotoListViewControllerDelegate {
     }
 }
 
-private extension PhotoListViewModel {
+extension PhotoListViewModel {
     func didStartLoading() {
         onLoad?(true)
     }
