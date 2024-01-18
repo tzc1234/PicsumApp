@@ -253,7 +253,32 @@ final class PhotoGridIntegrationTests: XCTestCase {
         XCTAssertEqual(try button.role(), .cancel)
         
         try button.tap()
-        XCTAssertNil(try? sut.errorView(), "Expect no errorView shown")
+        XCTAssertNil(try? sut.errorView(), "Expect no errorView shown after cancel button tap")
+    }
+    
+    @MainActor
+    func test_errorView_showsWhenLoadMorePhotoRequestOnError() async throws {
+        let photo = makePhoto()
+        let imageData = UIImage.makeData(withColor: .red)
+        let (sut, _) = makeSUT(
+            photoStubs: [.success([photo]), anyFailure()],
+            dataStubs: [.success(imageData)]
+        )
+        
+        await sut.completePhotosLoading()
+        let container = try XCTUnwrap(sut.inspectablePhotoViewContainers().first)
+        try await container.completeImageDataLoading()
+        
+        await sut.completeLoadMorePhotos()
+        
+        let errorView = try XCTUnwrap(sut.errorView())
+        XCTAssertEqual(try errorView.titleText(), PhotoGridStore.errorTitle)
+        XCTAssertEqual(try errorView.messageText(), PhotoListViewModel.errorMessage)
+        let button = try XCTUnwrap(errorView.actionButton())
+        XCTAssertEqual(try button.role(), .cancel)
+        
+        try button.tap()
+        XCTAssertNil(try? sut.errorView(), "Expect no errorView shown after cancel button tap")
     }
     
     // MARK: - Helpers
