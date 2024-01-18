@@ -5,26 +5,13 @@
 //  Created by Tsz-Lung on 18/01/2024.
 //
 
-import SwiftUI
+import Foundation
 
 @Observable
 final class PhotoGridStore {
     private(set) var isLoading = false
     private(set) var photos = [Photo]()
     private(set) var errorMessage: String?
-    
-    private var _showError = false
-    var showError: Binding<Bool> {
-        Binding(
-            get: { self._showError },
-            set: { showError in
-                if !showError {
-                    self.errorMessage = nil
-                }
-                self._showError = showError
-            }
-        )
-    }
     
     private let viewModel: PhotoListViewModel
     let delegate: PhotoListViewControllerDelegate
@@ -50,12 +37,11 @@ final class PhotoGridStore {
         
         viewModel.onError = { [weak self] errorMessage in
             self?.errorMessage = errorMessage
-            self?._showError = errorMessage != nil
         }
     }
     
-    func hideError() {
-        showError.wrappedValue = false
+    func clearErrorMessage() {
+        errorMessage = nil
     }
     
     @MainActor

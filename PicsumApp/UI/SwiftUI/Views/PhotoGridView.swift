@@ -47,6 +47,23 @@ struct PhotoGridView: View {
     }
 }
 
+extension PhotoGridStore {
+    var showError: Binding<Bool> {
+        Binding(
+            get: { self.errorMessage != nil },
+            set: { showError in
+                if !showError {
+                    self.clearErrorMessage()
+                }
+            }
+        )
+    }
+    
+    func hideError() {
+        clearErrorMessage()
+    }
+}
+
 #Preview {
     class PhotoListViewControllerDelegateStub: PhotoListViewControllerDelegate {
         var loadPhotosTask: Task<Void, Never>?
