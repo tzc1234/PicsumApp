@@ -365,17 +365,3 @@ final class PhotoGridIntegrationTests: XCTestCase {
         .success(Data())
     }
 }
-
-extension PhotoGridItem {
-    var authorText: String {
-        author
-    }
-    
-    var imageData: Data? {
-        image?.pngData()
-    }
-    
-    var isShowingLoadingIndicator: Bool {
-        isLoading
-    }
-}
