@@ -1,5 +1,6 @@
 # PicsumApp
 ## Practice the learnings from iOS Lead Essentials online course.
+**Migrating to SwifUI, work in progress.**
 
 ## Retrospective
 ### Async/await in unit test
