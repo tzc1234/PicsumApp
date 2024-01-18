@@ -247,7 +247,7 @@ final class PhotoGridIntegrationTests: XCTestCase {
         await sut.completePhotosLoading()
         
         let errorView = try XCTUnwrap(sut.errorView())
-        XCTAssertEqual(try errorView.titleText(), "Oops!")
+        XCTAssertEqual(try errorView.titleText(), PhotoGridStore.errorTitle)
         XCTAssertEqual(try errorView.messageText(), PhotoListViewModel.errorMessage)
         let button = try XCTUnwrap(errorView.actionButton())
         XCTAssertEqual(try button.role(), .cancel)

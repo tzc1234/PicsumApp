@@ -101,7 +101,7 @@ final class PhotoListViewController: UICollectionViewController {
     }
     
     private func showErrorView(message: String) {
-        let alert = UIAlertController(title: "Oops!", message: message, preferredStyle: .alert)
+        let alert = UIAlertController(title: PhotoListViewModel.errorTitle, message: message, preferredStyle: .alert)
         alert.addAction(.init(title: "Cancel", style: .cancel))
         present(alert, animated: true)
     }

@@ -90,6 +90,10 @@ final class PhotoGridStore {
     static var title: String {
         PhotoListViewModel.title
     }
+    
+    static var errorTitle: String {
+        PhotoListViewModel.errorTitle
+    }
 }
 
 struct PhotoGridView: View {
@@ -124,7 +128,7 @@ struct PhotoGridView: View {
             }
         }
         .accessibilityIdentifier("photo-grid-outmost-view")
-        .alert("Oops!", isPresented: store.showError) {
+        .alert(PhotoGridStore.errorTitle, isPresented: store.showError) {
             Button("OK", role: .cancel, action: { store.hideError() })
         } message: {
             Text(store.errorMessage ?? "")
