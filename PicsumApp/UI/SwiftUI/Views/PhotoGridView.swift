@@ -58,33 +58,32 @@ struct PhotoGridView: View {
         }
         
         func loadPhotos() {
-//            viewModel.didFinishLoading(with: [
-//                Photo(
-//                    id: "0",
-//                    author: "Author 0",
-//                    width: 1,
-//                    height: 1,
-//                    webURL: URL(string: "https://any-url.com")!,
-//                    url: URL(string: "https://0.com")!
-//                ),
-//                Photo(
-//                    id: "1",
-//                    author: "Author 1",
-//                    width: 1,
-//                    height: 1,
-//                    webURL: URL(string: "https://any-url.com")!,
-//                    url: URL(string: "https://1.com")!
-//                ),
-//                Photo(
-//                    id: "2",
-//                    author: "Author 2",
-//                    width: 1,
-//                    height: 1,
-//                    webURL: URL(string: "https://any-url.com")!,
-//                    url: URL(string: "https://2.com")!
-//                )
-//            ])
-            viewModel.didFinishLoadingWithError()
+            viewModel.didFinishLoading(with: [
+                Photo(
+                    id: "0",
+                    author: "Author 0",
+                    width: 1,
+                    height: 1,
+                    webURL: URL(string: "https://any-url.com")!,
+                    url: URL(string: "https://0.com")!
+                ),
+                Photo(
+                    id: "1",
+                    author: "Author 1",
+                    width: 1,
+                    height: 1,
+                    webURL: URL(string: "https://any-url.com")!,
+                    url: URL(string: "https://1.com")!
+                ),
+                Photo(
+                    id: "2",
+                    author: "Author 2",
+                    width: 1,
+                    height: 1,
+                    webURL: URL(string: "https://any-url.com")!,
+                    url: URL(string: "https://2.com")!
+                )
+            ])
         }
         
         func loadMorePhotos() {}
