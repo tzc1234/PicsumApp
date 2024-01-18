@@ -23,6 +23,6 @@ extension PhotosLoaderSpyResultHelpersForTest {
     }
     
     func anySuccessData() -> PhotosLoaderSpy.DataResult {
-        .success(Data())
+        .success(UIImage.makeData(withColor: .gray))
     }
 }

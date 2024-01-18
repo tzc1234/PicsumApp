@@ -259,11 +259,7 @@ final class PhotoGridIntegrationTests: XCTestCase, PhotosLoaderSpyResultHelpersF
     @MainActor
     func test_errorView_showsWhenLoadMorePhotoRequestOnError() async throws {
         let photo = makePhoto()
-        let imageData = UIImage.makeData(withColor: .red)
-        let (sut, _) = makeSUT(
-            photoStubs: [.success([photo]), anyFailure()],
-            dataStubs: [.success(imageData)]
-        )
+        let (sut, _) = makeSUT(photoStubs: [.success([photo])], dataStubs: [anySuccessData()])
         
         await sut.completePhotosLoading()
         let container = try XCTUnwrap(sut.inspectablePhotoViewContainers().first)
