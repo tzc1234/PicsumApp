@@ -265,6 +265,26 @@
 			path = Helpers;
 			sourceTree = "<group>";
 		};
+		BE28086D2B5962C100219CB4 /* UIKit */ = {
+			isa = PBXGroup;
+			children = (
+				BEF0B52A2A6005640024625A /* Helpers */,
+				BED8ECCC2A5340870077FFF9 /* PhotoListIntegrationTests.swift */,
+				BE62278E2A63FFFC0082ED1B /* PhotoDetailIntegrationTests.swift */,
+			);
+			path = UIKit;
+			sourceTree = "<group>";
+		};
+		BE28086E2B5962DE00219CB4 /* UIKit */ = {
+			isa = PBXGroup;
+			children = (
+				BE6560702A53236900CCD5D6 /* ViewModels */,
+				BE1FD4EB2A5423740021777F /* Controllers */,
+				BE4876D62A542E2D00F6AE3F /* Views */,
+			);
+			path = UIKit;
+			sourceTree = "<group>";
+		};
 		BE36355F2A5FEA520039EECD /* Composition */ = {
 			isa = PBXGroup;
 			children = (
@@ -287,9 +307,7 @@
 			isa = PBXGroup;
 			children = (
 				BEC368692B333F79001888E0 /* Collaborators */,
-				BE6560702A53236900CCD5D6 /* ViewModels */,
-				BE1FD4EB2A5423740021777F /* Controllers */,
-				BE4876D62A542E2D00F6AE3F /* Views */,
+				BE28086E2B5962DE00219CB4 /* UIKit */,
 				BED4E3AA2B51849E00089CEA /* SwiftUI */,
 			);
 			path = UI;
@@ -585,9 +603,7 @@
 		BEF0B5292A60054D0024625A /* UI */ = {
 			isa = PBXGroup;
 			children = (
-				BEF0B52A2A6005640024625A /* Helpers */,
-				BED8ECCC2A5340870077FFF9 /* PhotoListIntegrationTests.swift */,
-				BE62278E2A63FFFC0082ED1B /* PhotoDetailIntegrationTests.swift */,
+				BE28086D2B5962C100219CB4 /* UIKit */,
 				BE37F6892B553C700098FF2E /* SwiftUI */,
 			);
 			path = UI;
