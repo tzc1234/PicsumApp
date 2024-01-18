@@ -29,6 +29,7 @@ struct PhotoGridItem: View {
     var body: some View {
         ZStack {
             Color(.systemGray5)
+                .accessibilityIdentifier("photo-grid-item-background")
                 .shimmering(active: isLoading)
             
             Image(systemName: "photo")
@@ -40,6 +41,7 @@ struct PhotoGridItem: View {
             Image(uiImage: image ?? UIImage())
                 .resizable()
                 .scaledToFill()
+                .accessibilityIdentifier("photo-grid-item-image")
             
             VStack {
                 Spacer()
@@ -48,6 +50,7 @@ struct PhotoGridItem: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(8)
                     .background(.thinMaterial)
+                    .accessibilityIdentifier("photo-grid-item-author")
             }
         }
         .aspectRatio(1, contentMode: .fit)

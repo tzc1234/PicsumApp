@@ -6,18 +6,30 @@
 //
 
 import Foundation
+import ViewInspector
 @testable import PicsumApp
 
 extension PhotoGridItem {
-    var authorText: String {
-        author
+    func authorText() throws -> String {
+        try inspect()
+            .find(viewWithAccessibilityIdentifier: "photo-grid-item-author")
+            .text()
+            .string()
     }
     
-    var imageData: Data? {
-        image?.pngData()
+    func imageData() throws -> Data? {
+        try inspect()
+            .find(viewWithAccessibilityIdentifier: "photo-grid-item-image")
+            .image()
+            .actualImage()
+            .uiImage()
+            .pngData()
     }
     
     var isShowingLoadingIndicator: Bool {
-        isLoading
+        let shimmer = try? inspect()
+            .find(viewWithAccessibilityIdentifier: "photo-grid-item-background")
+            .modifier(Shimmer.self)
+        return shimmer != nil
     }
 }

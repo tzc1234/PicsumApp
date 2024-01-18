@@ -71,7 +71,7 @@ extension InspectableView<ViewType.View<PhotoGridItemContainer>> {
     }
     
     func imageData() throws -> Data? {
-        try photoView().imageData
+        try photoView().imageData()
     }
     
     private func photoView() throws -> PhotoGridItem {

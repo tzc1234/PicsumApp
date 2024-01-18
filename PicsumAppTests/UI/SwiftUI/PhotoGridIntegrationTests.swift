@@ -341,7 +341,7 @@ final class PhotoGridIntegrationTests: XCTestCase, PhotosLoaderSpyResultHelpersF
                             file: StaticString = #file,
                             line: UInt = #line) throws {
         XCTAssertEqual(
-            photoView.authorText,
+            try photoView.authorText(),
             photo.author,
             "Expect author: \(photo.author) for index \(index)",
             file: file,
