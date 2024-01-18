@@ -12,6 +12,7 @@
 		BE21A9CF2B46FC6C000385B1 /* PhotoListAcceptanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE21A9CE2B46FC6C000385B1 /* PhotoListAcceptanceTests.swift */; };
 		BE2808652B59609100219CB4 /* PhotoGridStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2808642B59609100219CB4 /* PhotoGridStore.swift */; };
 		BE2808672B5960EE00219CB4 /* PhotoGridItemStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2808662B5960EE00219CB4 /* PhotoGridItemStore.swift */; };
+		BE28086A2B5961ED00219CB4 /* PhotoGridView+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2808692B5961ED00219CB4 /* PhotoGridView+Helpers.swift */; };
 		BE3635642A5FF8C30039EECD /* ImageDataLoaderCacheDecoratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3635632A5FF8C30039EECD /* ImageDataLoaderCacheDecoratorTests.swift */; };
 		BE3635662A5FF9970039EECD /* ImageDataLoaderSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3635652A5FF9970039EECD /* ImageDataLoaderSpy.swift */; };
 		BE3691092A5566EE00DF0560 /* UIImage+TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3691082A5566EE00DF0560 /* UIImage+TestHelpers.swift */; };
@@ -114,6 +115,7 @@
 		BE21A9CE2B46FC6C000385B1 /* PhotoListAcceptanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoListAcceptanceTests.swift; sourceTree = "<group>"; };
 		BE2808642B59609100219CB4 /* PhotoGridStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoGridStore.swift; sourceTree = "<group>"; };
 		BE2808662B5960EE00219CB4 /* PhotoGridItemStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoGridItemStore.swift; sourceTree = "<group>"; };
+		BE2808692B5961ED00219CB4 /* PhotoGridView+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PhotoGridView+Helpers.swift"; sourceTree = "<group>"; };
 		BE3635632A5FF8C30039EECD /* ImageDataLoaderCacheDecoratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDataLoaderCacheDecoratorTests.swift; sourceTree = "<group>"; };
 		BE3635652A5FF9970039EECD /* ImageDataLoaderSpy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDataLoaderSpy.swift; sourceTree = "<group>"; };
 		BE3691082A5566EE00DF0560 /* UIImage+TestHelpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+TestHelpers.swift"; sourceTree = "<group>"; };
@@ -252,6 +254,14 @@
 			path = Stores;
 			sourceTree = "<group>";
 		};
+		BE2808682B5961CE00219CB4 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				BE2808692B5961ED00219CB4 /* PhotoGridView+Helpers.swift */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
 		BE36355F2A5FEA520039EECD /* Composition */ = {
 			isa = PBXGroup;
 			children = (
@@ -303,6 +313,7 @@
 		BE37F6892B553C700098FF2E /* SwiftUI */ = {
 			isa = PBXGroup;
 			children = (
+				BE2808682B5961CE00219CB4 /* Helpers */,
 				BE37F7892B553D0F0098FF2E /* PhotoGridIntegrationTests.swift */,
 			);
 			path = SwiftUI;
@@ -799,6 +810,7 @@
 				BE1FD4EA2A5421CE0021777F /* SharedHelpers.swift in Sources */,
 				BED8ECCD2A5340870077FFF9 /* PhotoListIntegrationTests.swift in Sources */,
 				BE756CE12A628EE4000636F0 /* SceneDelegateTests.swift in Sources */,
+				BE28086A2B5961ED00219CB4 /* PhotoGridView+Helpers.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
