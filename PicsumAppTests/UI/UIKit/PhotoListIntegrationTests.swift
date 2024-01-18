@@ -13,7 +13,7 @@ import UIKit
 // Once trigger `value` from whatever task, all pending tasks will complete at the same time.
 // This is annoying! Cannot find a better way to trigger tasks one by one, limit the testability.
 
-final class PhotoListIntegrationTests: XCTestCase {
+final class PhotoListIntegrationTests: XCTestCase, PhotosLoaderSpyResultHelpersForTest {
     func test_photosList_hasTitle() {
         let (sut, _) = makeSUT()
         
@@ -482,21 +482,5 @@ final class PhotoListIntegrationTests: XCTestCase {
         }
         
         XCTAssertEqual(view.authorText, photo.author, "Expect author: \(photo.author) for index \(index)", file: file, line: line)
-    }
-    
-    private func anyFailure() -> PhotosLoaderSpy.PhotosResult {
-        .failure(anyNSError())
-    }
-    
-    private func emptySuccessPhotos() -> PhotosLoaderSpy.PhotosResult {
-        .success([])
-    }
-    
-    private func anyFailure() -> PhotosLoaderSpy.DataResult {
-        .failure(anyNSError())
-    }
-    
-    private func anySuccessData() -> PhotosLoaderSpy.DataResult {
-        .success(Data())
     }
 }

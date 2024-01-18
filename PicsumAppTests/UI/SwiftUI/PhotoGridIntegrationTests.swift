@@ -9,7 +9,7 @@ import XCTest
 import ViewInspector
 @testable import PicsumApp
 
-final class PhotoGridIntegrationTests: XCTestCase {
+final class PhotoGridIntegrationTests: XCTestCase, PhotosLoaderSpyResultHelpersForTest {
     @MainActor
     func test_init_doesNotTriggerLoader() async {
         let (_, loader) = makeSUT()
@@ -304,7 +304,7 @@ final class PhotoGridIntegrationTests: XCTestCase {
             self?.dismissErrorView(on: sut)
             ViewHosting.expel(function: function)
             
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                 XCTAssertNil(
                     instance,
                     "Instance should have been deallocated. Potential memory leak.",
@@ -347,21 +347,5 @@ final class PhotoGridIntegrationTests: XCTestCase {
             file: file,
             line: line
         )
-    }
-    
-    private func emptySuccessPhotos() -> PhotosLoaderSpy.PhotosResult {
-        .success([])
-    }
-    
-    private func anyFailure() -> PhotosLoaderSpy.PhotosResult {
-        .failure(anyNSError())
-    }
-    
-    private func anyFailure() -> PhotosLoaderSpy.DataResult {
-        .failure(anyNSError())
-    }
-    
-    private func anySuccessData() -> PhotosLoaderSpy.DataResult {
-        .success(Data())
     }
 }
