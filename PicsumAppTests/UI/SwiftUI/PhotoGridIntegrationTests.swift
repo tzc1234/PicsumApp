@@ -249,11 +249,11 @@ final class PhotoGridIntegrationTests: XCTestCase, PhotosLoaderSpyResultHelpersF
         let errorView = try XCTUnwrap(sut.errorView())
         XCTAssertEqual(try errorView.titleText(), PhotoGridStore.errorTitle)
         XCTAssertEqual(try errorView.messageText(), PhotoListViewModel.errorMessage)
-        let button = try XCTUnwrap(errorView.actionButton())
-        XCTAssertEqual(try button.role(), .cancel)
+        let cancelButton = try XCTUnwrap(errorView.actionButton())
+        XCTAssertEqual(try cancelButton.role(), .cancel)
         
-        try button.tap()
-        XCTAssertNil(try? sut.errorView(), "Expect no errorView shown after cancel button tap")
+        try cancelButton.tap()
+        XCTAssertNil(try? sut.errorView(), "Expect no error view is shown after cancel button tap")
     }
     
     @MainActor
@@ -274,11 +274,11 @@ final class PhotoGridIntegrationTests: XCTestCase, PhotosLoaderSpyResultHelpersF
         let errorView = try XCTUnwrap(sut.errorView())
         XCTAssertEqual(try errorView.titleText(), PhotoGridStore.errorTitle)
         XCTAssertEqual(try errorView.messageText(), PhotoListViewModel.errorMessage)
-        let button = try XCTUnwrap(errorView.actionButton())
-        XCTAssertEqual(try button.role(), .cancel)
+        let cancelButton = try XCTUnwrap(errorView.actionButton())
+        XCTAssertEqual(try cancelButton.role(), .cancel)
         
-        try button.tap()
-        XCTAssertNil(try? sut.errorView(), "Expect no errorView shown after cancel button tap")
+        try cancelButton.tap()
+        XCTAssertNil(try? sut.errorView(), "Expect no error view is shown after cancel button tap")
     }
     
     // MARK: - Helpers
