@@ -7,40 +7,6 @@
 
 import SwiftUI
 
-@Observable
-final class PhotoGridItemStore<Image> {
-    private(set) var image: Image?
-    private(set) var isLoading = false
-    
-    private let viewModel: PhotoImageViewModel<Image>
-    let delegate: PhotoListCellControllerDelegate
-    
-    init(viewModel: PhotoImageViewModel<Image>, delegate: PhotoListCellControllerDelegate) {
-        self.viewModel = viewModel
-        self.delegate = delegate
-        self.setupBindings()
-    }
-    
-    private func setupBindings() {
-        viewModel.didLoadImage = { [weak self] image in
-            self?.image = image
-        }
-        
-        viewModel.onLoadImage = { [weak self] isLoading in
-            self?.isLoading = isLoading
-        }
-    }
-    
-    @MainActor
-    func loadImage() {
-        delegate.loadImage()
-    }
-    
-    func cancelLoadImage() {
-        delegate.cancelLoad()
-    }
-}
-
 struct PhotoGridItemContainer: View {
     let store: PhotoGridItemStore<UIImage>
     let author: String

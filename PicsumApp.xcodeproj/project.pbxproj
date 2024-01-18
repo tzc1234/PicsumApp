@@ -11,6 +11,7 @@
 		BE1FD4ED2A5423860021777F /* PhotoListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1FD4EC2A5423860021777F /* PhotoListViewController.swift */; };
 		BE21A9CF2B46FC6C000385B1 /* PhotoListAcceptanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE21A9CE2B46FC6C000385B1 /* PhotoListAcceptanceTests.swift */; };
 		BE2808652B59609100219CB4 /* PhotoGridStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2808642B59609100219CB4 /* PhotoGridStore.swift */; };
+		BE2808672B5960EE00219CB4 /* PhotoGridItemStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE2808662B5960EE00219CB4 /* PhotoGridItemStore.swift */; };
 		BE3635642A5FF8C30039EECD /* ImageDataLoaderCacheDecoratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3635632A5FF8C30039EECD /* ImageDataLoaderCacheDecoratorTests.swift */; };
 		BE3635662A5FF9970039EECD /* ImageDataLoaderSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3635652A5FF9970039EECD /* ImageDataLoaderSpy.swift */; };
 		BE3691092A5566EE00DF0560 /* UIImage+TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3691082A5566EE00DF0560 /* UIImage+TestHelpers.swift */; };
@@ -112,6 +113,7 @@
 		BE1FD4EC2A5423860021777F /* PhotoListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoListViewController.swift; sourceTree = "<group>"; };
 		BE21A9CE2B46FC6C000385B1 /* PhotoListAcceptanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoListAcceptanceTests.swift; sourceTree = "<group>"; };
 		BE2808642B59609100219CB4 /* PhotoGridStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoGridStore.swift; sourceTree = "<group>"; };
+		BE2808662B5960EE00219CB4 /* PhotoGridItemStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoGridItemStore.swift; sourceTree = "<group>"; };
 		BE3635632A5FF8C30039EECD /* ImageDataLoaderCacheDecoratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDataLoaderCacheDecoratorTests.swift; sourceTree = "<group>"; };
 		BE3635652A5FF9970039EECD /* ImageDataLoaderSpy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDataLoaderSpy.swift; sourceTree = "<group>"; };
 		BE3691082A5566EE00DF0560 /* UIImage+TestHelpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+TestHelpers.swift"; sourceTree = "<group>"; };
@@ -245,6 +247,7 @@
 			isa = PBXGroup;
 			children = (
 				BE2808642B59609100219CB4 /* PhotoGridStore.swift */,
+				BE2808662B5960EE00219CB4 /* PhotoGridItemStore.swift */,
 			);
 			path = Stores;
 			sourceTree = "<group>";
@@ -712,6 +715,7 @@
 				BE73DE832A584B5A00B5F438 /* PhotoImageEndpoint.swift in Sources */,
 				BED4E3AC2B5184D600089CEA /* PhotoGridItem.swift in Sources */,
 				BE65606C2A52EE1100CCD5D6 /* Photo.swift in Sources */,
+				BE2808672B5960EE00219CB4 /* PhotoGridItemStore.swift in Sources */,
 				BE65606F2A52EE8200CCD5D6 /* PhotosLoader.swift in Sources */,
 				BE6560372A52D4A300CCD5D6 /* AppDelegate.swift in Sources */,
 				BEE811C82A5DE87200A2F7D7 /* CacheImageDataPolicy.swift in Sources */,
