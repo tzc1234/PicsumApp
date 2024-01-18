@@ -238,6 +238,24 @@ final class PhotoGridIntegrationTests: XCTestCase {
         XCTAssertEqual(try containers[2].imageData(), imageData2)
     }
     
+    // MARK: - Error view tests
+    
+    @MainActor
+    func test_errorView_showsWhenPhotoRequestOnError() async throws {
+        let (sut, _) = makeSUT(photoStubs: [anyFailure()])
+        
+        await sut.completePhotosLoading()
+        
+        let errorView = try XCTUnwrap(sut.errorView())
+        XCTAssertEqual(try errorView.titleText(), "Oops!")
+        XCTAssertEqual(try errorView.messageText(), PhotoListViewModel.errorMessage)
+        let button = try XCTUnwrap(errorView.actionButton())
+        XCTAssertEqual(try button.role(), .cancel)
+        
+        try button.tap()
+        XCTAssertNil(try? sut.errorView(), "Expect no errorView shown")
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(photoStubs: [PhotosLoaderSpy.PhotosResult] = [],
@@ -248,25 +266,34 @@ final class PhotoGridIntegrationTests: XCTestCase {
         let loader = PhotosLoaderSpy(photoStubs: photoStubs, dataStubs: dataStubs)
         let sut = PhotoGridComposer.composeWith(photosLoader: loader, imageLoader: loader)
         ViewHosting.host(view: sut, function: function)
-        trackMemoryLeaks(for: loader, function: function, file: file, line: line)
+        trackMemoryLeaks(for: loader, sut: sut, function: function, file: file, line: line)
         return (sut, loader)
     }
     
     private func trackMemoryLeaks(for instance: AnyObject,
+                                  sut: PhotoGridView,
                                   function: String = #function,
                                   file: StaticString = #file,
                                   line: UInt = #line) {
-        addTeardownBlock { [weak instance] in
-            await MainActor.run { ViewHosting.expel(function: function) }
-            try? await Task.sleep(for: .seconds(0.01)) // Buffer time for instance releasing.
+        addTeardownBlock { [weak instance, weak self] in
+            self?.dismissErrorView(on: sut)
+            ViewHosting.expel(function: function)
             
-            XCTAssertNil(
-                instance,
-                "Instance should have been deallocated. Potential memory leak.",
-                file: file,
-                line: line
-            )
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                XCTAssertNil(
+                    instance,
+                    "Instance should have been deallocated. Potential memory leak.",
+                    file: file,
+                    line: line
+                )
+            }
         }
+    }
+    
+    private func dismissErrorView(on sut: PhotoGridView) {
+        let errorView = try? sut.errorView()
+        try? errorView?.actionButton().tap()
+        try? errorView?.dismiss()
     }
     
     private func assertThat(_ photoViews: [PhotoGridItem],
@@ -352,6 +379,10 @@ extension PhotoGridView {
     func inspectablePhotoViewContainers() throws -> [InspectableView<ViewType.View<PhotoGridItemContainer>>] {
         try inspect().findAll(PhotoGridItemContainer.self)
     }
+    
+    func errorView() throws -> InspectableView<ViewType.Alert> {
+        try inspect().find(viewWithAccessibilityIdentifier: "photo-grid-outmost-view").alert()
+    }
 }
 
 extension InspectableView<ViewType.View<PhotoGridItemContainer>> {
@@ -377,6 +408,20 @@ extension InspectableView<ViewType.View<PhotoGridItemContainer>> {
     
     private func photoView() throws -> PhotoGridItem {
         try find(PhotoGridItem.self).actualView()
+    }
+}
+
+extension InspectableView<ViewType.Alert> {
+    func titleText() throws -> String {
+        try title().string()
+    }
+    
+    func messageText() throws -> String {
+        try message().text().string()
+    }
+    
+    func actionButton() throws -> InspectableView<ViewType.Button> {
+        try actions().button()
     }
 }
 

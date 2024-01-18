@@ -11,6 +11,20 @@ import SwiftUI
 final class PhotoGridStore {
     private(set) var isLoading = false
     private(set) var photos = [Photo]()
+    private(set) var errorMessage: String?
+    
+    private var _showError = false
+    var showError: Binding<Bool> {
+        Binding(
+            get: { self._showError },
+            set: { showError in
+                if !showError {
+                    self.errorMessage = nil
+                }
+                self._showError = showError
+            }
+        )
+    }
     
     private let viewModel: PhotoListViewModel
     let delegate: PhotoListViewControllerDelegate
@@ -33,6 +47,15 @@ final class PhotoGridStore {
         viewModel.didLoadMore = { [weak self] photos in
             self?.photos += photos
         }
+        
+        viewModel.onError = { [weak self] errorMessage in
+            self?.errorMessage = errorMessage
+            self?._showError = errorMessage != nil
+        }
+    }
+    
+    func hideError() {
+        showError.wrappedValue = false
     }
     
     @MainActor
@@ -100,6 +123,12 @@ struct PhotoGridView: View {
                 store.loadPhotos()
             }
         }
+        .accessibilityIdentifier("photo-grid-outmost-view")
+        .alert("Oops!", isPresented: store.showError) {
+            Button("OK", role: .cancel, action: { store.hideError() })
+        } message: {
+            Text(store.errorMessage ?? "")
+        }
     }
 }
 
@@ -114,32 +143,33 @@ struct PhotoGridView: View {
         }
         
         func loadPhotos() {
-            viewModel.didFinishLoading(with: [
-                Photo(
-                    id: "0",
-                    author: "Author 0",
-                    width: 1,
-                    height: 1,
-                    webURL: URL(string: "https://any-url.com")!,
-                    url: URL(string: "https://0.com")!
-                ),
-                Photo(
-                    id: "1",
-                    author: "Author 1",
-                    width: 1,
-                    height: 1,
-                    webURL: URL(string: "https://any-url.com")!,
-                    url: URL(string: "https://1.com")!
-                ),
-                Photo(
-                    id: "2",
-                    author: "Author 2",
-                    width: 1,
-                    height: 1,
-                    webURL: URL(string: "https://any-url.com")!,
-                    url: URL(string: "https://2.com")!
-                )
-            ])
+//            viewModel.didFinishLoading(with: [
+//                Photo(
+//                    id: "0",
+//                    author: "Author 0",
+//                    width: 1,
+//                    height: 1,
+//                    webURL: URL(string: "https://any-url.com")!,
+//                    url: URL(string: "https://0.com")!
+//                ),
+//                Photo(
+//                    id: "1",
+//                    author: "Author 1",
+//                    width: 1,
+//                    height: 1,
+//                    webURL: URL(string: "https://any-url.com")!,
+//                    url: URL(string: "https://1.com")!
+//                ),
+//                Photo(
+//                    id: "2",
+//                    author: "Author 2",
+//                    width: 1,
+//                    height: 1,
+//                    webURL: URL(string: "https://any-url.com")!,
+//                    url: URL(string: "https://2.com")!
+//                )
+//            ])
+            viewModel.didFinishLoadingWithError()
         }
         
         func loadMorePhotos() {}
