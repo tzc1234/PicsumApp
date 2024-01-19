@@ -8,10 +8,14 @@
 import SwiftUI
 
 enum PhotoDetailContainerComposer {
-    static func composeWith(photo: Photo) -> PhotoDetailContainer {
+    static func composeWith(photo: Photo, imageDataLoader: ImageDataLoader) -> PhotoDetailContainer {
         let viewModel = PhotoDetailViewModel<UIImage>(photo: photo)
-        let store = PhotoDetailStore(viewModel: viewModel)
-        
+        let adapter = PhotoDetailPresentationAdapter(
+            photoURL: photo.url,
+            viewModel: viewModel,
+            imageDataLoader: imageDataLoader,
+            imageConverter: UIImage.init)
+        let store = PhotoDetailStore(viewModel: viewModel, delegate: adapter)
         return PhotoDetailContainer(store: store)
     }
 }

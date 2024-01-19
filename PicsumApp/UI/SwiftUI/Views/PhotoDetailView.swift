@@ -14,9 +14,15 @@ final class PhotoDetailStore<Image> {
     }
     
     private let viewModel: PhotoDetailViewModel<Image>
+    let delegate: PhotoDetailViewControllerDelegate
     
-    init(viewModel: PhotoDetailViewModel<Image>) {
+    init(viewModel: PhotoDetailViewModel<Image>, delegate: PhotoDetailViewControllerDelegate) {
         self.viewModel = viewModel
+        self.delegate = delegate
+    }
+    
+    func loadImage() {
+        delegate.loadImageData()
     }
 }
 
@@ -27,6 +33,7 @@ struct PhotoDetailContainer: View {
         VStack {
             PhotoDetailView(detail: store.photoDetail, image: nil, isLoading: false, shouldRetry: false)
         }
+        .onAppear(perform: store.loadImage)
     }
 }
 

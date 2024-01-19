@@ -17,6 +17,16 @@ final class PhotoDetailContainerIntegrationTests: XCTestCase {
         try assertThat(sut, hasConfigureFor: photo)
     }
     
+    @MainActor
+    func test_detailView_requestsPhotoImageForURL() async {
+        let photo = makePhoto(url: URL(string: "https://image-url.com")!)
+        let (sut, loader) = makeSUT(photo: photo, dataStubs: [anySuccessData()])
+        
+        await sut.completePhotoImageLoading()
+        
+        XCTAssertEqual(loader.loggedURLs, [photo.url])
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(photo: Photo,
@@ -25,7 +35,7 @@ final class PhotoDetailContainerIntegrationTests: XCTestCase {
                          file: StaticString = #filePath,
                          line: UInt = #line) -> (sut: PhotoDetailContainer, loader: LoaderSpy) {
         let loader = LoaderSpy(dataStubs: dataStubs)
-        let sut = PhotoDetailContainerComposer.composeWith(photo: photo)
+        let sut = PhotoDetailContainerComposer.composeWith(photo: photo, imageDataLoader: loader)
         ViewHosting.host(view: sut, function: function)
         trackMemoryLeaks(for: loader, function: function, file: file, line: line)
         return (sut, loader)
@@ -91,5 +101,9 @@ extension PhotoDetailContainer {
             .find(viewWithAccessibilityIdentifier: "photo-detail-link")
             .link()
             .url()
+    }
+    
+    func completePhotoImageLoading() async {
+        await store.delegate.task?.value
     }
 }
