@@ -68,6 +68,21 @@ final class PhotoDetailContainerIntegrationTests: XCTestCase {
         XCTAssertTrue(try sut.isShowingReloadIndicator())
     }
     
+    @MainActor
+    func test_reloadPhotoImage_requestsPhotoImageAgainWhenUserInitiatedReload() async throws {
+        let photo = makePhoto(url: URL(string: "https://image-url.com")!)
+        let (sut, loader) = makeSUT(photo: photo, dataStubs: [anyFailure(), anyFailure()])
+        
+        await sut.completePhotoImageLoading()
+        
+        XCTAssertEqual(loader.loggedURLs, [photo.url], "Expect one photo image request after view rendered")
+        
+        try sut.simulateUserInitiateReload()
+        await sut.completePhotoImageLoading()
+        
+        XCTAssertEqual(loader.loggedURLs, [photo.url, photo.url], "Expect one more photo image request after user initiate reload")
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(photo: Photo,
@@ -168,8 +183,14 @@ extension PhotoDetailContainer {
     }
     
     func isShowingReloadIndicator() throws -> Bool {
-        let reloadButton = try inspect()
-            .find(viewWithAccessibilityIdentifier: "photo-detail-reload-button")
-        return try reloadButton.opacity() > 0
+        try reloadIndicator().opacity() > 0
+    }
+    
+    func simulateUserInitiateReload() throws {
+        try reloadIndicator().tap()
+    }
+    
+    private func reloadIndicator() throws -> InspectableView<ViewType.Button> {
+        try inspect().find(viewWithAccessibilityIdentifier: "photo-detail-reload-button").button()
     }
 }

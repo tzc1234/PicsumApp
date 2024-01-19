@@ -54,7 +54,8 @@ struct PhotoDetailContainer: View {
                 detail: store.photoDetail,
                 image: store.image,
                 isLoading: store.isLoading,
-                shouldRetry: store.shouldReload
+                shouldRetry: store.shouldReload, 
+                reloadButtonTapped: store.loadImage
             )
         }
         .onAppear(perform: store.loadImage)
@@ -66,6 +67,7 @@ struct PhotoDetailView: View {
     let image: UIImage?
     let isLoading: Bool
     let shouldRetry: Bool
+    let reloadButtonTapped: () -> Void
     
     private var ratio: CGFloat {
         CGFloat(max(detail.width, 1)) / CGFloat(max(detail.height, 1))
@@ -83,9 +85,7 @@ struct PhotoDetailView: View {
                     .scaledToFit()
                     .accessibilityIdentifier("photo-detail-image")
                 
-                Button(action: {
-                    print("button tapped")
-                }, label: {
+                Button(action: reloadButtonTapped, label: {
                     Image(systemName: "arrow.clockwise")
                         .resizable()
                         .scaledToFit()
@@ -127,6 +127,7 @@ struct PhotoDetailView: View {
         ),
         image: nil,
         isLoading: false,
-        shouldRetry: true
+        shouldRetry: true,
+        reloadButtonTapped: {}
     )
 }
