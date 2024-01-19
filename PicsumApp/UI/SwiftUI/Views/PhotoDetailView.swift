@@ -7,6 +7,29 @@
 
 import SwiftUI
 
+@Observable
+final class PhotoDetailStore<Image> {
+    var photoDetail: PhotoDetail {
+        viewModel.photoDetail
+    }
+    
+    private let viewModel: PhotoDetailViewModel<Image>
+    
+    init(viewModel: PhotoDetailViewModel<Image>) {
+        self.viewModel = viewModel
+    }
+}
+
+struct PhotoDetailContainer: View {
+    let store: PhotoDetailStore<UIImage>
+    
+    var body: some View {
+        VStack {
+            PhotoDetailView(detail: store.photoDetail, image: nil, isLoading: false, shouldRetry: false)
+        }
+    }
+}
+
 struct PhotoDetailView: View {
     let detail: PhotoDetail
     let image: UIImage?
@@ -50,10 +73,12 @@ struct PhotoDetailView: View {
                 Text(detail.author)
                     .font(.headline)
                     .frame(maxWidth: .infinity, alignment: .leading)
+                    .accessibilityIdentifier("photo-detail-author")
 
                 Link(detail.webURL.absoluteString, destination: detail.webURL)
                     .font(.subheadline)
                     .frame(maxWidth: .infinity, alignment: .leading)
+                    .accessibilityIdentifier("photo-detail-link")
             }
             .padding(8)
         }
