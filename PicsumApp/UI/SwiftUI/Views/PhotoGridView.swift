@@ -18,9 +18,7 @@ struct PhotoGridView: View {
             ScrollView {
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 8) {
                     ForEach(Array(zip(store.photos.indices, store.photos)), id: \.1.id) { index, photo in
-                        NavigationLink {
-                            nextView(photo)
-                        } label: {
+                        ZStack {
                             gridItem(photo)
                                 .onAppear {
                                     let isTheLastOne = index == store.photos.count-1
@@ -28,9 +26,16 @@ struct PhotoGridView: View {
                                         store.loadMorePhotos()
                                     }
                                 }
-                                .onDisappear { onGridItemDisappear(photo) }
+                                .onDisappear {
+                                    onGridItemDisappear(photo)
+                                }
+                            
+                            Button {
+                                store.photoForPresentingSheet.wrappedValue = photo
+                            } label: {
+                                Color.clear
+                            }
                         }
-                        .accessibilityIdentifier("photo-grid-view-link-\(index)")
                     }
                 }
                 .padding(.horizontal, 8)
@@ -50,10 +55,25 @@ struct PhotoGridView: View {
         } message: {
             Text(store.errorMessage ?? "")
         }
+        // Since @State can't be accessed outside this view, purple warning occurred:
+        // "Accessing State's value outside of being installed on a View.
+        //  This will result in a constant Binding of the initial value and will not update."
+        // I have to move `photoForPresentingSheet` from this view to `PhotoGridStore`. 
+        // Also, need to use inspectableSheet to expose params to test. This is the limitation of the framework.
+        .inspectableSheet(item: store.photoForPresentingSheet) { photo in
+            nextView(photo)
+        }
     }
 }
 
 extension PhotoGridStore {
+    var photoForPresentingSheet: Binding<Photo?> {
+        Binding(
+            get: { self.selectedPhoto },
+            set: { self.selectedPhoto = $0 }
+        )
+    }
+    
     var showError: Binding<Bool> {
         Binding(
             get: { self.errorMessage != nil },

@@ -8,7 +8,6 @@
 import XCTest
 import ViewInspector
 @testable import PicsumApp
-import SwiftUI
 
 final class PhotoGridIntegrationTests: XCTestCase, PhotosLoaderSpyResultHelpersForTest {
     @MainActor
@@ -242,16 +241,16 @@ final class PhotoGridIntegrationTests: XCTestCase, PhotosLoaderSpyResultHelpersF
     @MainActor
     func test_photoViewSelection_showsDetailViewWhilePhotoViewIsSelected() async throws {
         let photo0 = makePhoto(id: "0", author: "author0")
-        let photo1 = makePhoto(id: "1", author: "author1")
+        let selectedPhoto = makePhoto(id: "1", author: "selected author")
         let (sut, _) = makeSUT(
-            photoStubs: [.success([photo0, photo1])],
+            photoStubs: [.success([photo0, selectedPhoto])],
             dataStubs: [anySuccessData(), anySuccessData()]
         )
         
         await sut.completePhotosLoading()
+        sut.select(selectedPhoto)
         
-        let detailView = try XCTUnwrap(sut.detailViewFromPhotoSelection(at: 1))
-        XCTAssertEqual(try detailView.authorText(), photo1.author)
+        XCTAssertEqual(try sut.detailView().authorText(), selectedPhoto.author)
     }
     
     // MARK: - Error view tests

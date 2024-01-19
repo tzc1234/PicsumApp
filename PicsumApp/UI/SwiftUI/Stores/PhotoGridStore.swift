@@ -12,6 +12,7 @@ final class PhotoGridStore {
     private(set) var isLoading = false
     private(set) var photos = [Photo]()
     private(set) var errorMessage: String?
+    var selectedPhoto: Photo?
     
     private let viewModel: PhotoListViewModel
     let delegate: PhotoListViewControllerDelegate

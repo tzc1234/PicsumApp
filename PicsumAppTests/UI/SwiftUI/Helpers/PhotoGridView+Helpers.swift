@@ -7,6 +7,7 @@
 
 import Foundation
 import ViewInspector
+import SwiftUI
 @testable import PicsumApp
 
 extension PhotoGridView {
@@ -52,13 +53,18 @@ extension PhotoGridView {
         try inspect().find(viewWithAccessibilityIdentifier: "photo-grid-outmost-view").alert()
     }
     
-    func detailViewFromPhotoSelection(at index: Int) throws -> PhotoDetailContainer? {
-        let link = try inspect()
-            .find(viewWithAccessibilityIdentifier: "photo-grid-view-link-\(index)")
-            .navigationLink()
-        return try? link.find(PhotoDetailContainer.self).actualView()
+    func select(_ photo: Photo) {
+        store.selectedPhoto = photo
+    }
+    
+    func detailView() throws -> PhotoDetailContainer {
+        try inspect()
+            .find(PhotoDetailContainer.self)
+            .actualView()
     }
 }
+
+extension InspectableSheetWithItem: ItemPopupPresenter {}
 
 extension InspectableView<ViewType.View<PhotoGridItemContainer>> {
     func completeImageDataLoading() async throws {
