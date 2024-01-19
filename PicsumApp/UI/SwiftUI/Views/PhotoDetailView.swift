@@ -10,6 +10,7 @@ import SwiftUI
 @Observable
 final class PhotoDetailStore<Image> {
     private(set) var image: Image?
+    private(set) var isLoading = false
     
     var photoDetail: PhotoDetail {
         viewModel.photoDetail
@@ -28,6 +29,10 @@ final class PhotoDetailStore<Image> {
         viewModel.didLoad = { [weak self] image in
             self?.image = image
         }
+        
+        viewModel.onLoad = { [weak self] isLoading in
+            self?.isLoading = isLoading
+        }
     }
     
     func loadImage() {
@@ -40,7 +45,12 @@ struct PhotoDetailContainer: View {
     
     var body: some View {
         VStack {
-            PhotoDetailView(detail: store.photoDetail, image: store.image, isLoading: false, shouldRetry: false)
+            PhotoDetailView(
+                detail: store.photoDetail,
+                image: store.image,
+                isLoading: store.isLoading,
+                shouldRetry: false
+            )
         }
         .onAppear(perform: store.loadImage)
     }
@@ -80,6 +90,7 @@ struct PhotoDetailView: View {
                 .opacity(shouldRetry ? 1 : 0)
             }
             .aspectRatio(ratio, contentMode: .fit)
+            .accessibilityIdentifier("photo-detail-image-stack")
             .shimmering(active: isLoading)
             
             Spacer()

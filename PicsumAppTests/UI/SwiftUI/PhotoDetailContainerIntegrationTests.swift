@@ -46,6 +46,17 @@ final class PhotoDetailContainerIntegrationTests: XCTestCase {
         try XCTAssertEqual(sut.imageData(), imageData)
     }
     
+    @MainActor
+    func test_loadingIndicator_showsWhenLoadingPhotoImage() async throws {
+        let (sut, _) = makeSUT(photo: makePhoto(), dataStubs: [anySuccessData()])
+        
+        XCTAssertTrue(sut.isShowingLoadingIndicator)
+        
+        await sut.completePhotoImageLoading()
+        
+        XCTAssertFalse(sut.isShowingLoadingIndicator)
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(photo: Photo,
@@ -136,5 +147,12 @@ extension PhotoDetailContainer {
     
     func completePhotoImageLoading() async {
         await store.delegate.task?.value
+    }
+    
+    var isShowingLoadingIndicator: Bool {
+        let shimmer = try? inspect()
+            .find(viewWithAccessibilityIdentifier: "photo-detail-image-stack")
+            .modifier(Shimmer.self)
+        return shimmer != nil
     }
 }
