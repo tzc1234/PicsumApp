@@ -36,6 +36,16 @@ final class PhotoDetailContainerIntegrationTests: XCTestCase {
         try XCTAssertNil(sut.imageData())
     }
     
+    @MainActor
+    func test_detailView_rendersPhotoImageOnLoaderSuccess() async throws {
+        let imageData = UIImage.makeData(withColor: .red)
+        let (sut, _) = makeSUT(photo: makePhoto(), dataStubs: [.success(imageData)])
+        
+        await sut.completePhotoImageLoading()
+        
+        try XCTAssertEqual(sut.imageData(), imageData)
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(photo: Photo,

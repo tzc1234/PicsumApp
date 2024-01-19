@@ -9,6 +9,8 @@ import SwiftUI
 
 @Observable
 final class PhotoDetailStore<Image> {
+    private(set) var image: Image?
+    
     var photoDetail: PhotoDetail {
         viewModel.photoDetail
     }
@@ -19,6 +21,13 @@ final class PhotoDetailStore<Image> {
     init(viewModel: PhotoDetailViewModel<Image>, delegate: PhotoDetailViewControllerDelegate) {
         self.viewModel = viewModel
         self.delegate = delegate
+        self.setupBindings()
+    }
+    
+    private func setupBindings() {
+        viewModel.didLoad = { [weak self] image in
+            self?.image = image
+        }
     }
     
     func loadImage() {
@@ -31,7 +40,7 @@ struct PhotoDetailContainer: View {
     
     var body: some View {
         VStack {
-            PhotoDetailView(detail: store.photoDetail, image: nil, isLoading: false, shouldRetry: false)
+            PhotoDetailView(detail: store.photoDetail, image: store.image, isLoading: false, shouldRetry: false)
         }
         .onAppear(perform: store.loadImage)
     }
