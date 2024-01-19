@@ -11,20 +11,26 @@ struct PhotoGridView: View {
     let store: PhotoGridStore
     let gridItem: (Photo) -> AnyView
     let onGridItemDisappear: (Photo) -> Void
+    let nextView: (Photo) -> AnyView
     
     var body: some View {
         NavigationView {
             ScrollView {
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 8) {
                     ForEach(Array(zip(store.photos.indices, store.photos)), id: \.1.id) { index, photo in
-                        gridItem(photo)
-                            .onAppear {
-                                let isTheLastOne = index == store.photos.count-1
-                                if isTheLastOne {
-                                    store.loadMorePhotos()
+                        NavigationLink {
+                            nextView(photo)
+                        } label: {
+                            gridItem(photo)
+                                .onAppear {
+                                    let isTheLastOne = index == store.photos.count-1
+                                    if isTheLastOne {
+                                        store.loadMorePhotos()
+                                    }
                                 }
-                            }
-                            .onDisappear { onGridItemDisappear(photo) }
+                                .onDisappear { onGridItemDisappear(photo) }
+                        }
+                        .accessibilityIdentifier("photo-grid-view-link-\(index)")
                     }
                 }
                 .padding(.horizontal, 8)
@@ -132,6 +138,7 @@ extension PhotoGridStore {
             )
             .eraseToAnyView()
         },
-        onGridItemDisappear: { _ in }
+        onGridItemDisappear: { _ in }, 
+        nextView: { _ in EmptyView().eraseToAnyView() }
     )
 }

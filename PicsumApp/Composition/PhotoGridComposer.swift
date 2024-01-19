@@ -11,7 +11,8 @@ enum PhotoGridComposer {
     private typealias PhotoID = String
     
     static func composeWith(photosLoader: PhotosLoader,
-                            imageLoader: PhotoImageDataLoader) -> PhotoGridView {
+                            imageLoader: PhotoImageDataLoader,
+                            imageDataLoader: ImageDataLoader) -> PhotoGridView {
         let viewModel = PhotoListViewModel()
         let paginatedPhotosLoaderAdapter = PaginatedPhotosLoaderAdapter(loader: photosLoader)
         let presentationAdapter = PhotoListPresentationAdapter(viewModel: viewModel, paginatedPhotos: {
@@ -31,10 +32,15 @@ enum PhotoGridComposer {
                 
                 gridItemStores[photo.id] = store
                 
-                return PhotoGridItemContainer(store: store, author: photo.author).eraseToAnyView()
+                return PhotoGridItemContainer(store: store, author: photo.author)
+                    .eraseToAnyView()
             },
             onGridItemDisappear: { photo in
                 gridItemStores[photo.id] = nil
+            }, 
+            nextView: { photo in
+                PhotoDetailContainerComposer.composeWith(photo: photo, imageDataLoader: imageDataLoader)
+                    .eraseToAnyView()
             }
         )
     }

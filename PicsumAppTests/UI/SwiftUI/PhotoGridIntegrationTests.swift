@@ -8,6 +8,7 @@
 import XCTest
 import ViewInspector
 @testable import PicsumApp
+import SwiftUI
 
 final class PhotoGridIntegrationTests: XCTestCase, PhotosLoaderSpyResultHelpersForTest {
     @MainActor
@@ -238,6 +239,21 @@ final class PhotoGridIntegrationTests: XCTestCase, PhotosLoaderSpyResultHelpersF
         XCTAssertEqual(try containers[2].imageData(), imageData2)
     }
     
+    @MainActor
+    func test_photoViewSelection_showsDetailViewWhilePhotoViewIsSelected() async throws {
+        let photo0 = makePhoto(id: "0", author: "author0")
+        let photo1 = makePhoto(id: "1", author: "author1")
+        let (sut, _) = makeSUT(
+            photoStubs: [.success([photo0, photo1])],
+            dataStubs: [anySuccessData(), anySuccessData()]
+        )
+        
+        await sut.completePhotosLoading()
+        
+        let detailView = try XCTUnwrap(sut.detailViewFromPhotoSelection(at: 1))
+        XCTAssertEqual(try detailView.authorText(), photo1.author)
+    }
+    
     // MARK: - Error view tests
     
     @MainActor
@@ -285,7 +301,11 @@ final class PhotoGridIntegrationTests: XCTestCase, PhotosLoaderSpyResultHelpersF
                          file: StaticString = #file,
                          line: UInt = #line) -> (sut: PhotoGridView, loader: PhotosLoaderSpy) {
         let loader = PhotosLoaderSpy(photoStubs: photoStubs, dataStubs: dataStubs)
-        let sut = PhotoGridComposer.composeWith(photosLoader: loader, imageLoader: loader)
+        let sut = PhotoGridComposer.composeWith(
+            photosLoader: loader,
+            imageLoader: loader,
+            imageDataLoader: DummyImageDataLoader()
+        )
         ViewHosting.host(view: sut, function: function)
         trackMemoryLeaks(for: loader, sut: sut, function: function, file: file, line: line)
         return (sut, loader)
@@ -343,5 +363,11 @@ final class PhotoGridIntegrationTests: XCTestCase, PhotosLoaderSpyResultHelpersF
             file: file,
             line: line
         )
+    }
+    
+    private class DummyImageDataLoader: ImageDataLoader {
+        func loadImageData(for url: URL) async throws -> Data {
+            Data()
+        }
     }
 }

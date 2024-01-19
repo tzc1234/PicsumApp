@@ -51,6 +51,13 @@ extension PhotoGridView {
     func errorView() throws -> InspectableView<ViewType.Alert> {
         try inspect().find(viewWithAccessibilityIdentifier: "photo-grid-outmost-view").alert()
     }
+    
+    func detailViewFromPhotoSelection(at index: Int) throws -> PhotoDetailContainer? {
+        let link = try inspect()
+            .find(viewWithAccessibilityIdentifier: "photo-grid-view-link-\(index)")
+            .navigationLink()
+        return try? link.find(PhotoDetailContainer.self).actualView()
+    }
 }
 
 extension InspectableView<ViewType.View<PhotoGridItemContainer>> {
