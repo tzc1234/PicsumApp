@@ -57,6 +57,17 @@ final class PhotoDetailContainerIntegrationTests: XCTestCase {
         XCTAssertFalse(sut.isShowingLoadingIndicator)
     }
     
+    @MainActor
+    func test_reloadIndicator_showsWhenLoadingPhotoImageFailure() async throws {
+        let (sut, _) = makeSUT(photo: makePhoto(), dataStubs: [anyFailure()])
+        
+        XCTAssertFalse(try sut.isShowingReloadIndicator())
+        
+        await sut.completePhotoImageLoading()
+        
+        XCTAssertTrue(try sut.isShowingReloadIndicator())
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(photo: Photo,
@@ -154,5 +165,11 @@ extension PhotoDetailContainer {
             .find(viewWithAccessibilityIdentifier: "photo-detail-image-stack")
             .modifier(Shimmer.self)
         return shimmer != nil
+    }
+    
+    func isShowingReloadIndicator() throws -> Bool {
+        let reloadButton = try inspect()
+            .find(viewWithAccessibilityIdentifier: "photo-detail-reload-button")
+        return try reloadButton.opacity() > 0
     }
 }

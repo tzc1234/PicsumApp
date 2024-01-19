@@ -11,6 +11,7 @@ import SwiftUI
 final class PhotoDetailStore<Image> {
     private(set) var image: Image?
     private(set) var isLoading = false
+    private(set) var shouldReload = false
     
     var photoDetail: PhotoDetail {
         viewModel.photoDetail
@@ -33,6 +34,10 @@ final class PhotoDetailStore<Image> {
         viewModel.onLoad = { [weak self] isLoading in
             self?.isLoading = isLoading
         }
+        
+        viewModel.shouldReload = { [weak self] shouldReload in
+            self?.shouldReload = shouldReload
+        }
     }
     
     func loadImage() {
@@ -49,7 +54,7 @@ struct PhotoDetailContainer: View {
                 detail: store.photoDetail,
                 image: store.image,
                 isLoading: store.isLoading,
-                shouldRetry: false
+                shouldRetry: store.shouldReload
             )
         }
         .onAppear(perform: store.loadImage)
@@ -87,6 +92,7 @@ struct PhotoDetailView: View {
                         .scaleEffect(0.2)
                         .foregroundColor(.white)
                 })
+                .accessibilityIdentifier("photo-detail-reload-button")
                 .opacity(shouldRetry ? 1 : 0)
             }
             .aspectRatio(ratio, contentMode: .fit)
