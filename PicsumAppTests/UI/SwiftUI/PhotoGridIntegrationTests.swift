@@ -294,11 +294,13 @@ final class PhotoGridIntegrationTests: XCTestCase, PhotosLoaderSpyResultHelpersF
     
     // MARK: - Helpers
     
+    private typealias SUT = PhotoGridView<PhotoGridItemContainer, PhotoDetailContainer>
+    
     private func makeSUT(photoStubs: [PhotosLoaderSpy.PhotosResult] = [],
                          dataStubs: [PhotosLoaderSpy.DataResult] = [],
                          function: String = #function,
                          file: StaticString = #file,
-                         line: UInt = #line) -> (sut: PhotoGridView, loader: PhotosLoaderSpy) {
+                         line: UInt = #line) -> (sut: SUT, loader: PhotosLoaderSpy) {
         let loader = PhotosLoaderSpy(photoStubs: photoStubs, dataStubs: dataStubs)
         let sut = PhotoGridComposer.composeWith(
             photosLoader: loader,
@@ -311,7 +313,7 @@ final class PhotoGridIntegrationTests: XCTestCase, PhotosLoaderSpyResultHelpersF
     }
     
     private func trackMemoryLeaks(for instance: AnyObject,
-                                  sut: PhotoGridView,
+                                  sut: SUT,
                                   function: String = #function,
                                   file: StaticString = #file,
                                   line: UInt = #line) {
@@ -330,7 +332,7 @@ final class PhotoGridIntegrationTests: XCTestCase, PhotosLoaderSpyResultHelpersF
         }
     }
     
-    private func dismissErrorView(on sut: PhotoGridView) {
+    private func dismissErrorView(on sut: SUT) {
         let errorView = try? sut.errorView()
         try? errorView?.actionButton().tap()
         try? errorView?.dismiss()

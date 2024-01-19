@@ -7,11 +7,11 @@
 
 import SwiftUI
 
-struct PhotoGridView: View {
+struct PhotoGridView<ItemView: View, NextView: View>: View {
     let store: PhotoGridStore
-    let gridItem: (Photo) -> AnyView
+    let gridItem: (Photo) -> ItemView
     let onGridItemDisappear: (Photo) -> Void
-    let nextView: (Photo) -> AnyView
+    let nextView: (Photo) -> NextView
     
     var body: some View {
         NavigationView {
