@@ -54,11 +54,10 @@ struct PhotoDetailView: View {
             ZStack {
                 Color(.systemGray5)
                 
-                if let image {
-                    Image(uiImage: image)
-                        .resizable()
-                        .scaledToFit()
-                }
+                Image(uiImage: image ?? UIImage())
+                    .resizable()
+                    .scaledToFit()
+                    .accessibilityIdentifier("photo-detail-image")
                 
                 Button(action: {
                     print("button tapped")

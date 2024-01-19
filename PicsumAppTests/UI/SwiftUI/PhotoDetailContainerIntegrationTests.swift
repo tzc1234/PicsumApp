@@ -27,6 +27,15 @@ final class PhotoDetailContainerIntegrationTests: XCTestCase {
         XCTAssertEqual(loader.loggedURLs, [photo.url])
     }
     
+    @MainActor
+    func test_detailView_doesNotRenderPhotoImageOnLoaderError() async throws {
+        let (sut, _) = makeSUT(photo: makePhoto(), dataStubs: [anyFailure()])
+        
+        await sut.completePhotoImageLoading()
+        
+        try XCTAssertNil(sut.imageData())
+    }
+    
     // MARK: - Helpers
     
     private func makeSUT(photo: Photo,
@@ -71,6 +80,10 @@ final class PhotoDetailContainerIntegrationTests: XCTestCase {
         .success(anyData())
     }
     
+    private func anyFailure() -> Result<Data, Error> {
+        .failure(anyNSError())
+    }
+    
     private class LoaderSpy: ImageDataLoader {
         typealias DataResult = Swift.Result<Data, Error>
         
@@ -101,6 +114,14 @@ extension PhotoDetailContainer {
             .find(viewWithAccessibilityIdentifier: "photo-detail-link")
             .link()
             .url()
+    }
+    
+    func imageData() throws -> Data? {
+        try inspect()
+            .find(viewWithAccessibilityIdentifier: "photo-detail-image")
+            .image()
+            .actualImage()
+            .uiImage().pngData()
     }
     
     func completePhotoImageLoading() async {
