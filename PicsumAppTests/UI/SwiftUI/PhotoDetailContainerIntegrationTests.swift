@@ -47,18 +47,7 @@ final class PhotoDetailContainerIntegrationTests: XCTestCase {
     }
     
     @MainActor
-    func test_loadingIndicator_showsWhenLoadingPhotoImage() async throws {
-        let (sut, _) = makeSUT(photo: makePhoto(), dataStubs: [anySuccessData()])
-        
-        XCTAssertTrue(sut.isShowingLoadingIndicator)
-        
-        await sut.completePhotoImageLoading()
-        
-        XCTAssertFalse(sut.isShowingLoadingIndicator)
-    }
-    
-    @MainActor
-    func test_reloadIndicator_showsWhenLoadingPhotoImageFailure() async throws {
+    func test_reloadIndicator_showsWhenLoadingPhotoImage() async throws {
         let (sut, _) = makeSUT(photo: makePhoto(), dataStubs: [anyFailure()])
         
         XCTAssertFalse(try sut.isShowingReloadIndicator())
@@ -81,6 +70,25 @@ final class PhotoDetailContainerIntegrationTests: XCTestCase {
         await sut.completePhotoImageLoading()
         
         XCTAssertEqual(loader.loggedURLs, [photo.url, photo.url], "Expect one more photo image request after user initiate reload")
+    }
+    
+    @MainActor
+    func test_loadingIndicator_showsWhenLoadingPhotoImage() async throws {
+        let (sut, _) = makeSUT(photo: makePhoto(), dataStubs: [anyFailure(), anySuccessData()])
+        
+        XCTAssertTrue(sut.isShowingLoadingIndicator, "Expect a loading indicator after view rendered")
+        
+        await sut.completePhotoImageLoading()
+        
+        XCTAssertFalse(sut.isShowingLoadingIndicator, "Expect no loading indicator after loading photo image completed with error")
+        
+        try sut.simulateUserInitiateReload()
+        
+        XCTAssertTrue(sut.isShowingLoadingIndicator, "Expect a loading indicator when user initiated a reload")
+        
+        await sut.completePhotoImageLoading()
+        
+        XCTAssertFalse(sut.isShowingLoadingIndicator, "Expect no loading indicator after reloading photo image completed successfully")
     }
     
     // MARK: - Helpers
