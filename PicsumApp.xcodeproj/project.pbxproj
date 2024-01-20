@@ -314,18 +314,14 @@
 		BE36355F2A5FEA520039EECD /* Composition */ = {
 			isa = PBXGroup;
 			children = (
-				BE8103142A55C2C400CE012A /* PhotoListComposer.swift */,
-				BEF751D92B4D90D200F49FD7 /* PhotoViewComposer.swift */,
+				BE5B76542B5C195800BA5F60 /* Composers */,
 				BE5DFCFA2A5C14FF007BD8A7 /* PhotoImageDataLoaderAdapter.swift */,
 				BEF0B5262A6002DF0024625A /* ImageDataLoaderCacheDecorator.swift */,
 				BEF0B52E2A600CA40024625A /* ImageDataLoaderWithFallbackComposite.swift */,
-				BEF6E38C2A645D24004C6511 /* PhotoDetailComposer.swift */,
 				BEC368672B331A6B001888E0 /* PaginatedPhotosLoaderAdapter.swift */,
 				BEF751D52B4D5DEB00F49FD7 /* PhotoDetailPresentationAdapter.swift */,
 				BEF751D72B4D874300F49FD7 /* PhotoImagePresentationAdapter.swift */,
 				BEF751DB2B4D9E2E00F49FD7 /* PhotoListPresentationAdapter.swift */,
-				BE37F78E2B5540C50098FF2E /* PhotoGridComposer.swift */,
-				BE6645C92B5A82D5003737D5 /* PhotoDetailContainerComposer.swift */,
 			);
 			path = Composition;
 			sourceTree = "<group>";
@@ -434,6 +430,34 @@
 				BE54968B2A57156E00D402A3 /* RemoteImageDataLoader.swift */,
 			);
 			path = Networking;
+			sourceTree = "<group>";
+		};
+		BE5B76542B5C195800BA5F60 /* Composers */ = {
+			isa = PBXGroup;
+			children = (
+				BE5B76552B5C196B00BA5F60 /* UIKit */,
+				BE5B76562B5C198000BA5F60 /* SwiftUI */,
+			);
+			path = Composers;
+			sourceTree = "<group>";
+		};
+		BE5B76552B5C196B00BA5F60 /* UIKit */ = {
+			isa = PBXGroup;
+			children = (
+				BE8103142A55C2C400CE012A /* PhotoListComposer.swift */,
+				BEF751D92B4D90D200F49FD7 /* PhotoViewComposer.swift */,
+				BEF6E38C2A645D24004C6511 /* PhotoDetailComposer.swift */,
+			);
+			path = UIKit;
+			sourceTree = "<group>";
+		};
+		BE5B76562B5C198000BA5F60 /* SwiftUI */ = {
+			isa = PBXGroup;
+			children = (
+				BE37F78E2B5540C50098FF2E /* PhotoGridComposer.swift */,
+				BE6645C92B5A82D5003737D5 /* PhotoDetailContainerComposer.swift */,
+			);
+			path = SwiftUI;
 			sourceTree = "<group>";
 		};
 		BE5DFCF62A5C0988007BD8A7 /* Networking */ = {
