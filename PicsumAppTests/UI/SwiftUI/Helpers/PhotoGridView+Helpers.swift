@@ -60,6 +60,16 @@ extension PhotoGridView {
     func select(_ photo: Photo) {
         store.selectedPhoto = photo
     }
+    
+    var isShowingDetailView: Bool {
+        (try? inspect().find(DummyDetailView.self)) != nil
+    }
+}
+
+struct DummyDetailView: View {
+    var body: some View {
+        EmptyView()
+    }
 }
 
 extension InspectableSheetWithItem: ItemPopupPresenter {}

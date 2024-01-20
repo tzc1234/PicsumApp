@@ -7,7 +7,6 @@
 
 import XCTest
 import ViewInspector
-import SwiftUI
 @testable import PicsumApp
 
 final class PhotoGridIntegrationTests: XCTestCase, PhotosLoaderSpyResultHelpersForTest {
@@ -275,11 +274,11 @@ final class PhotoGridIntegrationTests: XCTestCase, PhotosLoaderSpyResultHelpersF
         
         await sut.completePhotosLoading()
         
-        XCTAssertNil(try? sut.inspect().find(DummyDetailView.self))
+        XCTAssertFalse(sut.isShowingDetailView)
         
         sut.select(selectedPhoto)
 
-        XCTAssertNotNil(try? sut.inspect().find(DummyDetailView.self))
+        XCTAssertTrue(sut.isShowingDetailView)
     }
     
     // MARK: - Error view tests
@@ -394,11 +393,5 @@ final class PhotoGridIntegrationTests: XCTestCase, PhotosLoaderSpyResultHelpersF
             file: file,
             line: line
         )
-    }
-    
-    private struct DummyDetailView: View {
-        var body: some View {
-            EmptyView()
-        }
     }
 }

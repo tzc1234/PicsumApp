@@ -11,8 +11,9 @@ enum PhotoGridComposer {
     private typealias PhotoID = String
     
     static func composeWith<NextView>(photosLoader: PhotosLoader,
-                            imageLoader: PhotoImageDataLoader,
-                            nextView: @escaping (Photo) -> NextView) -> PhotoGridView<PhotoGridItemContainer, NextView> {
+                                      imageLoader: PhotoImageDataLoader,
+                                      nextView: @escaping (Photo) -> NextView) 
+    -> PhotoGridView<PhotoGridItemContainer, NextView> {
         let viewModel = PhotoListViewModel()
         let paginatedPhotosLoaderAdapter = PaginatedPhotosLoaderAdapter(loader: photosLoader)
         let presentationAdapter = PhotoListPresentationAdapter(viewModel: viewModel, paginatedPhotos: {
