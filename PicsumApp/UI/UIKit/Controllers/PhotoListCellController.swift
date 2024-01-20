@@ -7,12 +7,6 @@
 
 import UIKit
 
-protocol PhotoListCellControllerDelegate {
-    var task: Task<Void, Never>? { get }
-    func loadImage()
-    func cancelLoad()
-}
-
 final class PhotoListCellController {
     private var cell: PhotoListCell?
     
