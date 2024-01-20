@@ -31,9 +31,9 @@ final class PhotoListViewController: UICollectionViewController {
     }
     
     private var viewModel: PhotoListViewModel?
-    private var delegate: PhotoListViewControllerDelegate?
+    private var delegate: PhotosLoadingDelegate?
     
-    convenience init(viewModel: PhotoListViewModel, delegate: PhotoListViewControllerDelegate) {
+    convenience init(viewModel: PhotoListViewModel, delegate: PhotosLoadingDelegate) {
         self.init(collectionViewLayout: UICollectionViewFlowLayout())
         self.viewModel = viewModel
         self.delegate = delegate

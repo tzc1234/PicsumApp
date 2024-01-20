@@ -15,9 +15,9 @@ final class PhotoGridStore {
     var selectedPhoto: Photo?
     
     private let viewModel: PhotoListViewModel
-    let delegate: PhotoListViewControllerDelegate
+    let delegate: PhotosLoadingDelegate
     
-    init(viewModel: PhotoListViewModel, delegate: PhotoListViewControllerDelegate) {
+    init(viewModel: PhotoListViewModel, delegate: PhotosLoadingDelegate) {
         self.viewModel = viewModel
         self.delegate = delegate
         self.setupBindings()

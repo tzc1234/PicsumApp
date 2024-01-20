@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class PhotoListViewControllerDelegateStub: PhotoListViewControllerDelegate {
+final class PhotoListViewControllerDelegateStub: PhotosLoadingDelegate {
     var loadPhotosTask: Task<Void, Never>?
     var loadMorePhotosTask: Task<Void, Never>?
     let viewModel: PhotoListViewModel
