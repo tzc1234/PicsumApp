@@ -156,9 +156,8 @@ extension PhotoGridStore {
                 image: getImage(url: photo.url),
                 isLoading: false
             )
-            .eraseToAnyView()
         },
         onGridItemDisappear: { _ in }, 
-        nextView: { _ in EmptyView().eraseToAnyView() }
+        nextView: { _ in EmptyView() }
     )
 }
