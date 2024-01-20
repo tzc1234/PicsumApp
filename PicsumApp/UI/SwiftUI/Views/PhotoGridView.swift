@@ -17,11 +17,11 @@ struct PhotoGridView<ItemView: View, NextView: View>: View {
         NavigationView {
             ScrollView {
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 8) {
-                    ForEach(Array(zip(store.photos.indices, store.photos)), id: \.1.id) { index, photo in
+                    ForEach(store.photos) { photo in
                         ZStack {
                             gridItem(photo)
                                 .onAppear {
-                                    let isTheLastOne = index == store.photos.count-1
+                                    let isTheLastOne = photo == store.photos.last
                                     if isTheLastOne {
                                         store.loadMorePhotos()
                                     }
