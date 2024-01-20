@@ -31,7 +31,6 @@ final class PhotoGridItemStore<Image> {
         }
     }
     
-    @MainActor
     func loadImage() {
         delegate.loadImage()
     }

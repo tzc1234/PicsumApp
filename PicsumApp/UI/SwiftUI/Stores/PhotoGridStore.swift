@@ -45,7 +45,6 @@ final class PhotoGridStore {
         errorMessage = nil
     }
     
-    @MainActor
     func loadPhotos() {
         isLoading = true
         cancelAllPendingPhotosTask()
@@ -58,7 +57,7 @@ final class PhotoGridStore {
     }
     
     func asyncLoadPhotos() async {
-        await loadPhotos()
+        loadPhotos()
         await trackFinishLoading()
     }
     
@@ -69,7 +68,6 @@ final class PhotoGridStore {
         await trackFinishLoading()
     }
     
-    @MainActor
     func loadMorePhotos() {
         delegate.loadMorePhotos()
     }
