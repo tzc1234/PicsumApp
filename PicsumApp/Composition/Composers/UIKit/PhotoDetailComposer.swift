@@ -15,7 +15,7 @@ enum PhotoDetailComposer {
                             }) -> PhotoDetailViewController {
         let viewModel = PhotoDetailViewModel<UIImage>(photo: photo)
         let adapter = PhotoDetailPresentationAdapter(
-            photoURL: photo.url,
+            imageURL: photo.url,
             viewModel: viewModel,
             imageDataLoader: imageDataLoader,
             imageConverter: UIImage.init)

@@ -10,16 +10,16 @@ import Foundation
 final class PhotoDetailPresentationAdapter<Image>: ImageLoadingDelegate {
     private(set) var task: Task<Void, Never>?
     
-    private let photoURL: URL
+    private let imageURL: URL
     private let viewModel: PhotoDetailViewModel<Image>
     private let imageDataLoader: ImageDataLoader
     private let imageConverter: (Data) -> Image?
     
-    init(photoURL: URL,
+    init(imageURL: URL,
          viewModel: PhotoDetailViewModel<Image>,
          imageDataLoader: ImageDataLoader,
          imageConverter: @escaping (Data) -> Image?) {
-        self.photoURL = photoURL
+        self.imageURL = imageURL
         self.viewModel = viewModel
         self.imageDataLoader = imageDataLoader
         self.imageConverter = imageConverter
@@ -29,7 +29,7 @@ final class PhotoDetailPresentationAdapter<Image>: ImageLoadingDelegate {
         viewModel.didStartLoading()
         task = Task { @MainActor in
             do {
-                let data = try await imageDataLoader.loadImageData(for: photoURL)
+                let data = try await imageDataLoader.loadImageData(for: imageURL)
                 viewModel.didFinishLoading(with: imageConverter(data))
             } catch {
                 viewModel.didFinishLoadingWithError()
