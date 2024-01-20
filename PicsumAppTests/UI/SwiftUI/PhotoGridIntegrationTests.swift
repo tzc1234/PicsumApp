@@ -7,6 +7,7 @@
 
 import XCTest
 import ViewInspector
+import SwiftUI
 @testable import PicsumApp
 
 final class PhotoGridIntegrationTests: XCTestCase, PhotosLoaderSpyResultHelpersForTest {
@@ -268,13 +269,17 @@ final class PhotoGridIntegrationTests: XCTestCase, PhotosLoaderSpyResultHelpersF
         let selectedPhoto = makePhoto(id: "1", author: "selected author")
         let (sut, _) = makeSUT(
             photoStubs: [.success([photo0, selectedPhoto])],
-            dataStubs: [anySuccessData(), anySuccessData()]
+            dataStubs: [anySuccessData(), anySuccessData()],
+            detailView: { _ in DummyDetailView() }
         )
         
         await sut.completePhotosLoading()
-        sut.select(selectedPhoto)
         
-        XCTAssertEqual(try sut.detailView().authorText(), selectedPhoto.author)
+        XCTAssertNil(try? sut.inspect().find(DummyDetailView.self))
+        
+        sut.select(selectedPhoto)
+
+        XCTAssertNotNil(try? sut.inspect().find(DummyDetailView.self))
     }
     
     // MARK: - Error view tests
@@ -318,10 +323,11 @@ final class PhotoGridIntegrationTests: XCTestCase, PhotosLoaderSpyResultHelpersF
     
     // MARK: - Helpers
     
-    private typealias SUT = PhotoGridView<PhotoGridItemContainer, PhotoDetailContainer>
+    private typealias SUT = PhotoGridView<PhotoGridItemContainer, DummyDetailView>
     
     private func makeSUT(photoStubs: [PhotosLoaderSpy.PhotosResult] = [],
                          dataStubs: [PhotosLoaderSpy.DataResult] = [],
+                         detailView: @escaping (Photo) -> DummyDetailView = { _ in DummyDetailView() },
                          function: String = #function,
                          file: StaticString = #file,
                          line: UInt = #line) -> (sut: SUT, loader: PhotosLoaderSpy) {
@@ -329,7 +335,7 @@ final class PhotoGridIntegrationTests: XCTestCase, PhotosLoaderSpyResultHelpersF
         let sut = PhotoGridComposer.composeWith(
             photosLoader: loader,
             imageLoader: loader,
-            imageDataLoader: DummyImageDataLoader()
+            nextView: detailView
         )
         ViewHosting.host(view: sut, function: function)
         trackMemoryLeaks(for: loader, sut: sut, function: function, file: file, line: line)
@@ -390,9 +396,9 @@ final class PhotoGridIntegrationTests: XCTestCase, PhotosLoaderSpyResultHelpersF
         )
     }
     
-    private class DummyImageDataLoader: ImageDataLoader {
-        func loadImageData(for url: URL) async throws -> Data {
-            Data()
+    private struct DummyDetailView: View {
+        var body: some View {
+            EmptyView()
         }
     }
 }

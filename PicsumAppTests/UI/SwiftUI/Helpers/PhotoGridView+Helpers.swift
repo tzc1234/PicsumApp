@@ -60,12 +60,6 @@ extension PhotoGridView {
     func select(_ photo: Photo) {
         store.selectedPhoto = photo
     }
-    
-    func detailView() throws -> PhotoDetailContainer {
-        try inspect()
-            .find(PhotoDetailContainer.self)
-            .actualView()
-    }
 }
 
 extension InspectableSheetWithItem: ItemPopupPresenter {}

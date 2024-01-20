@@ -41,7 +41,9 @@ struct PicsumApp: App {
             PhotoGridComposer.composeWith(
                 photosLoader: factory.photosLoader,
                 imageLoader: factory.photoImageDataLoader, 
-                imageDataLoader: factory.imageDataLoader
+                nextView: { photo in
+                    PhotoDetailContainerComposer.composeWith(photo: photo, imageDataLoader: factory.imageDataLoader)
+                }
             )
         }
     }

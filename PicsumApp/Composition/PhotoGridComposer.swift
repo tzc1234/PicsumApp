@@ -10,10 +10,9 @@ import SwiftUI
 enum PhotoGridComposer {
     private typealias PhotoID = String
     
-    static func composeWith(photosLoader: PhotosLoader,
+    static func composeWith<NextView>(photosLoader: PhotosLoader,
                             imageLoader: PhotoImageDataLoader,
-                            imageDataLoader: ImageDataLoader)
-    -> PhotoGridView<PhotoGridItemContainer, PhotoDetailContainer> {
+                            nextView: @escaping (Photo) -> NextView) -> PhotoGridView<PhotoGridItemContainer, NextView> {
         let viewModel = PhotoListViewModel()
         let paginatedPhotosLoaderAdapter = PaginatedPhotosLoaderAdapter(loader: photosLoader)
         let presentationAdapter = PhotoListPresentationAdapter(viewModel: viewModel, paginatedPhotos: {
@@ -38,9 +37,7 @@ enum PhotoGridComposer {
             onGridItemDisappear: { photo in
                 gridItemStores[photo.id] = nil
             }, 
-            nextView: { photo in
-                PhotoDetailContainerComposer.composeWith(photo: photo, imageDataLoader: imageDataLoader)
-            }
+            nextView: nextView
         )
     }
     
