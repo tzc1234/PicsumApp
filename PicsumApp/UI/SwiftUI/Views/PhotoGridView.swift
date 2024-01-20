@@ -90,74 +90,36 @@ extension PhotoGridStore {
     }
 }
 
-#Preview {
-    class PhotoListViewControllerDelegateStub: PhotoListViewControllerDelegate {
-        var loadPhotosTask: Task<Void, Never>?
-        var loadMorePhotosTask: Task<Void, Never>?
-        let viewModel: PhotoListViewModel
-        
-        init(viewModel: PhotoListViewModel) {
-            self.viewModel = viewModel
-        }
-        
-        func loadPhotos() {
-            viewModel.didFinishLoading(with: [
-                Photo(
-                    id: "0",
-                    author: "Author 0",
-                    width: 1,
-                    height: 1,
-                    webURL: URL(string: "https://any-url.com")!,
-                    url: URL(string: "https://0.com")!
-                ),
-                Photo(
-                    id: "1",
-                    author: "Author 1",
-                    width: 1,
-                    height: 1,
-                    webURL: URL(string: "https://any-url.com")!,
-                    url: URL(string: "https://1.com")!
-                ),
-                Photo(
-                    id: "2",
-                    author: "Author 2",
-                    width: 1,
-                    height: 1,
-                    webURL: URL(string: "https://any-url.com")!,
-                    url: URL(string: "https://2.com")!
-                )
-            ])
-        }
-        
-        func loadMorePhotos() {}
-    }
-    
-    func getImage(url: URL) -> UIImage {
-        switch url.absoluteString {
-        case "https://0.com":
-            return .make(withColor: .red)
-        case "https://1.com":
-            return .make(withColor: .green)
-        case "https://2.com":
-            return .make(withColor: .blue)
-        default:
-            return .make(withColor: .gray)
-        }
-    }
-    
-    let delegate = PhotoListViewControllerDelegateStub(viewModel: PhotoListViewModel())
+#Preview("Success case") {
+    let delegate = PhotoListViewControllerDelegateStub(stub: .success(previewPhotos))
     let store = PhotoGridStore(viewModel: delegate.viewModel, delegate: delegate)
-    
     return PhotoGridView(
         store: store,
         gridItem: { photo in
             PhotoGridItem(
                 author: photo.author,
-                image: getImage(url: photo.url),
+                image: getPreviewUIImage(by: photo.url),
                 isLoading: false
             )
         },
         onGridItemDisappear: { _ in }, 
+        nextView: { _ in EmptyView() }
+    )
+}
+
+#Preview("Failure case") {
+    let delegate = PhotoListViewControllerDelegateStub(stub: .failure(NSError(domain: "error", code: 0)))
+    let store = PhotoGridStore(viewModel: delegate.viewModel, delegate: delegate)
+    return PhotoGridView(
+        store: store,
+        gridItem: { photo in
+            PhotoGridItem(
+                author: photo.author,
+                image: getPreviewUIImage(by: photo.url),
+                isLoading: false
+            )
+        },
+        onGridItemDisappear: { _ in },
         nextView: { _ in EmptyView() }
     )
 }
