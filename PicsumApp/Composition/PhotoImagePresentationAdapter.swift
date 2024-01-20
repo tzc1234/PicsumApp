@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class PhotoImagePresentationAdapter<Image>: PhotoListCellControllerDelegate {
+final class PhotoImagePresentationAdapter<Image>: PhotoImageLoadingDelegate {
     private let photoDimension = 600
     private(set) var task: Task<Void, Never>?
     
