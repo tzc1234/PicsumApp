@@ -128,16 +128,40 @@ final class PhotoGridIntegrationTests: XCTestCase, PhotosLoaderSpyResultHelpersF
         
         await sut.completePhotosLoading()
         
-        let containers = try sut.inspectablePhotoViewContainers()
-        try await containers[0].completeImageDataLoading()
+        let container = try sut.inspectablePhotoViewContainer()
+        try await container.completeImageDataLoading()
         XCTAssertEqual(loader.loggedPhotoIDs, [photo0.id], "Expect 1 photo data request after photo view is visible")
         
-        try containers[0].simulatePhotoViewInvisible()
+        try container.simulatePhotoViewInvisible()
         XCTAssertEqual(loader.loggedPhotoIDs, [photo0.id], "Expect no photo data requests changes after photo view is invisible")
         
-        try containers[0].simulatePhotoViewVisible()
-        try await containers[0].completeImageDataLoading()
+        try container.simulatePhotoViewVisible()
+        try await container.completeImageDataLoading()
         XCTAssertEqual(loader.loggedPhotoIDs, [photo0.id, photo0.id], "Expect 2 photo data requests after photo view is visible again")
+    }
+    
+    @MainActor
+    func test_photoView_loadsImageWhenItIsInitialisedAgain() async throws {
+        let photo0 = makePhoto(id: "0")
+        let (sut, loader) = makeSUT(
+            photoStubs: [.success([photo0]), .success([])],
+            dataStubs: [anySuccessData(), anySuccessData()]
+        )
+        
+        await sut.completePhotosLoading()
+        await sut.completeLoadMorePhotos()
+        
+        let container = try XCTUnwrap(sut.inspectablePhotoViewContainer())
+        try await container.completeImageDataLoading()
+        
+        XCTAssertEqual(loader.loggedPhotoIDs, [photo0.id], "Expect 1 photo data request after photo view is visible")
+        
+        try container.simulatePhotoViewInvisible()
+        XCTAssertEqual(loader.loggedPhotoIDs, [photo0.id], "Expect no photo data requests changes after photo view is invisible")
+        
+        let newInitContainer = try XCTUnwrap(sut.inspectablePhotoViewContainer())
+        try await newInitContainer.completeImageDataLoading()
+        XCTAssertEqual(loader.loggedPhotoIDs, [photo0.id, photo0.id], "Expect 2 photo data requests after photo view is initialised again")
     }
     
     @MainActor
@@ -190,7 +214,7 @@ final class PhotoGridIntegrationTests: XCTestCase, PhotosLoaderSpyResultHelpersF
         )
         await sut.completePhotosLoading()
         
-        let container = try XCTUnwrap(sut.inspectablePhotoViewContainers().first)
+        let container = try XCTUnwrap(sut.inspectablePhotoViewContainer())
         try await container.completeImageDataLoading()
         XCTAssertNil(try container.imageData(), "Expect no image rendered on photo view when photo image request completed with error")
         

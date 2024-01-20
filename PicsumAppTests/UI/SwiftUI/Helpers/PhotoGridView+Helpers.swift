@@ -45,6 +45,10 @@ extension PhotoGridView {
         try inspect().findAll(PhotoGridItem.self)
     }
     
+    func inspectablePhotoViewContainer() throws -> InspectableView<ViewType.View<PhotoGridItemContainer>> {
+        try inspect().find(PhotoGridItemContainer.self)
+    }
+    
     func inspectablePhotoViewContainers() throws -> [InspectableView<ViewType.View<PhotoGridItemContainer>>] {
         try inspect().findAll(PhotoGridItemContainer.self)
     }
@@ -72,10 +76,12 @@ extension InspectableView<ViewType.View<PhotoGridItemContainer>> {
     }
     
     func simulatePhotoViewInvisible() throws {
+        try callOnDisappear()
         try stack().callOnDisappear()
     }
     
     func simulatePhotoViewVisible() throws {
+        try callOnAppear()
         try stack().callOnAppear()
     }
     
