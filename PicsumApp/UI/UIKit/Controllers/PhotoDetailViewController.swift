@@ -7,11 +7,6 @@
 
 import UIKit
 
-protocol PhotoDetailViewControllerDelegate {
-    var task: Task<Void, Never>? { get }
-    func loadImageData()
-}
-
 final class PhotoDetailViewController: UIViewController {
     private lazy var stackView = {
         let sv = UIStackView()
