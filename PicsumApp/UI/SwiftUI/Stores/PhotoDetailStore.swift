@@ -18,9 +18,9 @@ final class PhotoDetailStore<Image> {
     }
     
     private let viewModel: PhotoDetailViewModel<Image>
-    let delegate: PhotoDetailViewControllerDelegate
+    let delegate: ImageLoadingDelegate
     
-    init(viewModel: PhotoDetailViewModel<Image>, delegate: PhotoDetailViewControllerDelegate) {
+    init(viewModel: PhotoDetailViewModel<Image>, delegate: ImageLoadingDelegate) {
         self.viewModel = viewModel
         self.delegate = delegate
         self.setupBindings()

@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class PhotoDetailPresentationAdapter<Image>: PhotoDetailViewControllerDelegate {
+final class PhotoDetailPresentationAdapter<Image>: ImageLoadingDelegate {
     private(set) var task: Task<Void, Never>?
     
     private let photoURL: URL
