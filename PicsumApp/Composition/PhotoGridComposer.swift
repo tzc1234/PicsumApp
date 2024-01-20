@@ -28,7 +28,7 @@ enum PhotoGridComposer {
                 let store = if let cachedStore = gridItemStores[photo.id] {
                     cachedStore
                 } else {
-                    makeGridItemStore(photo: photo, imageLoader: imageLoader)
+                    makeGridItemStore(photoId: photo.id, imageLoader: imageLoader)
                 }
                 
                 gridItemStores[photo.id] = store
@@ -42,11 +42,11 @@ enum PhotoGridComposer {
         )
     }
     
-    private static func makeGridItemStore(photo: Photo,
+    private static func makeGridItemStore(photoId: PhotoID,
                                           imageLoader: PhotoImageDataLoader) -> PhotoGridItemStore<UIImage> {
         let viewModel = PhotoImageViewModel<UIImage>()
         let adapter = PhotoImagePresentationAdapter(
-            photoId: photo.id,
+            photoId: photoId,
             viewModel: viewModel,
             imageLoader: imageLoader,
             imageConverter: UIImage.init)
