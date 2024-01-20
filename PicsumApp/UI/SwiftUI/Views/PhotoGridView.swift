@@ -50,7 +50,7 @@ struct PhotoGridView<ItemView: View, NextView: View>: View {
             }
         }
         .accessibilityIdentifier("photo-grid-outmost-view")
-        .alert(PhotoGridStore.errorTitle, isPresented: store.showError) {
+        .alert(PhotoGridStore.errorTitle, isPresented: store.isErrorShown) {
             Button("OK", role: .cancel, action: { store.hideError() })
         } message: {
             Text(store.errorMessage ?? "")
@@ -74,7 +74,7 @@ extension PhotoGridStore {
         )
     }
     
-    var showError: Binding<Bool> {
+    var isErrorShown: Binding<Bool> {
         Binding(
             get: { self.errorMessage != nil },
             set: { showError in
@@ -115,7 +115,7 @@ extension PhotoGridStore {
         gridItem: { photo in
             PhotoGridItem(
                 author: photo.author,
-                image: getPreviewUIImage(by: photo.url),
+                image: nil,
                 isLoading: false
             )
         },
