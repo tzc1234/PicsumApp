@@ -7,13 +7,6 @@
 
 import UIKit
 
-protocol PhotoListViewControllerDelegate {
-    var loadPhotosTask: Task<Void, Never>? { get }
-    var loadMorePhotosTask: Task<Void, Never>? { get }
-    func loadPhotos()
-    func loadMorePhotos()
-}
-
 final class PhotoListViewController: UICollectionViewController {
     private lazy var refreshControl = {
         let refresh = UIRefreshControl()
