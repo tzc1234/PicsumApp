@@ -21,6 +21,7 @@ final class PhotoGridStore {
         self.viewModel = viewModel
         self.delegate = delegate
         self.setupBindings()
+        self.loadPhotos()
     }
     
     private func setupBindings() {

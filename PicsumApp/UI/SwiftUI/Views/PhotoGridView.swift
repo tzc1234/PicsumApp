@@ -45,9 +45,6 @@ struct PhotoGridView<ItemView: View, NextView: View>: View {
             .refreshable {
                 await store.asyncLoadPhotos()
             }
-            .onAppear {
-                store.loadPhotos()
-            }
         }
         .accessibilityIdentifier("photo-grid-outmost-view")
         .alert(PhotoGridStore.errorTitle, isPresented: store.isErrorShown) {
