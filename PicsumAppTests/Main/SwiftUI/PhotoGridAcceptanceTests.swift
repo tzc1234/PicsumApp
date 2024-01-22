@@ -50,6 +50,15 @@ final class PhotoGridAcceptanceTests: XCTestCase, AcceptanceTest {
         XCTAssertEqual(try offlinePhotoViews[2].imageData(), imageData2())
     }
     
+    @MainActor
+    func test_enteringBackground_invalidatesExpiredImageCache() async throws {
+        let store = InMemoryImageDataStore.withExpiredCache
+        
+        try await enterBackground(with: store)
+        
+        XCTAssertTrue(store.imageCache.isEmpty)
+    }
+    
     // MARK: - Helpers
     
     private typealias PhotosView = PhotoGridView<PhotoGridItemContainer, EmptyView>
@@ -57,11 +66,9 @@ final class PhotoGridAcceptanceTests: XCTestCase, AcceptanceTest {
     @MainActor
     private func onLaunch(_ client: HTTPClientStub,
                           imageDataStore: InMemoryImageDataStore = .empty,
-                          function: String = #function,
-                          file: StaticString = #file,
-                          line: UInt = #line) async throws -> ContentView {
+                          function: String = #function) async throws -> ContentView {
         let factory = AppComponentsFactory(client: client, imageDataStore: imageDataStore)
-        let content = ContentView(factory: factory)
+        let content = ContentView(factory: factory, store: ContentStore())
         ViewHosting.host(view: content, function: function)
         addTeardownBlock {
             ViewHosting.expel(function: function)
@@ -69,6 +76,13 @@ final class PhotoGridAcceptanceTests: XCTestCase, AcceptanceTest {
         try await content.completePhotosLoading()
         try await Task.sleep(for: .seconds(0.01))
         return content
+    }
+    
+    @MainActor
+    private func enterBackground(with store: InMemoryImageDataStore, function: String = #function) async throws {
+        let app = try await onLaunch(.offline, imageDataStore: store, function: function)
+        try app.stack().callOnChange(newValue: true)
+        try await Task.sleep(for: .seconds(0.01))
     }
 }
 
@@ -86,5 +100,9 @@ extension ContentView {
             try await photoView.completeImageDataLoading()
         }
         return photoViews
+    }
+    
+    func stack() throws -> InspectableView<ViewType.ClassifiedView> {
+        try inspect().find(viewWithAccessibilityIdentifier: "content-view-outmost-stack")
     }
 }

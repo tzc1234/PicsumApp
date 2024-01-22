@@ -13,7 +13,7 @@ final class AppComponentsFactory {
     
     private lazy var storeURL = URL.applicationSupportDirectory.appending(path: "data-store.sqlite")
     private lazy var imageDataStore: ImageDataStore? = try? SwiftDataImageDataStore(url: storeURL)
-    private lazy var localImageDataLoader = imageDataStore.map { LocalImageDataLoader(store: $0) }
+    private(set) lazy var localImageDataLoader = imageDataStore.map { LocalImageDataLoader(store: $0) }
 
     private(set) lazy var photosLoader = RemotePhotosLoader(client: client)
     private lazy var imageDataLoader = makeImageDataLoader()
@@ -38,13 +38,20 @@ final class AppComponentsFactory {
     }
 }
 
+@Observable
+final class ContentStore {
+    var isEnteringBackground = false
+}
+
 // Can't inspect from `PicsumApp`, so the acceptance test starts from `ContentView`.
 struct ContentView: View {
     let factory: AppComponentsFactory
+    let store: ContentStore
     let gridStore: PhotoGridStore
     
-    init(factory: AppComponentsFactory) {
+    init(factory: AppComponentsFactory, store: ContentStore) {
         self.factory = factory
+        self.store = store
         self.gridStore = PhotoGridComposer.makeGridStore(photosLoader: factory.photosLoader)
     }
     
@@ -57,16 +64,34 @@ struct ContentView: View {
                     EmptyView()
                 })
         }
+        .accessibilityIdentifier("content-view-outmost-stack")
+        // ViewInspector not yet support the new iOS17 onChange modifier. So I use the old one.
+        .onChange(of: store.isEnteringBackground) { newValue in
+            if newValue {
+                Task {
+                    try? await factory.localImageDataLoader?.invalidateImageData()
+                }
+            }
+        }
     }
 }
 
 @main
 struct PicsumApp: App {
-    let factory = AppComponentsFactory()
+    @Environment(\.scenePhase) private var scenePhase
+    private let factory = AppComponentsFactory()
+    private let contentStore = ContentStore()
     
     var body: some Scene {
         WindowGroup {
-            ContentView(factory: factory)
+            ContentView(factory: factory, store: contentStore)
+        }
+        .onChange(of: scenePhase) { oldValue, newValue in
+            if oldValue == .active, newValue == .inactive {
+                contentStore.isEnteringBackground = true
+            } else {
+                contentStore.isEnteringBackground = false
+            }
         }
     }
 }
