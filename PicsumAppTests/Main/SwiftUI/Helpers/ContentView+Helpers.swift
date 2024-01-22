@@ -7,6 +7,7 @@
 
 import Foundation
 import ViewInspector
+import SwiftUI
 @testable import PicsumApp
 
 extension ContentView {
@@ -29,8 +30,8 @@ extension ContentView {
         return photoViews
     }
     
-    func triggerEnteringBackgroundOnChange() async throws {
-        try outmostStack().callOnChange(newValue: true)
+    func triggerEnteringBackground(byScenePhase scenePhase: ScenePhase) async throws {
+        try outmostStack().callOnChange(newValue: scenePhase)
         try await Task.sleep(for: .seconds(0.01))
     }
     

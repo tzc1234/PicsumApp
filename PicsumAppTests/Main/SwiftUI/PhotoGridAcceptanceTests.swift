@@ -7,6 +7,7 @@
 
 import XCTest
 import ViewInspector
+import SwiftUI
 @testable import PicsumApp
 
 final class PhotoGridAcceptanceTests: XCTestCase, AcceptanceTest {
@@ -89,7 +90,7 @@ final class PhotoGridAcceptanceTests: XCTestCase, AcceptanceTest {
                           imageDataStore: InMemoryImageDataStore = .empty,
                           function: String = #function) async throws -> ContentView {
         let factory = AppComponentsFactory(client: client, imageDataStore: imageDataStore)
-        let content = ContentView(factory: factory, store: ContentStore())
+        let content = ContentView(factory: factory, scenePhase: .active)
         ViewHosting.host(view: content, function: function)
         addTeardownBlock {
             ViewHosting.expel(function: function)
@@ -101,6 +102,6 @@ final class PhotoGridAcceptanceTests: XCTestCase, AcceptanceTest {
     @MainActor
     private func enterBackground(with store: InMemoryImageDataStore, function: String = #function) async throws {
         let app = try await onLaunch(.offline, imageDataStore: store, function: function)
-        try await app.triggerEnteringBackgroundOnChange()
+        try await app.triggerEnteringBackground(byScenePhase: .inactive)
     }
 }

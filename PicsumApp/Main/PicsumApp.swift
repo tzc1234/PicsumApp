@@ -38,21 +38,16 @@ final class AppComponentsFactory {
     }
 }
 
-@Observable
-final class ContentStore {
-    var isEnteringBackground = false
-}
-
 // Can't inspect from `PicsumApp`, so the acceptance test starts from `ContentView`.
 struct ContentView: View {
     let factory: AppComponentsFactory
-    let store: ContentStore
     let gridStore: PhotoGridStore
+    let scenePhase: ScenePhase
     
-    init(factory: AppComponentsFactory, store: ContentStore) {
+    init(factory: AppComponentsFactory, scenePhase: ScenePhase) {
         self.factory = factory
-        self.store = store
         self.gridStore = PhotoGridComposer.makeGridStore(photosLoader: factory.photosLoader)
+        self.scenePhase = scenePhase
     }
     
     var body: some View {
@@ -66,8 +61,8 @@ struct ContentView: View {
         }
         .accessibilityIdentifier("content-view-outmost-stack")
         // ViewInspector not yet support the new iOS17 onChange modifier. So I use the old one.
-        .onChange(of: store.isEnteringBackground) { newValue in
-            if newValue {
+        .onChange(of: scenePhase) { value in
+            if scenePhase == .active, value == .inactive {
                 Task {
                     try? await factory.localImageDataLoader?.invalidateImageData()
                 }
@@ -80,14 +75,10 @@ struct ContentView: View {
 struct PicsumApp: App {
     @Environment(\.scenePhase) private var scenePhase
     private let factory = AppComponentsFactory()
-    private let contentStore = ContentStore()
     
     var body: some Scene {
         WindowGroup {
-            ContentView(factory: factory, store: contentStore)
-        }
-        .onChange(of: scenePhase) { oldValue, newValue in
-            contentStore.isEnteringBackground = oldValue == .active && newValue == .inactive
+            ContentView(factory: factory, scenePhase: scenePhase)
         }
     }
 }
