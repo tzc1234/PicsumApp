@@ -10,7 +10,7 @@ import ViewInspector
 import SwiftUI
 @testable import PicsumApp
 
-final class PhotoGridAcceptanceTests: XCTestCase {
+final class PhotoGridAcceptanceTests: XCTestCase, AcceptanceTest {
     @MainActor
     func test_onLaunch_displaysPhotosWhenUserHasConnectivity() async throws {
         let app = try await onLaunch(.online(response))
@@ -40,85 +40,6 @@ final class PhotoGridAcceptanceTests: XCTestCase {
         }
         try await content.completeAllPhotosLoading()
         return content
-    }
-    
-    private func response(for url: URL) -> (Data, HTTPURLResponse) {
-        let data = pagesData(for: url) ?? imagesData(for: url) ?? Data()
-        return (data, .ok200Response)
-    }
-    
-    private func pagesData(for url: URL) -> Data? {
-        switch url.path() {
-        case "/v2/list" where url.query()?.contains("page=1") == true:
-            return page1Data()
-        case "/v2/list" where url.query()?.contains("page=2") == true:
-            return page2Data()
-        default:
-            return nil
-        }
-    }
-    
-    private func imagesData(for url: URL) -> Data? {
-        switch url.path() {
-        case downloadURLFor(id: "0").path():
-            return imageData0()
-        case downloadURLFor(id: "1").path():
-            return imageData1()
-        case downloadURLFor(id: "2").path():
-            return imageData2()
-        default:
-            return nil
-        }
-    }
-    
-    private func page1Data() -> Data {
-        [
-            [
-                "id": "0",
-                "author": "author0",
-                "width": 0,
-                "height": 0,
-                "url": "https://photo-0.com",
-                "download_url": downloadURLFor(id: "0").absoluteString
-            ],
-            [
-                "id": "1",
-                "author": "author1",
-                "width": 1,
-                "height": 1,
-                "url": "https://photo-1.com",
-                "download_url": downloadURLFor(id: "1").absoluteString
-            ]
-        ].toData()
-    }
-    
-    private func page2Data() -> Data {
-        [
-            [
-                "id": "2",
-                "author": "author2",
-                "width": 2,
-                "height": 2,
-                "url": "https://photo-2.com",
-                "download_url": downloadURLFor(id: "2").absoluteString
-            ]
-        ].toData()
-    }
-    
-    private func downloadURLFor(id: String, width: Int = .photoDimension, height: Int = .photoDimension) -> URL {
-        URL(string: "https://picsum.photos/id/\(id)/\(width)/\(height)")!
-    }
-    
-    private func imageData0() -> Data {
-        UIImage.makeData(withColor: .red)
-    }
-    
-    private func imageData1() -> Data {
-        UIImage.makeData(withColor: .green)
-    }
-    
-    private func imageData2() -> Data {
-        UIImage.makeData(withColor: .blue)
     }
 }
 
