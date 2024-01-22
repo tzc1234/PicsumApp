@@ -69,9 +69,21 @@ final class PhotoGridAcceptanceTests: XCTestCase, AcceptanceTest {
         XCTAssertFalse(store.imageCache.isEmpty)
     }
     
+    @MainActor
+    func test_selectPhoto_showsPhotoDetail() async throws {
+        let selectedPhoto = firstPhoto()
+        let app = try await onLaunch(.online(response))
+        
+        let photos = try app.photos()
+        photos.select(selectedPhoto)
+        
+        let detailView = try XCTUnwrap(app.detailView())
+        XCTAssertEqual(try detailView.authorText(), selectedPhoto.author)
+    }
+    
     // MARK: - Helpers
     
-    private typealias PhotosView = PhotoGridView<PhotoGridItemContainer, EmptyView>
+    private typealias PhotosView = PhotoGridView<PhotoGridItemContainer, PhotoDetailContainer>
     
     @MainActor
     private func onLaunch(_ client: HTTPClientStub,
@@ -96,9 +108,12 @@ final class PhotoGridAcceptanceTests: XCTestCase, AcceptanceTest {
 
 extension ContentView {
     func completePhotosLoading() async throws {
-        let photos = try inspect().find(PhotoGridView<PhotoGridItemContainer, EmptyView>.self).actualView()
-        await photos.completePhotosLoading()
+        try await photos().completePhotosLoading()
         try await Task.sleep(for: .seconds(0.01))
+    }
+    
+    func photos() throws -> PhotoGridView<PhotoGridItemContainer, PhotoDetailContainer> {
+        try inspect().find(PhotoGridView<PhotoGridItemContainer, PhotoDetailContainer>.self).actualView()
     }
     
     typealias PhotoView = InspectableView<ViewType.View<PhotoGridItemContainer>>
@@ -118,5 +133,11 @@ extension ContentView {
     
     private func outmostStack() throws -> InspectableView<ViewType.ClassifiedView> {
         try inspect().find(viewWithAccessibilityIdentifier: "content-view-outmost-stack")
+    }
+    
+    func detailView() throws -> PhotoDetailContainer {
+        try inspect()
+            .find(PhotoDetailContainer.self)
+            .actualView()
     }
 }

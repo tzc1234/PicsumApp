@@ -44,7 +44,23 @@ extension AcceptanceTest {
         }
     }
     
+    func firstPhoto() -> Photo {
+        let json = page1Json()[0]
+        return Photo(
+            id: json["id"] as! String,
+            author: json["author"] as! String,
+            width: json["width"] as! Int,
+            height: json["height"] as! Int,
+            webURL: URL(string: json["url"] as! String)!,
+            url: downloadURLFor(id: "0")
+        )
+    }
+    
     func page1Data() -> Data {
+        page1Json().toData()
+    }
+    
+    private func page1Json() -> [[String: Any]] {
         [
             [
                 "id": "0",
@@ -62,7 +78,7 @@ extension AcceptanceTest {
                 "url": "https://photo-1.com",
                 "download_url": downloadURLFor(id: "1").absoluteString
             ]
-        ].toData()
+        ]
     }
     
     func page2Data() -> Data {

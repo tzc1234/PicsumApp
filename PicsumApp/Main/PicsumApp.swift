@@ -16,7 +16,7 @@ final class AppComponentsFactory {
     private(set) lazy var localImageDataLoader = imageDataStore.map { LocalImageDataLoader(store: $0) }
 
     private(set) lazy var photosLoader = RemotePhotosLoader(client: client)
-    private lazy var imageDataLoader = makeImageDataLoader()
+    private(set) lazy var imageDataLoader = makeImageDataLoader()
     private(set) lazy var photoImageDataLoader = PhotoImageDataLoaderAdapter(imageDataLoader: imageDataLoader)
 
     convenience init(client: HTTPClient, imageDataStore: ImageDataStore) {
@@ -60,8 +60,8 @@ struct ContentView: View {
             PhotoGridComposer.makePhotoGridView(
                 store: gridStore,
                 imageLoader: factory.photoImageDataLoader,
-                nextView: { _ in
-                    EmptyView()
+                nextView: { photo in
+                    PhotoDetailContainerComposer.composeWith(photo: photo, imageDataLoader: factory.imageDataLoader)
                 })
         }
         .accessibilityIdentifier("content-view-outmost-stack")
