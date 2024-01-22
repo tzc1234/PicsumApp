@@ -29,7 +29,7 @@ extension ContentView {
         return photoViews
     }
     
-    func triggerOnChange() async throws {
+    func triggerEnteringBackgroundOnChange() async throws {
         try outmostStack().callOnChange(newValue: true)
         try await Task.sleep(for: .seconds(0.01))
     }

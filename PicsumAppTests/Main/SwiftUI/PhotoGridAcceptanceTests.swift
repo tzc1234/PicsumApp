@@ -100,6 +100,6 @@ final class PhotoGridAcceptanceTests: XCTestCase, AcceptanceTest {
     @MainActor
     private func enterBackground(with store: InMemoryImageDataStore, function: String = #function) async throws {
         let app = try await onLaunch(.offline, imageDataStore: store, function: function)
-        try await app.triggerOnChange()
+        try await app.triggerEnteringBackgroundOnChange()
     }
 }
