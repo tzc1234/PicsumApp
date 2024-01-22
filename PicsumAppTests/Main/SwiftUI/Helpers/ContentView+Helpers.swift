@@ -45,9 +45,11 @@ extension ContentView {
             .tap()
     }
     
-    func detailView() throws -> PhotoDetailContainer {
-        try inspect()
+    func detailView() async throws -> PhotoDetailContainer {
+        let detailView = try inspect()
             .find(PhotoDetailContainer.self)
             .actualView()
+        await detailView.completePhotoImageLoading()
+        return detailView
     }
 }

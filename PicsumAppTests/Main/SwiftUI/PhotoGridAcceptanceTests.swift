@@ -75,8 +75,9 @@ final class PhotoGridAcceptanceTests: XCTestCase, AcceptanceTest {
         
         try app.select(firstPhoto)
         
-        let detailView = try XCTUnwrap(app.detailView())
+        let detailView = try await app.detailView()
         XCTAssertEqual(try detailView.authorText(), firstPhoto.author)
+        XCTAssertEqual(try detailView.imageData(), imageData0())
     }
     
     // MARK: - Helpers

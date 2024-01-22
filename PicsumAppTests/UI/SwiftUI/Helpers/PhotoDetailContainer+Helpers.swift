@@ -29,7 +29,8 @@ extension PhotoDetailContainer {
             .find(viewWithAccessibilityIdentifier: "photo-detail-image")
             .image()
             .actualImage()
-            .uiImage().pngData()
+            .uiImage()
+            .pngData()
     }
     
     func completePhotoImageLoading() async {

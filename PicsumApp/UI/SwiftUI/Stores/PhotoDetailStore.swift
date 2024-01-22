@@ -24,6 +24,7 @@ final class PhotoDetailStore<Image> {
         self.viewModel = viewModel
         self.delegate = delegate
         self.setupBindings()
+        self.loadImage()
     }
     
     private func setupBindings() {

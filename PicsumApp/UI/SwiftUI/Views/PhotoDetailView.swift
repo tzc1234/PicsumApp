@@ -20,7 +20,6 @@ struct PhotoDetailContainer: View {
                 reloadButtonTapped: store.loadImage
             )
         }
-        .onAppear(perform: store.loadImage)
     }
 }
 
