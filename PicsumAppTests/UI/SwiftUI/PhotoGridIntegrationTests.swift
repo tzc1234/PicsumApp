@@ -331,32 +331,32 @@ final class PhotoGridIntegrationTests: XCTestCase, PhotosLoaderSpyResultHelpersF
                          file: StaticString = #file,
                          line: UInt = #line) -> (sut: SUT, loader: PhotosLoaderSpy) {
         let loader = PhotosLoaderSpy(photoStubs: photoStubs, dataStubs: dataStubs)
-        let sut = PhotoGridComposer.composeWith(
-            photosLoader: loader,
-            imageLoader: loader,
-            nextView: detailView
-        )
+        let store = PhotoGridComposer.makeGridStore(photosLoader: loader)
+        let sut = PhotoGridComposer.makePhotoGridView(store: store, imageLoader: loader, nextView: detailView)
         ViewHosting.host(view: sut, function: function)
-        trackMemoryLeaks(for: loader, sut: sut, function: function, file: file, line: line)
+        trackMemoryLeaks(for: [loader, store], sut: sut, function: function, file: file, line: line)
         return (sut, loader)
     }
     
-    private func trackMemoryLeaks(for instance: AnyObject,
+    private func trackMemoryLeaks(for instances: [AnyObject],
                                   sut: SUT,
                                   function: String = #function,
                                   file: StaticString = #file,
                                   line: UInt = #line) {
-        addTeardownBlock { [weak instance, weak self] in
+        let weakInstances = instances.map { WeakRefProxy($0) }
+        addTeardownBlock { [weak self] in
             self?.dismissErrorView(on: sut)
             ViewHosting.expel(function: function)
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                XCTAssertNil(
-                    instance,
-                    "Instance should have been deallocated. Potential memory leak.",
-                    file: file,
-                    line: line
-                )
+                weakInstances.forEach({
+                    XCTAssertNil(
+                        $0.object,
+                        "\(String(describing: $0.object)) should have been deallocated. Potential memory leak.",
+                        file: file,
+                        line: line
+                    )
+                })
             }
         }
     }

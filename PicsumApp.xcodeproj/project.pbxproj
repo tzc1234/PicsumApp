@@ -85,6 +85,7 @@
 		BEC368682B331A6B001888E0 /* PaginatedPhotosLoaderAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC368672B331A6B001888E0 /* PaginatedPhotosLoaderAdapter.swift */; };
 		BEC9C53B2A5C56730043B0C9 /* ImageDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC9C53A2A5C56730043B0C9 /* ImageDataStore.swift */; };
 		BEC9C53D2A5C56930043B0C9 /* LocalImageDataLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC9C53C2A5C56930043B0C9 /* LocalImageDataLoader.swift */; };
+		BECE9EEF2B5EA5220029338F /* WeakRefProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = BECE9EEE2B5EA5220029338F /* WeakRefProxy.swift */; };
 		BED008B92A5FE763002D94F5 /* ImageDataCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = BED008B82A5FE763002D94F5 /* ImageDataCache.swift */; };
 		BED283B62A5C6DB100521BC8 /* Date+TestHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BED283B52A5C6DB100521BC8 /* Date+TestHelpers.swift */; };
 		BED283B82A5C6E7500521BC8 /* ImageDataStoreSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = BED283B72A5C6E7500521BC8 /* ImageDataStoreSpy.swift */; };
@@ -204,6 +205,7 @@
 		BEC368672B331A6B001888E0 /* PaginatedPhotosLoaderAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaginatedPhotosLoaderAdapter.swift; sourceTree = "<group>"; };
 		BEC9C53A2A5C56730043B0C9 /* ImageDataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDataStore.swift; sourceTree = "<group>"; };
 		BEC9C53C2A5C56930043B0C9 /* LocalImageDataLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalImageDataLoader.swift; sourceTree = "<group>"; };
+		BECE9EEE2B5EA5220029338F /* WeakRefProxy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeakRefProxy.swift; sourceTree = "<group>"; };
 		BED008B82A5FE763002D94F5 /* ImageDataCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDataCache.swift; sourceTree = "<group>"; };
 		BED283B52A5C6DB100521BC8 /* Date+TestHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+TestHelpers.swift"; sourceTree = "<group>"; };
 		BED283B72A5C6E7500521BC8 /* ImageDataStoreSpy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDataStoreSpy.swift; sourceTree = "<group>"; };
@@ -287,6 +289,7 @@
 				BE2808692B5961ED00219CB4 /* PhotoGridView+Helpers.swift */,
 				BE28086B2B59626500219CB4 /* PhotoGridItem+Helpers.swift */,
 				BE6645CB2B5AA7EE003737D5 /* PhotoDetailContainer+Helpers.swift */,
+				BECE9EEE2B5EA5220029338F /* WeakRefProxy.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -876,6 +879,7 @@
 			files = (
 				BEF6E3892A6428B6004C6511 /* PhotoDetailViewController+TestHelpers.swift in Sources */,
 				BE525AEC2A5D4672000D3071 /* CacheImageDataUseCaseTests.swift in Sources */,
+				BECE9EEF2B5EA5220029338F /* WeakRefProxy.swift in Sources */,
 				BE5496862A570DF600D402A3 /* ClientSpy.swift in Sources */,
 				BE5DFCF92A5C0CAF007BD8A7 /* PhotoImageDataLoaderAdapterTests.swift in Sources */,
 				BE6645C82B5A7B68003737D5 /* PhotoDetailContainerIntegrationTests.swift in Sources */,
