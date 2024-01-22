@@ -23,6 +23,15 @@ final class PhotoGridAcceptanceTests: XCTestCase, AcceptanceTest {
         XCTAssertEqual(try photoViews[2].imageData(), imageData2())
     }
     
+    @MainActor
+    func test_onLaunch_doesNotDisplayPhotosWhenUserHasNoConnectivity() async throws {
+        let app = try await onLaunch(.offline)
+        
+        let photoViews = try await app.photoViews()
+        
+        XCTAssertTrue(photoViews.isEmpty)
+    }
+    
     // MARK: - Helpers
     
     private typealias PhotosView = PhotoGridView<PhotoGridItemContainer, EmptyView>

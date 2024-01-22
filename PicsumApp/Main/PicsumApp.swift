@@ -38,7 +38,7 @@ final class AppComponentsFactory {
     }
 }
 
-// Can't inspect from `PicsumApp`, so the acceptance test start from `ContentView`.
+// Can't inspect from `PicsumApp`, so the acceptance test starts from `ContentView`.
 struct ContentView: View {
     let factory: AppComponentsFactory
     let gridStore: PhotoGridStore
