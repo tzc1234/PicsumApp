@@ -59,6 +59,15 @@ final class PhotoGridAcceptanceTests: XCTestCase, AcceptanceTest {
         XCTAssertTrue(store.imageCache.isEmpty)
     }
     
+    @MainActor
+    func test_enteringBackground_doesNotInvalidateNonExpiredImageCache() async throws {
+        let store = InMemoryImageDataStore.withNonExpiredCache
+        
+        try await enterBackground(with: store)
+        
+        XCTAssertFalse(store.imageCache.isEmpty)
+    }
+    
     // MARK: - Helpers
     
     private typealias PhotosView = PhotoGridView<PhotoGridItemContainer, EmptyView>
