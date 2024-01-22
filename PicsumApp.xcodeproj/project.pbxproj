@@ -396,8 +396,7 @@
 			isa = PBXGroup;
 			children = (
 				BE4983562B4855B800CD03C6 /* Helpers */,
-				BE756CE02A628EE4000636F0 /* SceneDelegateTests.swift */,
-				BE21A9CE2B46FC6C000385B1 /* PhotoListAcceptanceTests.swift */,
+				BECE9EF02B5EA6360029338F /* UIKit */,
 				BE8584512B5E6D3500876D82 /* SwiftUI */,
 			);
 			path = Main;
@@ -625,6 +624,15 @@
 				BEE811C72A5DE87200A2F7D7 /* CacheImageDataPolicy.swift */,
 			);
 			path = Cache;
+			sourceTree = "<group>";
+		};
+		BECE9EF02B5EA6360029338F /* UIKit */ = {
+			isa = PBXGroup;
+			children = (
+				BE756CE02A628EE4000636F0 /* SceneDelegateTests.swift */,
+				BE21A9CE2B46FC6C000385B1 /* PhotoListAcceptanceTests.swift */,
+			);
+			path = UIKit;
 			sourceTree = "<group>";
 		};
 		BED283B42A5C6D9C00521BC8 /* Helpers */ = {
