@@ -38,6 +38,7 @@ final class PhotoGridAcceptanceTests: XCTestCase, AcceptanceTest {
         let onlineApp = try await onLaunch(.online(response), imageDataStore: store)
     
         let onlinePhotoViews = try await onlineApp.photoViews()
+        XCTAssertEqual(onlinePhotoViews.count, 3)
         XCTAssertEqual(try onlinePhotoViews[0].imageData(), imageData0())
         XCTAssertEqual(try onlinePhotoViews[1].imageData(), imageData1())
         XCTAssertEqual(try onlinePhotoViews[2].imageData(), imageData2())
@@ -83,15 +84,13 @@ final class PhotoGridAcceptanceTests: XCTestCase, AcceptanceTest {
             ViewHosting.expel(function: function)
         }
         try await content.completePhotosLoading()
-        try await Task.sleep(for: .seconds(0.01))
         return content
     }
     
     @MainActor
     private func enterBackground(with store: InMemoryImageDataStore, function: String = #function) async throws {
         let app = try await onLaunch(.offline, imageDataStore: store, function: function)
-        try app.stack().callOnChange(newValue: true)
-        try await Task.sleep(for: .seconds(0.01))
+        try await app.triggerOnChange()
     }
 }
 
@@ -99,6 +98,7 @@ extension ContentView {
     func completePhotosLoading() async throws {
         let photos = try inspect().find(PhotoGridView<PhotoGridItemContainer, EmptyView>.self).actualView()
         await photos.completePhotosLoading()
+        try await Task.sleep(for: .seconds(0.01))
     }
     
     typealias PhotoView = InspectableView<ViewType.View<PhotoGridItemContainer>>
@@ -111,7 +111,12 @@ extension ContentView {
         return photoViews
     }
     
-    func stack() throws -> InspectableView<ViewType.ClassifiedView> {
+    func triggerOnChange() async throws {
+        try outmostStack().callOnChange(newValue: true)
+        try await Task.sleep(for: .seconds(0.01))
+    }
+    
+    private func outmostStack() throws -> InspectableView<ViewType.ClassifiedView> {
         try inspect().find(viewWithAccessibilityIdentifier: "content-view-outmost-stack")
     }
 }

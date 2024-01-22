@@ -87,11 +87,7 @@ struct PicsumApp: App {
             ContentView(factory: factory, store: contentStore)
         }
         .onChange(of: scenePhase) { oldValue, newValue in
-            if oldValue == .active, newValue == .inactive {
-                contentStore.isEnteringBackground = true
-            } else {
-                contentStore.isEnteringBackground = false
-            }
+            contentStore.isEnteringBackground = oldValue == .active && newValue == .inactive
         }
     }
 }
