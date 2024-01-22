@@ -16,6 +16,7 @@ final class PhotoGridAcceptanceTests: XCTestCase, AcceptanceTest {
         let app = try await onLaunch(.online(response))
         
         let photoViews = try await app.photoViews()
+        
         XCTAssertEqual(photoViews.count, 3)
         XCTAssertEqual(try photoViews[0].imageData(), imageData0())
         XCTAssertEqual(try photoViews[1].imageData(), imageData1())
@@ -38,16 +39,15 @@ final class PhotoGridAcceptanceTests: XCTestCase, AcceptanceTest {
         addTeardownBlock {
             ViewHosting.expel(function: function)
         }
-        try await content.completeAllPhotosLoading()
+        try await content.completePhotosLoading()
         return content
     }
 }
 
 extension ContentView {
-    func completeAllPhotosLoading() async throws {
+    func completePhotosLoading() async throws {
         let photos = try inspect().find(PhotoGridView<PhotoGridItemContainer, EmptyView>.self).actualView()
         await photos.completePhotosLoading()
-        await photos.completeLoadMorePhotos()
     }
     
     typealias PhotoView = InspectableView<ViewType.View<PhotoGridItemContainer>>
