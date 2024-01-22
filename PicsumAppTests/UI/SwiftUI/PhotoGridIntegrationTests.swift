@@ -265,19 +265,25 @@ final class PhotoGridIntegrationTests: XCTestCase, PhotosLoaderSpyResultHelpersF
     @MainActor
     func test_photoViewSelection_showsDetailViewWhilePhotoViewIsSelected() async throws {
         let photo = makePhoto()
+        var photosLogged = [Photo]()
         let (sut, _) = makeSUT(
             photoStubs: [.success([photo])],
             dataStubs: [anySuccessData()],
-            detailView: { _ in DummyDetailView() }
+            detailView: { photo in
+                photosLogged.append(photo)
+                return DummyDetailView()
+            }
         )
         
         await sut.completePhotosLoading()
         
         XCTAssertFalse(sut.isShowingDetailView)
+        XCTAssertEqual(photosLogged, [])
         
         try sut.select(photo)
 
         XCTAssertTrue(sut.isShowingDetailView)
+        XCTAssertEqual(photosLogged, [photo])
     }
     
     // MARK: - Error view tests
