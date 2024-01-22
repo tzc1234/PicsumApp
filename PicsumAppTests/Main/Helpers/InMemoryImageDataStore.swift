@@ -21,6 +21,7 @@ final class InMemoryImageDataStore: ImageDataStore {
         imageCache[url]?.data
     }
     
+    @MainActor
     func insert(data: Data, timestamp: Date, for url: URL) async throws {
         imageCache[url] = (data, timestamp)
     }

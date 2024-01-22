@@ -76,6 +76,7 @@
 		BE8103132A55C19700CE012A /* PhotoListCellController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8103122A55C19700CE012A /* PhotoListCellController.swift */; };
 		BE8103152A55C2C400CE012A /* PhotoListComposer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8103142A55C2C400CE012A /* PhotoListComposer.swift */; };
 		BE81BCF42B52EA9A00C9E6A1 /* PhotoGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE81BCF32B52EA9A00C9E6A1 /* PhotoGridView.swift */; };
+		BE8584532B5E6D5B00876D82 /* PhotoGridAcceptanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8584522B5E6D5B00876D82 /* PhotoGridAcceptanceTests.swift */; };
 		BE9E00E62B443ADF003439C1 /* SwiftDataImageDataStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9E00E52B443ADF003439C1 /* SwiftDataImageDataStoreTests.swift */; };
 		BE9E00E82B44560E003439C1 /* SwiftDataImageDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9E00E72B44560E003439C1 /* SwiftDataImageDataStore.swift */; };
 		BEA70FB42B319F22001D667B /* RefreshControlSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEA70FB32B319F22001D667B /* RefreshControlSpy.swift */; };
@@ -194,6 +195,7 @@
 		BE8103122A55C19700CE012A /* PhotoListCellController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoListCellController.swift; sourceTree = "<group>"; };
 		BE8103142A55C2C400CE012A /* PhotoListComposer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoListComposer.swift; sourceTree = "<group>"; };
 		BE81BCF32B52EA9A00C9E6A1 /* PhotoGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoGridView.swift; sourceTree = "<group>"; };
+		BE8584522B5E6D5B00876D82 /* PhotoGridAcceptanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoGridAcceptanceTests.swift; sourceTree = "<group>"; };
 		BE9E00E52B443ADF003439C1 /* SwiftDataImageDataStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftDataImageDataStoreTests.swift; sourceTree = "<group>"; };
 		BE9E00E72B44560E003439C1 /* SwiftDataImageDataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftDataImageDataStore.swift; sourceTree = "<group>"; };
 		BEA70FB32B319F22001D667B /* RefreshControlSpy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshControlSpy.swift; sourceTree = "<group>"; };
@@ -393,6 +395,7 @@
 				BE4983562B4855B800CD03C6 /* Helpers */,
 				BE756CE02A628EE4000636F0 /* SceneDelegateTests.swift */,
 				BE21A9CE2B46FC6C000385B1 /* PhotoListAcceptanceTests.swift */,
+				BE8584512B5E6D3500876D82 /* SwiftUI */,
 			);
 			path = Main;
 			sourceTree = "<group>";
@@ -589,6 +592,14 @@
 				BE76D4572A7CE436000EA213 /* HTTPURLResponse+StatusCode.swift */,
 			);
 			path = Helpers;
+			sourceTree = "<group>";
+		};
+		BE8584512B5E6D3500876D82 /* SwiftUI */ = {
+			isa = PBXGroup;
+			children = (
+				BE8584522B5E6D5B00876D82 /* PhotoGridAcceptanceTests.swift */,
+			);
+			path = SwiftUI;
 			sourceTree = "<group>";
 		};
 		BEC368692B333F79001888E0 /* Collaborators */ = {
@@ -900,6 +911,7 @@
 				BE6560692A52DF8900CCD5D6 /* XCTestCase+MemoryLeakTracking.swift in Sources */,
 				BE54967D2A56D24500D402A3 /* RemotePhotosLoaderTests.swift in Sources */,
 				BEA70FB42B319F22001D667B /* RefreshControlSpy.swift in Sources */,
+				BE8584532B5E6D5B00876D82 /* PhotoGridAcceptanceTests.swift in Sources */,
 				BE62278F2A63FFFC0082ED1B /* PhotoDetailIntegrationTests.swift in Sources */,
 				BE5496782A56CAFA00D402A3 /* PhotosEndpointTests.swift in Sources */,
 				BE1FD4EA2A5421CE0021777F /* SharedHelpers.swift in Sources */,

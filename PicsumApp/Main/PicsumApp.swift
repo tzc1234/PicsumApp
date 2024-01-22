@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-final class PicsumAppComponentsFactory {
+final class AppComponentsFactory {
     private(set) lazy var client: HTTPClient = URLSessionHTTPClient(session: .shared)
     private(set) lazy var remoteImageDataLoader = RemoteImageDataLoader(client: client)
     
@@ -19,6 +19,12 @@ final class PicsumAppComponentsFactory {
     private(set) lazy var imageDataLoader = makeImageDataLoader()
     private(set) lazy var photoImageDataLoader = PhotoImageDataLoaderAdapter(imageDataLoader: imageDataLoader)
 
+    convenience init(client: HTTPClient, imageDataStore: ImageDataStore) {
+        self.init()
+        self.client = client
+        self.imageDataStore = imageDataStore
+    }
+    
     func makeImageDataLoader() -> ImageDataLoader {
         guard let localImageDataLoader else {
             return remoteImageDataLoader
@@ -32,19 +38,35 @@ final class PicsumAppComponentsFactory {
     }
 }
 
+// Can't inspect from `PicsumApp`, so the acceptance test start from `ContentView`.
+struct ContentView: View {
+    let factory: AppComponentsFactory
+    let gridStore: PhotoGridStore
+    
+    init(factory: AppComponentsFactory) {
+        self.factory = factory
+        self.gridStore = PhotoGridComposer.makeGridStore(photosLoader: factory.photosLoader)
+    }
+    
+    var body: some View {
+        VStack {
+            PhotoGridComposer.makePhotoGridView(
+                store: gridStore,
+                imageLoader: factory.photoImageDataLoader,
+                nextView: { _ in
+                    EmptyView()
+                })
+        }
+    }
+}
+
 @main
 struct PicsumApp: App {
-    private let factory = PicsumAppComponentsFactory()
+    let factory = AppComponentsFactory()
     
     var body: some Scene {
         WindowGroup {
-            PhotoGridComposer.composeWith(
-                photosLoader: factory.photosLoader,
-                imageLoader: factory.photoImageDataLoader, 
-                nextView: { photo in
-                    PhotoDetailContainerComposer.composeWith(photo: photo, imageDataLoader: factory.imageDataLoader)
-                }
-            )
+            ContentView(factory: factory)
         }
     }
 }

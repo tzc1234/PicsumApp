@@ -215,12 +215,12 @@ final class PhotoListAcceptanceTests: XCTestCase {
     }
 }
 
-private extension [[String: Any]] {
+extension [[String: Any]] {
     func toData() -> Data {
         try! JSONSerialization.data(withJSONObject: self)
     }
 }
 
-private extension Int {
+extension Int {
     static var photoDimension: Int { 600 }
 }
