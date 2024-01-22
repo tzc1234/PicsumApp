@@ -8,15 +8,15 @@
 import SwiftUI
 
 final class AppComponentsFactory {
-    private(set) lazy var client: HTTPClient = URLSessionHTTPClient(session: .shared)
-    private(set) lazy var remoteImageDataLoader = RemoteImageDataLoader(client: client)
+    private lazy var client: HTTPClient = URLSessionHTTPClient(session: .shared)
+    private lazy var remoteImageDataLoader = RemoteImageDataLoader(client: client)
     
-    private(set) lazy var storeURL = URL.applicationSupportDirectory.appending(path: "data-store.sqlite")
-    private(set) lazy var imageDataStore: ImageDataStore? = try? SwiftDataImageDataStore(url: storeURL)
-    private(set) lazy var localImageDataLoader = imageDataStore.map { LocalImageDataLoader(store: $0) }
+    private lazy var storeURL = URL.applicationSupportDirectory.appending(path: "data-store.sqlite")
+    private lazy var imageDataStore: ImageDataStore? = try? SwiftDataImageDataStore(url: storeURL)
+    private lazy var localImageDataLoader = imageDataStore.map { LocalImageDataLoader(store: $0) }
 
     private(set) lazy var photosLoader = RemotePhotosLoader(client: client)
-    private(set) lazy var imageDataLoader = makeImageDataLoader()
+    private lazy var imageDataLoader = makeImageDataLoader()
     private(set) lazy var photoImageDataLoader = PhotoImageDataLoaderAdapter(imageDataLoader: imageDataLoader)
 
     convenience init(client: HTTPClient, imageDataStore: ImageDataStore) {
@@ -25,7 +25,7 @@ final class AppComponentsFactory {
         self.imageDataStore = imageDataStore
     }
     
-    func makeImageDataLoader() -> ImageDataLoader {
+    private func makeImageDataLoader() -> ImageDataLoader {
         guard let localImageDataLoader else {
             return remoteImageDataLoader
         }
