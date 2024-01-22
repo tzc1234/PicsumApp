@@ -264,11 +264,10 @@ final class PhotoGridIntegrationTests: XCTestCase, PhotosLoaderSpyResultHelpersF
     
     @MainActor
     func test_photoViewSelection_showsDetailViewWhilePhotoViewIsSelected() async throws {
-        let photo0 = makePhoto(id: "0", author: "author0")
-        let selectedPhoto = makePhoto(id: "1", author: "selected author")
+        let photo = makePhoto()
         let (sut, _) = makeSUT(
-            photoStubs: [.success([photo0, selectedPhoto])],
-            dataStubs: [anySuccessData(), anySuccessData()],
+            photoStubs: [.success([photo])],
+            dataStubs: [anySuccessData()],
             detailView: { _ in DummyDetailView() }
         )
         
@@ -276,7 +275,7 @@ final class PhotoGridIntegrationTests: XCTestCase, PhotosLoaderSpyResultHelpersF
         
         XCTAssertFalse(sut.isShowingDetailView)
         
-        sut.select(selectedPhoto)
+        try sut.select(photo)
 
         XCTAssertTrue(sut.isShowingDetailView)
     }

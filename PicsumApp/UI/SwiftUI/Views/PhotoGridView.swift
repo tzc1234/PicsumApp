@@ -35,6 +35,7 @@ struct PhotoGridView<ItemView: View, NextView: View>: View {
                             } label: {
                                 Color.clear
                             }
+                            .accessibilityIdentifier("photo-grid-photo-selection-button-\(photo.id)")
                         }
                     }
                 }

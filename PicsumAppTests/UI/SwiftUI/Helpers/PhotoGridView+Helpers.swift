@@ -57,8 +57,11 @@ extension PhotoGridView {
         try inspect().find(viewWithAccessibilityIdentifier: "photo-grid-outmost-view").alert()
     }
     
-    func select(_ photo: Photo) {
-        store.selectedPhoto = photo
+    func select(_ photo: Photo) throws {
+        try inspect()
+            .find(viewWithAccessibilityIdentifier: "photo-grid-photo-selection-button-\(photo.id)")
+            .button()
+            .tap()
     }
     
     var isShowingDetailView: Bool {

@@ -71,14 +71,13 @@ final class PhotoGridAcceptanceTests: XCTestCase, AcceptanceTest {
     
     @MainActor
     func test_selectPhoto_showsPhotoDetail() async throws {
-        let selectedPhoto = firstPhoto()
         let app = try await onLaunch(.online(response))
+        let firstPhoto = firstPhoto()
         
-        let photos = try app.photos()
-        photos.select(selectedPhoto)
+        try app.select(firstPhoto)
         
         let detailView = try XCTUnwrap(app.detailView())
-        XCTAssertEqual(try detailView.authorText(), selectedPhoto.author)
+        XCTAssertEqual(try detailView.authorText(), firstPhoto.author)
     }
     
     // MARK: - Helpers
@@ -133,6 +132,13 @@ extension ContentView {
     
     private func outmostStack() throws -> InspectableView<ViewType.ClassifiedView> {
         try inspect().find(viewWithAccessibilityIdentifier: "content-view-outmost-stack")
+    }
+    
+    func select(_ photo: Photo) throws {
+        try inspect()
+            .find(viewWithAccessibilityIdentifier: "photo-grid-photo-selection-button-\(photo.id)")
+            .button()
+            .tap()
     }
     
     func detailView() throws -> PhotoDetailContainer {
