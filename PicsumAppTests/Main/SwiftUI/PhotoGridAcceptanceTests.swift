@@ -32,6 +32,24 @@ final class PhotoGridAcceptanceTests: XCTestCase, AcceptanceTest {
         XCTAssertTrue(photoViews.isEmpty)
     }
     
+    @MainActor
+    func test_onLaunch_displaysCachedPhotosWhenCacheExisted() async throws {
+        let store = InMemoryImageDataStore.empty
+        let onlineApp = try await onLaunch(.online(response), imageDataStore: store)
+    
+        let onlinePhotoViews = try await onlineApp.photoViews()
+        XCTAssertEqual(try onlinePhotoViews[0].imageData(), imageData0())
+        XCTAssertEqual(try onlinePhotoViews[1].imageData(), imageData1())
+        XCTAssertEqual(try onlinePhotoViews[2].imageData(), imageData2())
+        
+        let offlineApp = try await onLaunch(.online(responseWithoutImageData), imageDataStore: store)
+        let offlinePhotoViews = try await offlineApp.photoViews()
+        XCTAssertEqual(offlinePhotoViews.count, 3)
+        XCTAssertEqual(try offlinePhotoViews[0].imageData(), imageData0())
+        XCTAssertEqual(try offlinePhotoViews[1].imageData(), imageData1())
+        XCTAssertEqual(try offlinePhotoViews[2].imageData(), imageData2())
+    }
+    
     // MARK: - Helpers
     
     private typealias PhotosView = PhotoGridView<PhotoGridItemContainer, EmptyView>
@@ -49,6 +67,7 @@ final class PhotoGridAcceptanceTests: XCTestCase, AcceptanceTest {
             ViewHosting.expel(function: function)
         }
         try await content.completePhotosLoading()
+        try await Task.sleep(for: .seconds(0.01))
         return content
     }
 }

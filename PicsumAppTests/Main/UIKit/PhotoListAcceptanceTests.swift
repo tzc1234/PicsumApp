@@ -130,8 +130,4 @@ final class PhotoListAcceptanceTests: XCTestCase, AcceptanceTest {
         
         XCTAssertEqual(photoImage, data, file: file, line: line)
     }
-    
-    private func responseWithoutImageData(for url: URL) -> (Data, HTTPURLResponse) {
-        (pagesData(for: url) ?? Data(), .ok200Response)
-    }
 }

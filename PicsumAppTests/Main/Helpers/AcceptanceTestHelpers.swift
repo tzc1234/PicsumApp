@@ -16,6 +16,10 @@ extension AcceptanceTest {
         return (data, .ok200Response)
     }
     
+    func responseWithoutImageData(for url: URL) -> (Data, HTTPURLResponse) {
+        (pagesData(for: url) ?? Data(), .ok200Response)
+    }
+    
     func pagesData(for url: URL) -> Data? {
         switch url.path() {
         case "/v2/list" where url.query()?.contains("page=1") == true:
