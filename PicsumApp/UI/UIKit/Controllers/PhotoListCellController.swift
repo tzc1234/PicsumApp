@@ -7,12 +7,6 @@
 
 import UIKit
 
-protocol PhotoListCellControllerDelegate {
-    var task: Task<Void, Never>? { get }
-    func loadImage()
-    func cancelLoad()
-}
-
 final class PhotoListCellController {
     private var cell: PhotoListCell?
     
@@ -22,12 +16,12 @@ final class PhotoListCellController {
     
     private let author: String
     private let viewModel: PhotoImageViewModel<UIImage>
-    private let delegate: PhotoListCellControllerDelegate
+    private let delegate: PhotoImageLoadingDelegate
     let selection: () -> Void
     
     init(author: String,
          viewModel: PhotoImageViewModel<UIImage>,
-         delegate: PhotoListCellControllerDelegate,
+         delegate: PhotoImageLoadingDelegate,
          selection: @escaping () -> Void) {
         self.author = author
         self.viewModel = viewModel

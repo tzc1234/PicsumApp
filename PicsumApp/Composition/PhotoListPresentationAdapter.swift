@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class PhotoListPresentationAdapter: PhotoListViewControllerDelegate {
+final class PhotoListPresentationAdapter: PhotosLoadingDelegate {
     typealias PaginatedPhotos = () async throws -> Paginated<Photo>
     
     private(set) var loadPhotosTask: Task<Void, Never>?
@@ -62,7 +62,7 @@ final class PhotoListPresentationAdapter: PhotoListViewControllerDelegate {
     }
 }
 
-private extension PhotoListViewModel {
+extension PhotoListViewModel {
     func didStartLoading() {
         onLoad?(true)
     }

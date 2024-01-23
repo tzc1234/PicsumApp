@@ -15,6 +15,10 @@ final class PhotoListViewModel {
     var didLoad: Observer<[Photo]>?
     var didLoadMore: Observer<[Photo]>?
     
+    static var errorTitle: String {
+        "Oops!"
+    }
+    
     static var errorMessage: String {
         "Error occurred, please try again."
     }

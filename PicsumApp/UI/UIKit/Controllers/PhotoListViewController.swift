@@ -7,13 +7,6 @@
 
 import UIKit
 
-protocol PhotoListViewControllerDelegate {
-    var loadPhotosTask: Task<Void, Never>? { get }
-    var loadMorePhotosTask: Task<Void, Never>? { get }
-    func loadPhotos()
-    func loadMorePhotos()
-}
-
 final class PhotoListViewController: UICollectionViewController {
     private lazy var refreshControl = {
         let refresh = UIRefreshControl()
@@ -38,9 +31,9 @@ final class PhotoListViewController: UICollectionViewController {
     }
     
     private var viewModel: PhotoListViewModel?
-    private var delegate: PhotoListViewControllerDelegate?
+    private var delegate: PhotosLoadingDelegate?
     
-    convenience init(viewModel: PhotoListViewModel, delegate: PhotoListViewControllerDelegate) {
+    convenience init(viewModel: PhotoListViewModel, delegate: PhotosLoadingDelegate) {
         self.init(collectionViewLayout: UICollectionViewFlowLayout())
         self.viewModel = viewModel
         self.delegate = delegate
@@ -101,7 +94,7 @@ final class PhotoListViewController: UICollectionViewController {
     }
     
     private func showErrorView(message: String) {
-        let alert = UIAlertController(title: "Oops!", message: message, preferredStyle: .alert)
+        let alert = UIAlertController(title: PhotoListViewModel.errorTitle, message: message, preferredStyle: .alert)
         alert.addAction(.init(title: "Cancel", style: .cancel))
         present(alert, animated: true)
     }

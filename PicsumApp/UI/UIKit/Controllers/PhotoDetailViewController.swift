@@ -7,11 +7,6 @@
 
 import UIKit
 
-protocol PhotoDetailViewControllerDelegate {
-    var task: Task<Void, Never>? { get }
-    func loadImageData()
-}
-
 final class PhotoDetailViewController: UIViewController {
     private lazy var stackView = {
         let sv = UIStackView()
@@ -70,11 +65,11 @@ final class PhotoDetailViewController: UIViewController {
     
     private let viewModel: PhotoDetailViewModel<UIImage>
     private let urlHandler: (URL) -> Void
-    private let delegate: PhotoDetailViewControllerDelegate
+    private let delegate: ImageLoadingDelegate
     
     init(viewModel: PhotoDetailViewModel<UIImage>,
          urlHandler: @escaping (URL) -> Void,
-         delegate: PhotoDetailViewControllerDelegate) {
+         delegate: ImageLoadingDelegate) {
         self.viewModel = viewModel
         self.urlHandler = urlHandler
         self.delegate = delegate

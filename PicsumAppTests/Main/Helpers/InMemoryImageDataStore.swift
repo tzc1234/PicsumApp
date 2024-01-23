@@ -17,10 +17,12 @@ final class InMemoryImageDataStore: ImageDataStore {
         cache.map { self.imageCache[$0.url] = ($0.data, $0.timestamp) }
     }
     
+    @MainActor
     func retrieveData(for url: URL) async throws -> Data? {
         imageCache[url]?.data
     }
     
+    @MainActor
     func insert(data: Data, timestamp: Date, for url: URL) async throws {
         imageCache[url] = (data, timestamp)
     }

@@ -42,6 +42,7 @@ class PhotosLoaderSpy: PhotosLoader, PhotoImageDataLoader {
     
     private(set) var dataStubs: [DataResult]
     private(set) var loggedPhotoIDs = [String]()
+    var loggedPhotoIDSet: Set<String> { Set(loggedPhotoIDs) }
     
     struct CannotFindFirstImageDataStub: Error {}
     
