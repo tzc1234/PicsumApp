@@ -80,6 +80,7 @@
 		BE8584532B5E6D5B00876D82 /* PhotoGridAcceptanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8584522B5E6D5B00876D82 /* PhotoGridAcceptanceTests.swift */; };
 		BE9E00E62B443ADF003439C1 /* SwiftDataImageDataStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9E00E52B443ADF003439C1 /* SwiftDataImageDataStoreTests.swift */; };
 		BE9E00E82B44560E003439C1 /* SwiftDataImageDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE9E00E72B44560E003439C1 /* SwiftDataImageDataStore.swift */; };
+		BEA6456B2B5FC12C00A8893C /* AppComponentsFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEA6456A2B5FC12C00A8893C /* AppComponentsFactory.swift */; };
 		BEA70FB42B319F22001D667B /* RefreshControlSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEA70FB32B319F22001D667B /* RefreshControlSpy.swift */; };
 		BEB90FB72A5F0A6500A22904 /* ContextDidSaveNotificationSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEB90FB62A5F0A6500A22904 /* ContextDidSaveNotificationSpy.swift */; };
 		BEC368662B32F505001888E0 /* PaginatedPhotosLoaderAdapterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC368652B32F505001888E0 /* PaginatedPhotosLoaderAdapterTests.swift */; };
@@ -202,6 +203,7 @@
 		BE8584522B5E6D5B00876D82 /* PhotoGridAcceptanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoGridAcceptanceTests.swift; sourceTree = "<group>"; };
 		BE9E00E52B443ADF003439C1 /* SwiftDataImageDataStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftDataImageDataStoreTests.swift; sourceTree = "<group>"; };
 		BE9E00E72B44560E003439C1 /* SwiftDataImageDataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftDataImageDataStore.swift; sourceTree = "<group>"; };
+		BEA6456A2B5FC12C00A8893C /* AppComponentsFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppComponentsFactory.swift; sourceTree = "<group>"; };
 		BEA70FB32B319F22001D667B /* RefreshControlSpy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshControlSpy.swift; sourceTree = "<group>"; };
 		BEB90FB62A5F0A6500A22904 /* ContextDidSaveNotificationSpy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextDidSaveNotificationSpy.swift; sourceTree = "<group>"; };
 		BEC368652B32F505001888E0 /* PaginatedPhotosLoaderAdapterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaginatedPhotosLoaderAdapterTests.swift; sourceTree = "<group>"; };
@@ -409,6 +411,7 @@
 		BE4983552B48556B00CD03C6 /* Main */ = {
 			isa = PBXGroup;
 			children = (
+				BEA6456A2B5FC12C00A8893C /* AppComponentsFactory.swift */,
 				BE6560362A52D4A300CCD5D6 /* AppDelegate.swift */,
 				BE6560382A52D4A300CCD5D6 /* SceneDelegate.swift */,
 				BE2808722B5966DC00219CB4 /* PicsumApp.swift */,
@@ -841,6 +844,7 @@
 				BEF6E38B2A64296F004C6511 /* PhotoDetailViewController.swift in Sources */,
 				BE4876DD2A54996900F6AE3F /* ShimmeringView.swift in Sources */,
 				BE37F78F2B5540C50098FF2E /* PhotoGridComposer.swift in Sources */,
+				BEA6456B2B5FC12C00A8893C /* AppComponentsFactory.swift in Sources */,
 				BEC9C53B2A5C56730043B0C9 /* ImageDataStore.swift in Sources */,
 				BE2808652B59609100219CB4 /* PhotoGridStore.swift in Sources */,
 				BEF751D62B4D5DEB00F49FD7 /* PhotoDetailPresentationAdapter.swift in Sources */,

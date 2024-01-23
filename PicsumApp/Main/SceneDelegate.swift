@@ -8,17 +8,11 @@
 import UIKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
-    private lazy var client: HTTPClient = URLSessionHTTPClient(session: .shared)
-    private lazy var remoteImageDataLoader = RemoteImageDataLoader(client: client)
-    
-    private lazy var storeURL = URL.applicationSupportDirectory.appending(path: "data-store.sqlite")
-    private lazy var imageDataStore: ImageDataStore? = try? SwiftDataImageDataStore(url: storeURL)
-    private lazy var localImageDataLoader = imageDataStore.map { LocalImageDataLoader(store: $0) }
+    private lazy var factory = AppComponentsFactory()
     
     convenience init(client: HTTPClient, imageDataStore: ImageDataStore) {
         self.init()
-        self.client = client
-        self.imageDataStore = imageDataStore
+        self.factory = AppComponentsFactory(client: client, imageDataStore: imageDataStore)
     }
     
     var window: UIWindow?
@@ -32,14 +26,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
     
     func configureWindow() {
-        let photosLoader = RemotePhotosLoader(client: client)
-        let imageDataLoader = makeImageDataLoader()
-        let photoImageLoader = PhotoImageDataLoaderAdapter(imageDataLoader: imageDataLoader)
         let photoListViewController = PhotoListComposer.composeWith(
-            photosLoader: photosLoader,
-            imageLoader: photoImageLoader,
+            photosLoader: factory.photosLoader,
+            imageLoader: factory.photoImageDataLoader,
             selection: { [weak self] photo in
-                self?.showPhotoDetail(photo: photo, imageDataLoader: imageDataLoader)
+                guard let self else { return }
+                
+                showPhotoDetail(photo: photo, imageDataLoader: factory.imageDataLoader)
             })
         
         navigationController = UINavigationController(rootViewController: photoListViewController)
@@ -49,20 +42,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     func sceneWillResignActive(_ scene: UIScene) {
         Task {
-            try? await localImageDataLoader?.invalidateImageData()
+            try? await factory.localImageDataLoader?.invalidateImageData()
         }
-    }
-    
-    private func makeImageDataLoader() -> ImageDataLoader {
-        guard let localImageDataLoader else {
-            return remoteImageDataLoader
-        }
-        
-        return ImageDataLoaderWithFallbackComposite(
-            primary: localImageDataLoader,
-            fallback: ImageDataLoaderCacheDecorator(
-                loader: remoteImageDataLoader,
-                cache: localImageDataLoader))
     }
     
     private func showPhotoDetail(photo: Photo, imageDataLoader: ImageDataLoader) {
