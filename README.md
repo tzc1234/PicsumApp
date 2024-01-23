@@ -8,6 +8,8 @@ I've to utilise [ViewInspector](https://github.com/nalexn/ViewInspector) to enab
 This limitation made me decide not to use `@State variable` during the development. Not even counting on the unpredictable re-initialisation of SwiftUI view, really time consuming to debug.
 Although the solution is not perfect yet (`ViewInspector` does not 100% support all SwiftUI's API.), it can be proved that writing unit/integration tests for SwiftUI is possible. I really appreciate the efforts from the team of `ViewInspector`, unlocking the ability to do TDD for SwiftUI. Thanks!
 
+I've still kept UIKit files in the project, convenient to compare side by side, page by page.
+
 ### Async/await in unit test
 Pros: The async functions work really well in unit tests marked with keyword `async`, seamlessly just like testing sync functions.
 When compared with completion handlers, async functions are easier to reason about what's going on, and also avoid a callback hell.
