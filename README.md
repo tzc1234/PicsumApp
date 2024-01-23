@@ -1,6 +1,5 @@
 # PicsumApp
 ## Practice the learnings from iOS Lead Essentials online course.
-**Migrating to SwifUI, work in progress.**
 
 ## Retrospective
 ### Async/await in unit test
@@ -45,13 +44,13 @@ The `UICollectionViewDiffableDataSource` is not running in preview, no collectio
 Therefore, I decide not to use preview at the moment.
 
 ## Screenshot
-<img src="https://github.com/tzc1234/PicsumApp/blob/swift-ui/Screenshots/preview.png" alt="preview" width="256" height="554"/> <img src="https://github.com/tzc1234/PicsumApp/blob/swift-ui/Screenshots/preview2.png" alt="preview2" width="256" height="554"/>
+<img src="https://github.com/tzc1234/PicsumApp/blob/main/Screenshots/preview.png" alt="preview" width="256" height="554"/> <img src="https://github.com/tzc1234/PicsumApp/blob/main/Screenshots/preview2.png" alt="preview2" width="256" height="554"/>
 
 ## Frameworks
 1. Async/await
 2. URLSession for [Picsum API](https://picsum.photos/)
 3. ~~Core Data~~ SwiftData for image data caching
-4. UIKit
+4. ~~UIKit~~ Migrated to SwiftUI
 5. XCTest
 
 ## Goals to achieve
@@ -59,7 +58,8 @@ Therefore, I decide not to use preview at the moment.
 2. Fully adopt TDD
 3. Use of dependency injection
 4. Refactor from MVC to MVVM, safeguard by tests
-5. Compose all the components in the composition root (SceneDelegate)
+5. Compose all the components in the composition root
 6. Make use of design patterns: adapter, composite and decorator
 7. Better naming
 8. Learn new frameworks: Async/await, SwiftData and SwiftUI
+9. Change UI framework (UIKit to SwiftUI) won't need to modify the existing networking, caching parts
