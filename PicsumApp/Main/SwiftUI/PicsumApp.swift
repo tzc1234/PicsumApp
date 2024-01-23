@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// Can't inspect from `PicsumApp`, so the acceptance test starts from `ContentView`.
+// ViewInspector not support `App` type, so the acceptance test starts from `ContentView`.
 struct ContentView: View {
     let factory: AppComponentsFactory
     let gridStore: PhotoGridStore
