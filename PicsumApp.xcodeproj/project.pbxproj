@@ -411,10 +411,9 @@
 		BE4983552B48556B00CD03C6 /* Main */ = {
 			isa = PBXGroup;
 			children = (
-				BEA6456A2B5FC12C00A8893C /* AppComponentsFactory.swift */,
-				BE6560362A52D4A300CCD5D6 /* AppDelegate.swift */,
-				BE6560382A52D4A300CCD5D6 /* SceneDelegate.swift */,
-				BE2808722B5966DC00219CB4 /* PicsumApp.swift */,
+				BEA6456E2B5FC36300A8893C /* Helpers */,
+				BEA6456C2B5FC34400A8893C /* UIKit */,
+				BEA6456D2B5FC34E00A8893C /* SwiftUI */,
 			);
 			path = Main;
 			sourceTree = "<group>";
@@ -619,6 +618,31 @@
 				BE8584522B5E6D5B00876D82 /* PhotoGridAcceptanceTests.swift */,
 			);
 			path = SwiftUI;
+			sourceTree = "<group>";
+		};
+		BEA6456C2B5FC34400A8893C /* UIKit */ = {
+			isa = PBXGroup;
+			children = (
+				BE6560362A52D4A300CCD5D6 /* AppDelegate.swift */,
+				BE6560382A52D4A300CCD5D6 /* SceneDelegate.swift */,
+			);
+			path = UIKit;
+			sourceTree = "<group>";
+		};
+		BEA6456D2B5FC34E00A8893C /* SwiftUI */ = {
+			isa = PBXGroup;
+			children = (
+				BE2808722B5966DC00219CB4 /* PicsumApp.swift */,
+			);
+			path = SwiftUI;
+			sourceTree = "<group>";
+		};
+		BEA6456E2B5FC36300A8893C /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				BEA6456A2B5FC12C00A8893C /* AppComponentsFactory.swift */,
+			);
+			path = Helpers;
 			sourceTree = "<group>";
 		};
 		BEC368692B333F79001888E0 /* Collaborators */ = {
