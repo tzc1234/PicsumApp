@@ -20,7 +20,7 @@ extension AcceptanceTest {
         (pagesData(for: url) ?? Data(), .ok200Response)
     }
     
-    func pagesData(for url: URL) -> Data? {
+    private func pagesData(for url: URL) -> Data? {
         switch url.path() {
         case "/v2/list" where url.query()?.contains("page=1") == true:
             return page1Data()
@@ -31,7 +31,7 @@ extension AcceptanceTest {
         }
     }
     
-    func imagesData(for url: URL) -> Data? {
+    private func imagesData(for url: URL) -> Data? {
         switch url.path() {
         case downloadURLFor(id: "0").path():
             return imageData0()
@@ -56,7 +56,7 @@ extension AcceptanceTest {
         )
     }
     
-    func page1Data() -> Data {
+    private func page1Data() -> Data {
         page1Json().toData()
     }
     
@@ -81,7 +81,7 @@ extension AcceptanceTest {
         ]
     }
     
-    func page2Data() -> Data {
+    private func page2Data() -> Data {
         [
             [
                 "id": "2",
@@ -94,7 +94,7 @@ extension AcceptanceTest {
         ].toData()
     }
     
-    func downloadURLFor(id: String, width: Int = .photoDimension, height: Int = .photoDimension) -> URL {
+    private func downloadURLFor(id: String, width: Int = .photoDimension, height: Int = .photoDimension) -> URL {
         URL(string: "https://picsum.photos/id/\(id)/\(width)/\(height)")!
     }
     
