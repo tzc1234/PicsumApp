@@ -17,7 +17,6 @@ final class InMemoryImageDataStore: ImageDataStore {
         cache.map { self.imageCache[$0.url] = ($0.data, $0.timestamp) }
     }
     
-    @MainActor
     func retrieveData(for url: URL) async throws -> Data? {
         imageCache[url]?.data
     }
