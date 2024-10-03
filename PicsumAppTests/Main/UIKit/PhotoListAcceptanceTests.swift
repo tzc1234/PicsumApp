@@ -120,6 +120,7 @@ final class PhotoListAcceptanceTests: XCTestCase, AcceptanceTest {
                                  file: StaticString = #filePath,
                                  line: UInt = #line) async {
         await photoDetail.completeImageDataLoading()
+        try? await Task.sleep(for: .seconds(0.03)) // Give a little bit time buffer for image data 
         let photoImage = await photoDetail.imageData
         
         XCTAssertEqual(photoImage, data, file: file, line: line)
