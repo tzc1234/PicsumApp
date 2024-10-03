@@ -366,6 +366,7 @@ final class PhotoGridIntegrationTests: XCTestCase, PhotosLoaderSpyResultHelpersF
         }
     }
     
+    @MainActor
     private func dismissErrorView(on sut: SUT) {
         let errorView = try? sut.errorView()
         try? errorView?.actionButton().tap()

@@ -72,7 +72,7 @@ final class SwiftDataImageDataStoreTests: XCTestCase {
         let url = anyURL()
         
         let beforeDeleteAllData = try await sut.retrieveData(for: url)
-        try await deleteAllData(in: sut, until: .now)
+        try await sut.deleteAllData(until: .now)
         let afterDeleteAllData = try await sut.retrieveData(for: url)
         
         XCTAssertNil(beforeDeleteAllData)
