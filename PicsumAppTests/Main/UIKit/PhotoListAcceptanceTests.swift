@@ -15,7 +15,7 @@ final class PhotoListAcceptanceTests: XCTestCase, AcceptanceTest {
         
         XCTAssertEqual(photos.numberOfRenderedPhotoView(), 2)
         // Due to iOS 18 update, should avoid dequeuing views without a request from the collection view.
-        // Triggering collectionView.dequeueReusableCell for more than once will occur an error.
+        // Triggering collectionView.dequeueReusableCell for a cell more than once will occur an error.
         // Calling assertImageData will trigger collectionView.dequeueReusableCell once.
         // Therefore, I can't assertImageData for a cell twice in this test.
 //        await assertImageData(for: photos, at: 0, asExpected: imageData0())

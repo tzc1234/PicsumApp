@@ -380,9 +380,9 @@ final class PhotoListIntegrationTests: XCTestCase, PhotosLoaderSpyResultHelpersF
         await sut.completePhotosLoading()
         
         // Due to iOS 18 update, should avoid dequeuing views without a request from the collection view.
-        // Triggering collectionView.dequeueReusableCell for more than once will occur an error.
-        // Calling sut.simulatePhotoViewVisible will trigger collectionView.dequeueReusableCell once.
-        // Therefore, I can't sut.simulatePhotoViewVisible for a cell twice in this test.
+        // Triggering collectionView.dequeueReusableCell for a cell more than once will occur an error.
+        // Calling `sut.simulatePhotoViewVisible(at: 0)` before `sut.completeMorePhotosLoading()` will trigger collectionView.dequeueReusableCell for a cell more than once.
+        // Therefore, I can't call `sut.simulatePhotoViewVisible(at: 0)` before `sut.completeMorePhotosLoading()` in this test.
         
 //        let view0 = try XCTUnwrap(sut.simulatePhotoViewVisible(at: 0))
 //        await sut.completeImageDataLoading(at: 0)
@@ -397,7 +397,10 @@ final class PhotoListIntegrationTests: XCTestCase, PhotosLoaderSpyResultHelpersF
         let view0 = try XCTUnwrap(sut.simulatePhotoViewVisible(at: 0))
         let view1 = try XCTUnwrap(sut.simulatePhotoViewVisible(at: 1))
         let view2 = try XCTUnwrap(sut.simulatePhotoViewVisible(at: 2))
-        await sut.completeImageDataLoading(at: 1)
+        
+        // The behaviour still as before, trigger one image data loading task will complete all pending tasks together.
+        // In this case, I trigger image data loading task 2 here. Then, task 0, task 1 and task 2 completed all together.
+        await sut.completeImageDataLoading(at: 2)
         
         XCTAssertEqual(view0.renderedImage, imageData0, "Expected rendered image for first view when first view become visible")
         XCTAssertEqual(view1.renderedImage, imageData1, "Expected rendered image for second view when second view become visible")
