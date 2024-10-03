@@ -29,9 +29,8 @@ struct ContentView: View {
                 })
         }
         .accessibilityIdentifier("content-view-outmost-stack")
-        // ViewInspector not yet support the new iOS17 onChange modifier. So I use the old one.
-        .onChange(of: scenePhase) { value in
-            if scenePhase == .active, value == .inactive {
+        .onChange(of: scenePhase) { oldValue, newValue in
+            if oldValue == .active, newValue == .inactive {
                 Task {
                     try? await factory.localImageDataLoader?.invalidateImageData()
                 }

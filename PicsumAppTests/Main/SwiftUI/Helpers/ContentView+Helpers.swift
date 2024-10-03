@@ -30,8 +30,8 @@ extension ContentView {
         return photoViews
     }
     
-    func triggerEnteringBackground(byScenePhase scenePhase: ScenePhase) async throws {
-        try outmostStack().callOnChange(newValue: scenePhase)
+    func triggerEnteringBackground() async throws {
+        try outmostStack().callOnChange(oldValue: ScenePhase.active, newValue: ScenePhase.inactive)
         try await Task.sleep(for: .seconds(0.01))
     }
     
