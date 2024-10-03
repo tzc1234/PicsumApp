@@ -48,7 +48,7 @@ final class URLSessionHTTPClientTests: XCTestCase {
         await assertFailureFor(data: anyData(), response: nonHTTPURLResponse(), error: nil)
     }
     
-    func test_get_succeedsOnHTTPURLReponseWithData() async throws {
+    func test_get_succeedsOnHTTPURLResponseWithData() async throws {
         let sut = makeSUT()
         let data = anyData()
         let response = anyHTTPURLResponse()
@@ -61,7 +61,7 @@ final class URLSessionHTTPClientTests: XCTestCase {
         XCTAssertEqual(receivedResponse.statusCode, response.statusCode)
     }
     
-    func test_get_succeedsOnHTTPURLReponseWithNilData() async throws {
+    func test_get_succeedsOnHTTPURLResponseWithNilData() async throws {
         let sut = makeSUT()
         let response = anyHTTPURLResponse()
         URLProtocolStub.stub(data: nil, response: response, error: nil)
