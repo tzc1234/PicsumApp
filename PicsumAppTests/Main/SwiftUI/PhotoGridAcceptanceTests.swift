@@ -83,8 +83,6 @@ final class PhotoGridAcceptanceTests: XCTestCase, AcceptanceTest {
     
     // MARK: - Helpers
     
-    private typealias PhotosView = PhotoGridView<PhotoGridItemContainer, PhotoDetailContainer>
-    
     @MainActor
     private func onLaunch(_ client: HTTPClientStub,
                           imageDataStore: InMemoryImageDataStore = .empty,
