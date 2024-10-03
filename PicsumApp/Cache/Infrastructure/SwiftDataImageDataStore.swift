@@ -51,9 +51,14 @@ final actor SwiftDataImageDataStore: ModelActor, ImageDataStore {
     }
     
     func deleteAllData(until date: Date) throws {
-        let predicate = #Predicate<SwiftDataImage> { $0.timestamp <= date }
-        try modelContext.delete(model: SwiftDataImage.self, where: predicate)
+        try retrieveImages(until: date).forEach(modelContext.delete)
         try modelContext.save()
+    }
+    
+    private func retrieveImages(until date: Date) throws -> [SwiftDataImage] {
+        let predicate = #Predicate<SwiftDataImage> { $0.timestamp <= date }
+        let descriptor = FetchDescriptor<SwiftDataImage>(predicate: predicate)
+        return try modelContext.fetch(descriptor)
     }
     
     deinit {

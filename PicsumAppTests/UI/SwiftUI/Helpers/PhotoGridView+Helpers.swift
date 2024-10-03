@@ -75,7 +75,8 @@ struct DummyDetailView: View {
     }
 }
 
-extension InspectableSheetWithItem: ItemPopupPresenter {}
+extension InspectableSheetWithItem: @retroactive BasePopupPresenter {}
+extension InspectableSheetWithItem: @retroactive ItemPopupPresenter {}
 
 extension InspectableView<ViewType.View<PhotoGridItemContainer>> {
     func completeImageDataLoading() async throws {
