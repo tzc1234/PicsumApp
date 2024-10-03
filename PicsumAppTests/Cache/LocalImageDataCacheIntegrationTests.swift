@@ -5,13 +5,6 @@
 //  Created by Tsz-Lung on 17/07/2023.
 //
 
-/*
- Got this error from this test if instantiate more than one ModelContainer with same URL upfront:
- Error Domain=NSCocoaErrorDomain Code=134020 "The model configuration used to open the store is incompatible with the
- one that was used to create the store."
- See can find any better solution later.
- */
-
 import XCTest
 import SwiftData
 @testable import PicsumApp
@@ -28,46 +21,42 @@ final class LocalImageDataCacheIntegrationTests: XCTestCase {
     }
     
     func test_loadImageData_deliversSavedDataOnASeparateInstance() async throws {
+        let imageLoaderForSave = try makeSUT()
+        let imageLoaderForLoad = try makeSUT()
         let data = anyData()
         let url = anyURL()
         
-        let imageLoaderForSave = try makeSUT()
         try await imageLoaderForSave.save(data: data, for: url)
-        
-        let imageLoaderForLoad = try makeSUT()
         let receivedData = try await imageLoaderForLoad.loadImageData(for: url)
         
         XCTAssertEqual(receivedData, data)
     }
     
     func test_save_overridesSavedDataOnASeparateInstance() async throws {
+        let imageLoaderForFirstSave = try makeSUT()
+        let imageLoaderForLastSave = try makeSUT()
+        let imageLoaderForLoad = try makeSUT()
         let firstData = Data("first data".utf8)
         let lastData = Data("last data".utf8)
         let url = anyURL()
         
-        let imageLoaderForFirstSave = try makeSUT()
         try await imageLoaderForFirstSave.save(data: firstData, for: url)
-        
-        let imageLoaderForLastSave = try makeSUT()
         try await imageLoaderForLastSave.save(data: lastData, for: url)
-        
-        let imageLoaderForLoad = try makeSUT()
         let receivedData = try await imageLoaderForLoad.loadImageData(for: url)
         
         XCTAssertEqual(receivedData, lastData)
     }
     
     func test_invalidateImageData_removesAllSavedDataInADistancePast() async throws {
+        let imageLoaderForSave = try makeSUT(currentDate: { .distantPast })
+        let imageLoaderForInvalidate = try makeSUT(currentDate: { .now })
+        let imageLoaderForLoad = try makeSUT()
         let data = anyData()
         let url = anyURL()
         
-        let imageLoaderForSave = try makeSUT(currentDate: { .distantPast })
         try await imageLoaderForSave.save(data: data, for: url)
-        
-        let imageLoaderForInvalidate = try makeSUT(currentDate: { .now })
         try await imageLoaderForInvalidate.invalidateImageData()
         
-        let imageLoaderForLoad = try makeSUT()
         await asyncAssertThrowsError(_ = try await imageLoaderForLoad.loadImageData(for: url))
     }
 

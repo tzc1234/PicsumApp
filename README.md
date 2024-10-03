@@ -23,10 +23,11 @@ Because of this, I would prefer completion handlers more.
 
 ### SwiftData
 An easier, handier API available in iOS 17 compared with CoreData, in my opinion.
-Overall it is good but not mature yet, for example I can't use `URL` for `predicate`, I've to convert to `String` before using at the moment.
+~~Overall it is good but not mature yet, for example I can't use `URL` for `predicate`, I've to convert to `String` before using at the moment.
 Also, when instantiating more than one `ModelContainer` with same `URL` upfront, 
 `Error Domain=NSCocoaErrorDomain Code=134020 "The model configuration used to open the store is incompatible with the one that was used to create the store.` will occur.
-This was annoying when I was doing integration tests.
+This was annoying when I was doing integration tests.~~
+After updated to iOS 18, SwiftData works perfectly.
 
 Benefiting from dependency injection/clean architecture, I can easily switch frameworks from `CoreData` to `SwiftData`. 
 Changing an implementation of an `ImageDataStore` is not much effort when backed by automated tests, ensuring the whole code base works properly.
