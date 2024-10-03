@@ -12,12 +12,12 @@ import SwiftData
 final class SwiftDataImage {
     var data: Data
     var timestamp: Date
-    @Attribute(.unique) var url: String
+    @Attribute(.unique) var url: URL
     
     init(data: Data, timestamp: Date, url: URL) {
         self.data = data
         self.timestamp = timestamp
-        self.url = url.absoluteString
+        self.url = url
     }
 }
 
@@ -39,7 +39,7 @@ final actor SwiftDataImageDataStore: ModelActor, ImageDataStore {
     }
     
     func retrieveData(for url: URL) throws -> Data? {
-        let predicate = #Predicate<SwiftDataImage> { $0.url == url.absoluteString }
+        let predicate = #Predicate<SwiftDataImage> { $0.url == url }
         var descriptor = FetchDescriptor<SwiftDataImage>(predicate: predicate)
         descriptor.fetchLimit = 1
         return try modelContext.fetch(descriptor).first?.data
